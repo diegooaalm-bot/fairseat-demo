@@ -7,6 +7,10 @@ and only verified fans can buy.
 
 > Academic concept. Not a real product. Business figures are illustrative hypotheses. Artists, tours and venues are fictional.
 
+**Live:** https://diegooaalm-bot.github.io/fairseat-demo/ · **Demo:** https://diegooaalm-bot.github.io/fairseat-demo/#/demo · **Projector QR:** https://diegooaalm-bot.github.io/fairseat-demo/#/share
+
+<img src="docs/qr-demo.png" alt="QR code to the live demo" width="180">
+
 - `/#/` — the product page (scroll story, interactive resale slider, festival calculator, timeline).
 - `/#/demo` — the live demo app: 6 roles that share one state (Maya, Ben, Organizer, Artist, Gate, Proof) and Story mode.
 - `/#/share` — a full-screen QR to the demo, for the projector.
