@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'motion/react'
-import { Compass, Ticket, UserRound } from 'lucide-react'
+import { ArrowLeftRight, Compass, Ticket, UserRound } from 'lucide-react'
 import { type EventId, type PersonId } from '@/data/world'
 import { StackView } from '@/demo/shell/StackView'
 import { TabBar } from '@/demo/shell/TabBar'
@@ -17,7 +17,8 @@ import { Resell } from './Resell'
 import { Seats } from './Seats'
 import { SideHint } from './SideHint'
 import { Wallet } from './Wallet'
-import { BenEventFooter, ResaleOffer } from '../ben/BenEvent'
+import { BenEventFooter } from '../ben/BenEvent'
+import { Offer, ResaleHub } from './Resale'
 
 export function FanApp({ person }: { person: PersonId }) {
   const onboarded = useDemo((s) => s[person].onboarded)
@@ -31,11 +32,11 @@ export function FanApp({ person }: { person: PersonId }) {
 
   if (!onboarded) return <Onboarding />
 
-  const root = tab === 'tickets' ? <Wallet person={person} /> : tab === 'pass' ? <FanPass person={person} /> : <Discover person={person} />
+  const root = tab === 'tickets' ? <Wallet person={person} /> : tab === 'pass' ? <FanPass person={person} /> : tab === 'resale' ? <ResaleHub person={person} /> : <Discover person={person} />
   const render = (r: Route) => {
     switch (r.name) {
       case 'event':
-        return <EventDetail person={person} id={r.params!.id as EventId} footer={person === 'ben' ? <BenEventFooter /> : undefined} />
+        return <EventDetail person={person} id={r.params!.id as EventId} footer={person === 'ben' && r.params!.id === 'nova' ? <BenEventFooter /> : undefined} />
       case 'queue':
         return <Queue person={person} />
       case 'seats':
@@ -43,7 +44,7 @@ export function FanApp({ person }: { person: PersonId }) {
       case 'resell':
         return <Resell person={person} id={r.params!.id} />
       case 'offer':
-        return <ResaleOffer />
+        return <Offer person={person} id={r.params!.id} />
       case 'gift':
         return <GiftScreen person={person} id={r.params!.id} />
       default:
@@ -60,6 +61,7 @@ export function FanApp({ person }: { person: PersonId }) {
         onChange={(t) => setTab(person, t)}
         items={[
           { id: 'discover', label: 'Discover', icon: Compass },
+          { id: 'resale', label: 'Resale', icon: ArrowLeftRight },
           { id: 'tickets', label: 'My Tickets', icon: Ticket, badge: tab !== 'tickets' ? count : 0 },
           { id: 'pass', label: 'Fan Pass', icon: UserRound },
         ]}

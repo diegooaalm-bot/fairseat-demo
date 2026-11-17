@@ -20,13 +20,14 @@ export function chipFor(t: Ticket, person: PersonId, listingPrice?: number) {
   if (t.status === 'listed') return <Pill tone="glass">Listed · {usd(listingPrice ?? 0, { cents: false })}</Pill>
   if (minutesToShow(t.eventId, useDemo.getState().moment) <= 120 && minutesToShow(t.eventId, useDemo.getState().moment) > 0)
     return <Pill tone="glass">Tonight</Pill>
-  if (t.prevOwner && t.prevOwner !== person && t.eventId === 'nova') return <Pill tone="glass">Fair resale</Pill>
+  if (t.prevOwner && t.prevOwner !== person) return <Pill tone="glass">Fair resale</Pill>
   return undefined
 }
 
 export function Wallet({ person }: { person: PersonId }) {
   const all = useDemo((s) => s.tickets)
-  const listing = useDemo((s) => s.listing)
+  const market = useDemo((s) => s.market)
+  const priceOf = (id: string) => market.find((l) => l.ticketId === id)?.priceCents
   const ledger = useDemo((s) => s.ledger)
   const setFlag = useDemo((s) => s.setFlag)
   const focus = useUI((s) => s.focusTicket)
@@ -82,7 +83,7 @@ export function Wallet({ person }: { person: PersonId }) {
                   className="absolute inset-x-0 block text-left"
                   style={{ top: i * PEEK, zIndex: i }}
                 >
-                  <TicketCard ticket={t} chip={chipFor(t, person, listing?.priceCents)} />
+                  <TicketCard ticket={t} chip={chipFor(t, person, priceOf(t.id))} />
                 </motion.button>
               ))}
             </div>
@@ -110,7 +111,9 @@ export function Wallet({ person }: { person: PersonId }) {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-[15px] font-semibold">Sold to a verified fan</span>
-                      <span className="block truncate text-[13px] text-fg-3">{EVENTS[tx.eventId].artist} · Sec 312 · Row 14 · Seat 7</span>
+                      <span className="block truncate text-[13px] text-fg-3">
+                        {EVENTS[tx.eventId].artist} · {tx.note}
+                      </span>
                     </span>
                     <span className="text-[15px] font-semibold text-ok tabular">+{usd(tx.breakdown!.seller)}</span>
                   </motion.button>
@@ -119,7 +122,7 @@ export function Wallet({ person }: { person: PersonId }) {
             )}
           </div>
         ) : (
-          <Pager tickets={tickets} index={Math.max(0, openIndex)} onIndex={(i) => setOpen(tickets[i].id)} onClose={() => setOpen(null)} person={person} listingPrice={listing?.priceCents} />
+          <Pager tickets={tickets} index={Math.max(0, openIndex)} onIndex={(i) => setOpen(tickets[i].id)} onClose={() => setOpen(null)} person={person} priceOf={priceOf} />
         )}
       </LayoutGroup>
     </Screen>
@@ -145,14 +148,14 @@ function Pager({
   onIndex,
   onClose,
   person,
-  listingPrice,
+  priceOf,
 }: {
   tickets: Ticket[]
   index: number
   onIndex: (i: number) => void
   onClose: () => void
   person: PersonId
-  listingPrice?: number
+  priceOf: (id: string) => number | undefined
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [w, setW] = useState(350)
@@ -192,7 +195,7 @@ function Pager({
           {tickets.map((t, i) => (
             <div key={t.id} className="shrink-0" style={{ width: w }}>
               <motion.div layoutId={`card-${t.id}`} transition={spring.snappy} onClick={() => i === index && onClose()} className="cursor-pointer">
-                <TicketCard ticket={t} tilt={i === index} chip={chipFor(t, person, listingPrice)} />
+                <TicketCard ticket={t} tilt={i === index} chip={chipFor(t, person, priceOf(t.id))} />
               </motion.div>
               <AnimatePresence>
                 {i === index && (

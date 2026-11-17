@@ -13,25 +13,24 @@ import { Screen } from '@/demo/shell/Screen'
 import { useDemo, ticketsOf } from '@/store/demo'
 import { useUI } from '@/store/ui'
 import { PaySheet } from './PaySheet'
-import { SeatGrid, VenueMap, levelPrice, sectionById } from './SeatMap'
+import { SeatGrid, VenueMap, defaultSection, levelPrice, sectionOf } from './SeatMap'
 
 export function Seats({ person, id }: { person: PersonId; id: EventId }) {
   const ev = EVENTS[id]
-  const venue = ev.venueId ?? 'mbs'
   const pop = useDemo((s) => s.pop)
   const buy = useDemo((s) => s.buyPrimary)
   const setStack = useDemo((s) => s.setStack)
   const owned = useDemo((s) => ticketsOf(s, person).filter((t) => t.eventId === id).length)
   const toast = useUI((s) => s.showToast)
   const setFocus = useUI((s) => s.setFocusTicket)
-  const [section, setSection] = useState(venue === 'mbs' ? '312' : '104')
+  const [section, setSection] = useState(defaultSection(ev))
   const [sel, setSel] = useState<string[]>([])
   const [shake, setShake] = useState<{ key: string; n: number } | null>(null)
   const [limitBump, setLimitBump] = useState(0)
   const [pay, setPay] = useState(false)
   const [bought, setBought] = useState<string[] | null>(null)
   const max = Math.max(0, DEFAULT_RULES.maxPerPerson - owned)
-  const sec = sectionById(venue, section)!
+  const sec = sectionOf(ev, section)!
   const price = levelPrice(ev, sec.level)
 
   const toggle = (key: string) => {

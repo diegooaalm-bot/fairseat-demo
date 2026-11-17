@@ -1,18 +1,20 @@
 import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
 import { useState } from 'react'
-import { BadgeCheck, CalendarClock, Check, Lock, ShieldCheck, Users } from 'lucide-react'
+import { BadgeCheck, CalendarClock, Check, Circle, Lock, ShieldCheck, Users } from 'lucide-react'
 import { EventImage } from '@/components/art/EventImage'
 import { Button } from '@/components/ui/Button'
 import { CapSlider } from '@/components/ui/CapSlider'
+import { MoneySplit } from '@/components/ui/MoneySplit'
 import { NumberTicker } from '@/components/ui/NumberTicker'
 import { EVENTS, type PersonId } from '@/data/world'
 import { usd } from '@/lib/money'
 import { spring } from '@/lib/motion'
 import { capCents, resaleBreakdown } from '@/lib/rules'
 import { Screen } from '@/demo/shell/Screen'
-import { minutesToShow, useDemo } from '@/store/demo'
+import { listingOf, minutesToShow, useDemo } from '@/store/demo'
 import { useUI } from '@/store/ui'
-import { DemoButton, fmtCountdown } from './TicketPanel'
+import { DemoButton, fmtCountdown, useSimulateBuyer } from './TicketPanel'
+import { shortArtist } from './Resale'
 
 const fmt = (n: number) => usd(Math.round(n))
 const closeTime = (t: string) => {
@@ -28,8 +30,8 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
   const m = useDemo((s) => s.moment)
   const pop = useDemo((s) => s.pop)
   const list = useDemo((s) => s.listForResale)
-  const listing = useDemo((s) => s.listing)
-  const buyResale = useDemo((s) => s.buyResale)
+  const listing = useDemo((s) => listingOf(s, id))
+  const simulateBuyer = useSimulateBuyer()
   const playSwap = useUI((s) => s.playSwap)
   const [price, setPrice] = useState(ticket?.faceCents ?? 10000)
   const [hits, setHits] = useState(0)
@@ -47,7 +49,15 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
   const br = resaleBreakdown(price)
   const mins = minutesToShow(ticket.eventId, m)
   const locked = mins <= 120
-  const isListed = listing?.ticketId === ticket.id
+  const isListed = !!listing
+  // slider range follows the ticket's own face value (80%–140%), so the cap sits mid-track for any price
+  const minC = Math.round((ticket.faceCents * 0.8) / 100) * 100
+  const maxC = Math.round((ticket.faceCents * 1.4) / 100) * 100
+  const artist = shortArtist(ev.artist)
+  const setAtCap = () => {
+    setPrice(cap)
+    onHit()
+  }
 
   const onHit = () => {
     setHits((h) => h + 1)
@@ -76,12 +86,26 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
               <Check size={34} strokeWidth={3} />
             </motion.span>
             <h2 className="mt-5 text-[30px] leading-tight font-bold tracking-[-0.03em]">Listed for {usd(listing!.priceCents)}</h2>
-            <p className="mt-2 max-w-[30ch] text-[16px] text-fg-2">88,200 verified fans are on the waitlist. When one buys, you get {usd(resaleBreakdown(listing!.priceCents).seller)} instantly.</p>
-            <div className="mt-8 flex w-full flex-col gap-3">
+            <p className="mt-1 text-[15px] text-fg-2">
+              {ev.artist} · Sec {ticket.section} · Row {ticket.row} · Seat {ticket.seat}
+            </p>
+            <ol className="mt-6 flex w-full flex-col gap-0 rounded-[16px] bg-ink-3 p-4 text-left hairline">
+              <Step done title="Listed on FairSeat" sub="Visible to verified fans right now" />
+              <Step
+                title="A verified fan buys it"
+                sub={ticket.eventId === 'nova' ? '88,200 verified fans are on the waitlist for this show' : `Fans following ${artist} get a notification`}
+              />
+              <Step
+                last
+                title={`You get ${usd(resaleBreakdown(listing!.priceCents).seller)} · ${artist} gets ${usd(resaleBreakdown(listing!.priceCents).royalty)}`}
+                sub="Paid at the same moment the ticket moves"
+              />
+            </ol>
+            <div className="mt-6 flex w-full flex-col gap-3">
               <DemoButton
                 className="self-center"
                 onClick={() => {
-                  if (buyResale('ben')) {
+                  if (simulateBuyer(ticket.id, person)) {
                     playSwap(person)
                     pop(person)
                   }
@@ -116,7 +140,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
             {/* price */}
             <div className="rounded-[24px] bg-ink-2 p-5 hairline">
               <div className="flex items-end justify-between gap-3">
-                <motion.div animate={priceCtl} className="text-[52px] leading-none font-bold tracking-[-0.045em] tabular">
+                <motion.div animate={priceCtl} className="text-[46px] leading-none font-bold tracking-[-0.045em] tabular">
                   {usd(price)}
                 </motion.div>
                 <div className="shrink-0 pb-1 text-right text-[12px] leading-tight whitespace-nowrap text-fg-3">
@@ -126,7 +150,11 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
                 </div>
               </div>
               <div className="mt-8">
-                <CapSlider faceCents={ticket.faceCents} capCents={cap} minCents={8000} maxCents={14000} value={price} onChange={setPrice} onHitCap={onHit} />
+                <CapSlider faceCents={ticket.faceCents} capCents={cap} minCents={minC} maxCents={maxC} value={price} onChange={setPrice} onHitCap={onHit} />
+              </div>
+              <div className="mt-1 grid grid-cols-2 gap-2">
+                <Preset active={price === ticket.faceCents} onClick={() => setPrice(ticket.faceCents)} k="Face value" v={usd(ticket.faceCents)} />
+                <Preset active={price === cap} onClick={setAtCap} k="Max allowed" v={usd(cap)} />
               </div>
               <div className="h-[52px]">
                 <AnimatePresence mode="wait">
@@ -151,10 +179,20 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
             </div>
 
             {/* live split */}
-            <div className="overflow-hidden rounded-[24px] bg-ink-3 hairline">
-              <Split k="You receive" sub="Instantly, to your card" v={<NumberTicker value={br.seller} format={fmt} duration={0.4} />} big />
-              <Split k={`${ev.artist} gets`} sub="5% royalty on every resale" v={<NumberTicker value={br.royalty} format={fmt} duration={0.4} />} />
-              <Split k="Buyer pays" sub={`Includes ${usd(br.fee)} service fee (3%)`} v={<NumberTicker value={br.buyerTotal} format={fmt} duration={0.4} />} />
+            <div className="rounded-[20px] bg-ink-3 p-4 hairline">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[17px] font-semibold tracking-[-0.01em]">You receive</div>
+                  <div className="text-[12px] text-fg-3">Paid instantly when it sells</div>
+                </div>
+                <div className="text-[28px] font-bold tracking-[-0.02em] text-accent-soft">
+                  <NumberTicker value={br.seller} format={fmt} duration={0.4} />
+                </div>
+              </div>
+              <div className="mt-3 mb-2.5 border-t border-white/[0.06] pt-3 text-[13px] text-fg-2">
+                The buyer pays <b className="text-fg tabular">{usd(br.buyerTotal)}</b>, split like this:
+              </div>
+              <MoneySplit priceCents={price} artist={artist} seller="You" />
             </div>
 
             <div className="flex flex-col gap-2 px-1 text-[13px] text-fg-3">
@@ -175,15 +213,33 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
   )
 }
 
-function Split({ k, sub, v, big }: { k: string; sub: string; v: React.ReactNode; big?: boolean }) {
+function Preset({ k, v, active, onClick }: { k: string; v: string; active: boolean; onClick: () => void }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3 last:border-0">
-      <div>
-        <div className={`font-semibold tracking-[-0.01em] ${big ? 'text-[17px]' : 'text-[15px] text-fg-2'}`}>{k}</div>
-        <div className="text-[12px] text-fg-3">{sub}</div>
-      </div>
-      <div className={`font-bold tracking-[-0.02em] ${big ? 'text-[26px] text-accent-soft' : 'text-[18px]'}`}>{v}</div>
-    </div>
+    <motion.button
+      whileTap={{ scale: 0.96 }}
+      onClick={onClick}
+      className={`flex items-center justify-between rounded-[12px] px-3 py-2 text-left text-[13px] transition-colors ${active ? 'bg-accent/20 text-fg ring-1 ring-accent/50' : 'bg-white/[0.05] text-fg-2'}`}
+    >
+      <span>{k}</span>
+      <span className="font-semibold tabular">{v}</span>
+    </motion.button>
+  )
+}
+
+function Step({ title, sub, done, last }: { title: string; sub: string; done?: boolean; last?: boolean }) {
+  return (
+    <li className="flex gap-3">
+      <span className="flex flex-col items-center">
+        <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${done ? 'bg-ok text-white' : 'bg-white/[0.08] text-fg-3'}`}>
+          {done ? <Check size={14} strokeWidth={3} /> : <Circle size={8} fill="currentColor" />}
+        </span>
+        {!last && <span className="my-1 w-px flex-1 bg-white/[0.1]" />}
+      </span>
+      <span className={last ? '' : 'pb-3'}>
+        <span className="block text-[15px] font-semibold">{title}</span>
+        <span className="block text-[13px] leading-snug text-fg-3">{sub}</span>
+      </span>
+    </li>
   )
 }
 

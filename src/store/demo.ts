@@ -10,6 +10,7 @@ import {
   momentIndex,
   type Badge,
   type EventId,
+  type LevelId,
   type MomentId,
   type PersonId,
 } from '@/data/world'
@@ -62,6 +63,7 @@ export interface Tx {
   failed?: Check['id']
   note?: string
   live?: boolean
+  parties?: { seller: string; buyer: string }
 }
 
 export interface PersonState {
@@ -70,9 +72,19 @@ export interface PersonState {
   badges: Badge[]
 }
 
-export interface Listing {
-  ticketId: string
+/** A resale listing on the fan-to-fan market. */
+export interface MarketListing {
+  id: string
+  /** set when the seller is one of the demo fans (Maya, Ben) */
+  ticketId?: string
+  eventId: EventId
+  section: string
+  row: string
+  seat: number
+  faceCents: number
   priceCents: number
+  seller: PersonId | 'fan'
+  sellerName: string
 }
 
 export type ScanMode = 'live' | 'screenshot' | 'notOwner'
@@ -112,7 +124,7 @@ export interface DemoData {
   maya: PersonState
   ben: PersonState
   tickets: Ticket[]
-  listing: Listing | null
+  market: MarketListing[]
   ledger: Tx[]
   block: number
   botsBlocked: number
@@ -140,7 +152,10 @@ interface Actions {
   addBotsBlocked: (n: number) => void
   buyPrimary: (p: PersonId, eventId: EventId, seats: { section: string; row: string; seat: number; faceCents: number }[]) => string[]
   listForResale: (ticketId: string, priceCents: number) => void
-  cancelListing: () => void
+  cancelListing: (ticketId: string) => void
+  /** buy any market listing; 'fan' = an anonymous verified fan (demo buyer) */
+  buyListing: (p: PersonId | 'fan', listingId: string) => string | null
+  /** the canonical flow: buy Maya's Bad Bunny listing */
   buyResale: (p: PersonId) => string | null
   attemptBreak: (kind: 'overCap' | 'adminOverride') => Tx
   gift: (ticketId: string, contactId: string, contactAddr: string) => void
@@ -214,6 +229,32 @@ function seedLedger(): Tx[] {
   ]
 }
 
+/** Illustrative listings from anonymous verified fans, always within the cap. */
+function seedMarket(): MarketListing[] {
+  const mk = (eventId: EventId, section: string, row: string, seat: number, level: LevelId, pct: number): MarketListing => {
+    const face = EVENTS[eventId].levels.find((l) => l.id === level)!.cents
+    const price = Math.min(capCents(face), Math.round((face * (100 + pct)) / 100 / 100) * 100)
+    return { id: `m-${eventId}-${section}-${row}-${seat}`, eventId, section, row, seat, faceCents: face, priceCents: price, seller: 'fan', sellerName: 'Verified fan' }
+  }
+  return [
+    mk('taylor', '312', '11', 4, '300', 10),
+    mk('taylor', '226', '8', 15, '200', 5),
+    mk('taylor', '118', '19', 2, '100', 10),
+    mk('taylor', 'F3', '4', 9, 'floor', 0),
+    mk('harry', '107', '18', 6, '100', 5),
+    mk('harry', '330', '12', 21, '300', 10),
+    mk('zach', '225', '7', 3, '200', 0),
+    mk('straykids', 'F2', '3', 11, 'floor', 8),
+    mk('straykids', '305', '15', 8, '300', 10),
+    mk('bocelli', '106', '17', 5, '100', 4),
+    mk('atlutd', '121', '20', 14, '100', 10),
+    mk('falcons', '224', '9', 7, '200', 6),
+    mk('monsterjam', '115', '22', 10, '100', 0),
+    mk('hamilton', 'ORC', '6', 8, 'floor', 10),
+    mk('disney', '208', '6', 3, '200', 5),
+  ].filter((l) => EVENTS[l.eventId])
+}
+
 const initialNav = (): Record<Role, Nav> => ({
   maya: { tab: 'discover', stack: [] },
   ben: { tab: 'discover', stack: [] },
@@ -229,7 +270,7 @@ export const initialData = (): DemoData => ({
   maya: { onboarded: true, verified: true, badges: [...MAYA_PAST_BADGES] },
   ben: { onboarded: true, verified: true, badges: [...BEN_PAST_BADGES] },
   tickets: [existingTicket],
-  listing: null,
+  market: seedMarket(),
   ledger: seedLedger(),
   block: BASE_BLOCK,
   botsBlocked: NOVA_BASELINE.botsBlocked,
@@ -258,6 +299,12 @@ export const initialData = (): DemoData => ({
 export const minutesToShow = (eventId: EventId, m: MomentId) => EVENTS[eventId].startMin - momentOf(m).min
 export const isAtOrAfter = (cur: MomentId, target: MomentId) => momentIndex(cur) >= momentIndex(target)
 export const ticketsOf = (s: DemoData, p: PersonId | string) => s.tickets.filter((t) => t.owner === p && t.status !== 'gone')
+/** Maya's Bad Bunny listing: the canonical resale of the story. */
+export const novaListing = (s: DemoData) => s.market.find((l) => l.eventId === 'nova' && l.seller === 'maya')
+export const listingOf = (s: DemoData, ticketId: string) => s.market.find((l) => l.ticketId === ticketId)
+/** Resale is open until 2 hours before the show. */
+export const resaleOpen = (s: DemoData, eventId: EventId) => minutesToShow(eventId, s.moment) > 120
+export const marketFor = (s: DemoData, eventId: EventId) => s.market.filter((l) => l.eventId === eventId).sort((a, b) => a.priceCents - b.priceCents)
 
 const ADDR_OF = (p: PersonId | string) => (p === 'maya' ? ADDR.maya : p === 'ben' ? ADDR.ben : (ADDR as Record<string, string>)[p] ?? ADDR.lucia)
 
@@ -367,57 +414,96 @@ export const useDemo = create<DemoState>()(
       listForResale: (ticketId, priceCents) => {
         const s = get()
         const t = s.tickets.find((x) => x.id === ticketId)
-        if (!t) return
+        if (!t || (t.owner !== 'maya' && t.owner !== 'ben')) return
         const price = Math.min(priceCents, capCents(t.faceCents))
+        const l: MarketListing = {
+          id: `l-${ticketId}`,
+          ticketId,
+          eventId: t.eventId,
+          section: t.section,
+          row: t.row,
+          seat: t.seat,
+          faceCents: t.faceCents,
+          priceCents: price,
+          seller: t.owner,
+          sellerName: t.owner === 'maya' ? 'Maya' : 'Ben',
+        }
         set({
-          listing: { ticketId, priceCents: price },
+          market: [l, ...s.market.filter((x) => x.ticketId !== ticketId)],
           tickets: s.tickets.map((x) => (x.id === ticketId ? { ...x, status: 'listed' } : x)),
         })
       },
 
-      cancelListing: () => {
+      cancelListing: (ticketId) => {
         const s = get()
-        if (!s.listing) return
-        const id = s.listing.ticketId
-        set({ listing: null, tickets: s.tickets.map((x) => (x.id === id ? { ...x, status: 'active' } : x)) })
+        set({
+          market: s.market.filter((x) => x.ticketId !== ticketId),
+          tickets: s.tickets.map((x) => (x.id === ticketId && x.status === 'listed' ? { ...x, status: 'active' } : x)),
+        })
       },
 
-      buyResale: (p) => {
+      buyListing: (p, listingId) => {
         const s = get()
-        if (!s.listing) return null
-        const t = s.tickets.find((x) => x.id === s.listing!.ticketId)
-        if (!t) return null
-        const br = resaleBreakdown(s.listing.priceCents)
+        const l = s.market.find((x) => x.id === listingId)
+        if (!l || l.seller === p) return null
+        const br = resaleBreakdown(l.priceCents)
         const checks = resaleChecks({
-          priceCents: s.listing.priceCents,
-          faceCents: t.faceCents,
-          buyerVerified: s[p].verified,
-          buyerTickets: ticketsOf(s, p).filter((x) => x.eventId === t.eventId).length,
-          minutesToShow: minutesToShow(t.eventId, s.moment),
+          priceCents: l.priceCents,
+          faceCents: l.faceCents,
+          buyerVerified: p === 'fan' ? true : s[p].verified,
+          buyerTickets: p === 'fan' ? 0 : ticketsOf(s, p).filter((x) => x.eventId === l.eventId).length,
+          minutesToShow: minutesToShow(l.eventId, s.moment),
         })
         if (checks.some((c) => !c.ok)) return null
+        const old = l.ticketId ? s.tickets.find((x) => x.id === l.ticketId) : undefined
+        const tokenId = old?.tokenId ?? tokenIdFor(l.eventId, l.section, l.row, l.seat)
+        const anon = (k: string) => txHash(`anon-${k}-${l.id}`).slice(0, 42)
         const [tx, b] = nextTx(s, {
           kind: 'resale',
-          eventId: t.eventId,
-          tokenId: t.tokenId,
-          from: ADDR_OF(t.owner),
-          to: ADDR_OF(p),
-          priceCents: s.listing.priceCents,
+          eventId: l.eventId,
+          tokenId,
+          from: l.seller === 'fan' ? anon('seller') : ADDR_OF(l.seller),
+          to: p === 'fan' ? anon('buyer') : ADDR_OF(p),
+          priceCents: l.priceCents,
           breakdown: br,
           checks,
+          note: `Sec ${l.section} · Row ${l.row} · Seat ${l.seat}`,
+          parties: { seller: l.sellerName, buyer: p === 'fan' ? 'Verified fan' : p === 'maya' ? 'Maya' : 'Ben' },
         })
-        const newId = `${t.id}-r-${p}`
+        const newId = old ? `${old.id}-r-${p}` : `t-${l.eventId}-${p}-${l.section}-${l.row}-${l.seat}-r`
+        let tickets = s.tickets.map((x) => (old && x.id === old.id ? { ...x, status: 'gone' as const } : x))
+        if (p !== 'fan') {
+          const base: Ticket = old ?? {
+            id: newId,
+            tokenId,
+            eventId: l.eventId,
+            section: l.section,
+            row: l.row,
+            seat: l.seat,
+            faceCents: l.faceCents,
+            paidCents: 0,
+            owner: 'fan',
+            status: 'active',
+            transfersLeft: DEFAULT_RULES.maxTransfers,
+          }
+          tickets = [
+            ...tickets,
+            { ...base, id: newId, owner: p, prevOwner: l.seller, status: 'active', paidCents: br.buyerTotal, transfersLeft: DEFAULT_RULES.maxTransfers },
+          ]
+        }
         set({
           block: b,
           ledger: [tx, ...s.ledger],
-          listing: null,
+          market: s.market.filter((x) => x.id !== l.id),
           lastResaleTxId: tx.id,
-          tickets: [
-            ...s.tickets.map((x) => (x.id === t.id ? { ...x, status: 'gone' as const } : x)),
-            { ...t, id: newId, owner: p, prevOwner: t.owner, status: 'active', paidCents: br.buyerTotal, transfersLeft: DEFAULT_RULES.maxTransfers },
-          ],
+          tickets,
         })
-        return newId
+        return p === 'fan' ? tx.id : newId
+      },
+
+      buyResale: (p) => {
+        const l = novaListing(get())
+        return l ? get().buyListing(p, l.id) : null
       },
 
       attemptBreak: (kind) => {
@@ -552,7 +638,7 @@ export const useDemo = create<DemoState>()(
           st().addBotsBlocked(4_812)
           st().buyPrimary('maya', 'nova', [{ section: '312', row: '14', seat: 7, faceCents: 10000 }])
         }
-        if (idx >= 2 && !st().listing && !st().tickets.some((t) => t.eventId === 'nova' && t.owner === 'ben')) {
+        if (idx >= 2 && !novaListing(st()) && !st().tickets.some((t) => t.eventId === 'nova' && t.owner === 'ben')) {
           const mt = st().tickets.find((t) => t.eventId === 'nova' && t.owner === 'maya' && t.status === 'active')
           if (mt) st().listForResale(mt.id, capCents(mt.faceCents))
         }
@@ -570,7 +656,7 @@ export const useDemo = create<DemoState>()(
       },
     }),
     {
-      name: 'fairseat-demo-v3',
+      name: 'fairseat-demo-v4',
       version: 1,
       storage: createJSONStorage(() => {
         try {
@@ -597,7 +683,7 @@ export function novaStats(s: DemoData) {
   const mayaBought = s.tickets.some((t) => t.eventId === 'nova' && (t.owner === 'maya' || t.prevOwner === 'maya'))
   const livePrimaries = s.ledger.filter((t) => t.live && t.kind === 'primary').length
   const sold = mayaBought ? 71_000 : NOVA_BASELINE.soldBefore + livePrimaries
-  const liveResales = s.ledger.filter((t) => t.live && t.kind === 'resale')
+  const liveResales = s.ledger.filter((t) => t.live && t.kind === 'resale' && t.eventId === 'nova')
   const resales = NOVA_BASELINE.tourResales + liveResales.length
   const royaltyCents = NOVA_BASELINE.tourRoyaltyCents + liveResales.reduce((a, t) => a + (t.breakdown?.royalty ?? 0), 0)
   const entries = s.gate.entries

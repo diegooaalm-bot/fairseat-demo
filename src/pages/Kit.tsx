@@ -15,7 +15,7 @@ import { Sheet } from '@/components/ui/Sheet'
 import { Toggle } from '@/components/ui/Toggle'
 import { DynamicQR } from '@/components/ticket/DynamicQR'
 import { TicketCard } from '@/components/ticket/TicketCard'
-import { EVENTS, DISCOVER_ORDER } from '@/data/world'
+import { EVENTS } from '@/data/world'
 import { usd } from '@/lib/money'
 import { capCents, resaleBreakdown } from '@/lib/rules'
 import { Screen } from '@/demo/shell/Screen'
@@ -129,7 +129,7 @@ export default function Kit() {
 
         <Section title="Event art">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-            {DISCOVER_ORDER.map((id) => (
+            {(Object.keys(EVENTS) as (keyof typeof EVENTS)[]).map((id) => (
               <div key={id} className="relative aspect-[4/5] overflow-hidden rounded-[22px] hairline">
                 <EventImage id={id} size="card" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4">

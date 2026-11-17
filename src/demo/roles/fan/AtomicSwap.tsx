@@ -10,6 +10,7 @@ import { haptic } from '@/lib/haptics'
 import { usd } from '@/lib/money'
 import { spring } from '@/lib/motion'
 import { resaleBreakdown } from '@/lib/rules'
+import { shortArtist } from './Resale'
 import { useDemo } from '@/store/demo'
 import { useUI } from '@/store/ui'
 
@@ -60,7 +61,23 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
   }, [swap?.id, reduced])
 
   const settled = phase >= 4
-  const title = viewer === 'maya' ? (settled ? 'Sold to a verified fan' : 'Selling your seat…') : settled ? 'The seat is yours' : 'Buying Maya’s seat…'
+  const eventId = tx?.eventId ?? 'nova'
+  const seller = tx?.parties?.seller ?? 'Maya'
+  const buyer = tx?.parties?.buyer ?? 'Ben'
+  const viewerName = viewer === 'maya' ? 'Maya' : 'Ben'
+  const selling = seller === viewerName
+  const artist = shortArtist(EVENTS[eventId].artist)
+  const title = selling
+    ? settled
+      ? 'Sold to a verified fan'
+      : 'Selling your seat…'
+    : settled
+      ? 'The seat is yours'
+      : seller === 'Verified fan'
+        ? 'Buying from a verified fan…'
+        : `Buying ${seller}’s seat…`
+  const capLabel = (tx?.checks?.find((c) => c.id === 'cap')?.detail.split('≤ ')[1] ?? '$110.00').replace(/\.00$/, '')
+  const avatar = (n: string) => (n === 'Maya' ? 330 : n === 'Ben' ? 200 : 150)
 
   return (
     <motion.div className="absolute inset-0 z-[80] flex flex-col bg-ink" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
@@ -103,13 +120,13 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
         </svg>
 
         {/* nodes */}
-        <Node at={P.seller} label="Maya" sub="Seller">
-          <Avatar name="Maya" hue={330} size={54} />
+        <Node at={P.seller} label={selling ? 'You' : seller} sub="Seller">
+          <Avatar name={seller === 'Verified fan' ? 'Fan' : seller} hue={avatar(seller)} size={54} />
         </Node>
-        <Node at={P.buyer} label="Ben" sub="Verified buyer">
-          <Avatar name="Ben" hue={200} size={54} />
+        <Node at={P.buyer} label={!selling ? 'You' : buyer} sub="Verified buyer">
+          <Avatar name={buyer === 'Verified fan' ? 'Fan' : buyer} hue={avatar(buyer)} size={54} />
         </Node>
-        <Node at={P.artist} label={EVENTS.nova.artist} sub="Artist · 5%">
+        <Node at={P.artist} label={artist} sub="Artist · 5%">
           <span className="grid h-[54px] w-[54px] place-items-center rounded-full bg-[linear-gradient(140deg,#8b6cff,#3e3ab0)] text-white">
             <Music2 size={24} />
           </span>
@@ -137,7 +154,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
 
         {/* rules lighting up */}
         <div className="absolute grid grid-cols-2 gap-x-2 gap-y-2" style={{ left: P.lock.x - 128, top: P.lock.y + 54, width: 256 }}>
-          {['Price ≤ $110', 'Buyer verified', 'Under 4 tickets', 'Before close'].map((r, i) => (
+          {[`Price ≤ ${capLabel}`, 'Buyer verified', 'Under 4 tickets', 'Before close'].map((r, i) => (
             <motion.div
               key={r}
               animate={{ opacity: checks > i ? 1 : 0.25 }}
@@ -164,8 +181,8 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
           }
           transition={phase >= 3 ? { type: 'spring', stiffness: 120, damping: 17 } : { type: 'spring', stiffness: 90, damping: 16 }}
         >
-          <EventImage id="nova" size="card" />
-          <span className="absolute inset-0 grid place-items-center bg-black/30 text-[9px] font-bold text-white">{EVENTS.nova.artist}</span>
+          <EventImage id={eventId} size="card" />
+          <span className="absolute inset-0 grid place-items-center bg-black/30 px-1 text-center text-[9px] leading-tight font-bold text-white">{artist}</span>
         </motion.div>
 
         {/* moving: the money */}
@@ -198,7 +215,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
             style={{ paddingBottom: 'calc(var(--sab) + 14px)' }}
           >
             <p className="mb-4 text-center text-[14px] leading-snug text-fg-2">
-              Ben paid {usd(br.buyerTotal)}. Maya got {usd(br.seller)}, the artist {usd(br.royalty)}, FairSeat {usd(br.fee)}. If any rule had failed, no money would have moved.
+              {selling ? 'The buyer' : 'You'} paid {usd(br.buyerTotal)}. {selling ? 'You' : seller === 'Verified fan' ? 'The seller' : seller} got {usd(br.seller)}, {artist} {usd(br.royalty)}, FairSeat {usd(br.fee)}. If any rule had failed, no money would have moved.
             </p>
             <Button size="lg" full onClick={close}>
               Done

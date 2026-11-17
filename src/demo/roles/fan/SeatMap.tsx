@@ -37,8 +37,8 @@ function ringSection(inner: [number, number], outer: [number, number], d1: numbe
   return 'M' + pts.join(' L') + ' Z'
 }
 
-function mbsSections(): Section[] {
-  const r = mulberry32(17)
+function mbsSections(field = false): Section[] {
+  const r = mulberry32(field ? 23 : 17)
   const out: Section[] = []
   const rings: { level: LevelId; base: number; n: number; inner: [number, number]; outer: [number, number]; font: number }[] = [
     { level: '100', base: 101, n: 32, inner: [56, 82], outer: [77, 103], font: 5.6 },
@@ -52,7 +52,7 @@ function mbsSections(): Section[] {
       const d2 = -90 + (i + 1) * span - 0.6
       const mid = (d1 + d2) / 2
       const dTop = (((mid + 90) % 360) + 360) % 360
-      const blocked = dTop < 26 || dTop > 334 // behind the stage end
+      const blocked = !field && (dTop < 26 || dTop > 334) // behind the stage end
       const id = String(ring.base + i)
       const mr: [number, number] = [(ring.inner[0] + ring.outer[0]) / 2, (ring.inner[1] + ring.outer[1]) / 2]
       let avail = blocked ? 0 : r() < 0.3 ? 0 : 0.02 + r() * 0.1
@@ -60,6 +60,7 @@ function mbsSections(): Section[] {
       out.push({ id, level: ring.level, d: ringSection(ring.inner, ring.outer, d1, d2), label: sePoint(mr[0], mr[1], mid), avail, blocked, font: ring.font })
     }
   }
+  if (field) return out
   // floor: six reserved blocks in front of the stage
   const fx = MC.x - 40
   const fy = MC.y - 38
@@ -100,11 +101,47 @@ function sfaSections(): Section[] {
   return out
 }
 
-const CACHE: Partial<Record<VenueId, Section[]>> = {}
-export function sectionsFor(v: VenueId): Section[] {
-  return (CACHE[v] ??= v === 'mbs' ? mbsSections() : sfaSections())
+/* ───────── Fox Theatre (proscenium stage) ───────── */
+const FC = { x: 170, y: 16 }
+function foxArc(r1: number, r2: number, a1: number, a2: number) {
+  const p = (r: number, a: number) => `${(FC.x + r * Math.cos(rad(a))).toFixed(1)} ${(FC.y + r * Math.sin(rad(a))).toFixed(1)}`
+  return `M${p(r2, a1)} A${r2} ${r2} 0 0 1 ${p(r2, a2)} L${p(r1, a2)} A${r1} ${r1} 0 0 0 ${p(r1, a1)} Z`
 }
-export const sectionById = (v: VenueId, id: string) => sectionsFor(v).find((s) => s.id === id)
+function foxSections(): Section[] {
+  const r = mulberry32(29)
+  const out: Section[] = []
+  const tiers: { level: LevelId; ids: string[]; r1: number; r2: number; from: number; to: number; font: number }[] = [
+    { level: 'floor', ids: ['ORL', 'ORC', 'ORR'], r1: 38, r2: 108, from: 34, to: 146, font: 8 },
+    { level: '100', ids: ['M1', 'M2', 'M3', 'M4', 'M5'], r1: 116, r2: 142, from: 26, to: 154, font: 7.5 },
+    { level: '200', ids: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'], r1: 150, r2: 180, from: 22, to: 158, font: 7.5 },
+  ]
+  for (const t of tiers) {
+    const span = (t.to - t.from) / t.ids.length
+    t.ids.forEach((id, i) => {
+      const a1 = t.from + i * span + 0.8
+      const a2 = t.from + (i + 1) * span - 0.8
+      const mid = rad((a1 + a2) / 2)
+      const rm = (t.r1 + t.r2) / 2
+      const avail = t.level === 'floor' ? 0.04 + r() * 0.05 : r() < 0.25 ? 0 : 0.02 + r() * 0.1
+      out.push({ id, level: t.level, d: foxArc(t.r1, t.r2, a1, a2), label: [FC.x + rm * Math.cos(mid), FC.y + rm * Math.sin(mid)], avail, font: t.font })
+    })
+  }
+  return out
+}
+
+type MapKey = VenueId | 'mbs-field'
+const CACHE: Partial<Record<MapKey, Section[]>> = {}
+const keyOf = (v: VenueId, layout?: EventInfo['layout']): MapKey => (v === 'mbs' && layout && layout !== 'stage' ? 'mbs-field' : v)
+export function sectionsFor(v: VenueId, layout?: EventInfo['layout']): Section[] {
+  const k = keyOf(v, layout)
+  return (CACHE[k] ??= k === 'mbs' ? mbsSections() : k === 'mbs-field' ? mbsSections(true) : k === 'sfa' ? sfaSections() : foxSections())
+}
+export const sectionById = (v: VenueId, id: string, layout?: EventInfo['layout']) => sectionsFor(v, layout).find((s) => s.id === id)
+export const sectionOf = (ev: EventInfo, id: string) => (ev.venueId ? sectionById(ev.venueId, id, ev.layout) : undefined)
+/** The section the seat picker opens on. */
+export function defaultSection(ev: EventInfo) {
+  return ev.venueId === 'sfa' ? '104' : ev.venueId === 'fox' ? 'ORC' : '312'
+}
 
 export function levelPrice(ev: EventInfo, level: LevelId) {
   return ev.levels.find((l) => l.id === level)?.cents ?? ev.faceCents
@@ -117,6 +154,7 @@ export const VenueMap = memo(function VenueMap({
   interactive = true,
   className = '',
   pulse,
+  highlight,
 }: {
   event: EventInfo
   selected?: string | null
@@ -124,17 +162,46 @@ export const VenueMap = memo(function VenueMap({
   interactive?: boolean
   className?: string
   pulse?: string
+  /** resale view: only these sections are shown as available */
+  highlight?: string[]
 }) {
   const v = event.venueId ?? 'mbs'
-  const sections = sectionsFor(v)
+  const sections = sectionsFor(v, event.layout)
   const isMbs = v === 'mbs'
+  const field = isMbs && event.layout && event.layout !== 'stage'
   return (
-    <svg viewBox={isMbs ? '0 0 360 300' : '0 0 340 236'} className={`w-full ${className}`} role="img" aria-label={`${event.venue} seating map`}>
-      {isMbs ? (
+    <svg viewBox={isMbs ? '0 0 360 300' : v === 'fox' ? '0 0 340 204' : '0 0 340 236'} className={`w-full ${className}`} role="img" aria-label={`${event.venue} seating map`}>
+      {field ? (
+        event.layout === 'dirt' ? (
+          <>
+            <rect x={MC.x - 50} y={MC.y - 80} width={100} height={160} rx={18} fill="rgba(176,120,64,.28)" stroke="rgba(255,255,255,.08)" />
+            <path d={`M${MC.x - 22} ${MC.y - 40} q22 -18 44 0 M${MC.x - 22} ${MC.y + 40} q22 18 44 0`} stroke="rgba(255,255,255,.25)" strokeWidth={4} fill="none" strokeLinecap="round" />
+            <text x={MC.x} y={MC.y + 3} textAnchor="middle" fontSize="8" fontWeight="700" letterSpacing="2" fill="rgba(255,255,255,.75)">
+              TRACK
+            </text>
+          </>
+        ) : (
+          <>
+            <rect x={MC.x - 46} y={MC.y - 78} width={92} height={156} rx={4} fill="rgba(80,170,110,.22)" stroke="rgba(255,255,255,.22)" />
+            <line x1={MC.x - 46} x2={MC.x + 46} y1={MC.y} y2={MC.y} stroke="rgba(255,255,255,.22)" />
+            <circle cx={MC.x} cy={MC.y} r={14} fill="none" stroke="rgba(255,255,255,.22)" />
+            <text x={MC.x} y={MC.y - 30} textAnchor="middle" fontSize="8" fontWeight="700" letterSpacing="2" fill="rgba(255,255,255,.7)">
+              FIELD
+            </text>
+          </>
+        )
+      ) : isMbs ? (
         <>
           <rect x={MC.x - 48} y={MC.y - 76} width={96} height={152} rx={10} fill="rgba(80,170,110,.10)" stroke="rgba(255,255,255,.08)" />
           <rect x={MC.x - 40} y={MC.y - 70} width={80} height={24} rx={4} fill="rgba(255,255,255,.14)" />
           <text x={MC.x} y={MC.y - 54.5} textAnchor="middle" fontSize="8" fontWeight="700" letterSpacing="2" fill="rgba(255,255,255,.8)">
+            STAGE
+          </text>
+        </>
+      ) : v === 'fox' ? (
+        <>
+          <path d={`M${FC.x - 60} 2 h120 v18 a6 6 0 0 1 -6 6 h-108 a6 6 0 0 1 -6 -6z`} fill="rgba(255,255,255,.14)" />
+          <text x={FC.x} y={17} textAnchor="middle" fontSize="9" fontWeight="700" letterSpacing="2" fill="rgba(255,255,255,.8)">
             STAGE
           </text>
         </>
@@ -147,12 +214,12 @@ export const VenueMap = memo(function VenueMap({
         </>
       )}
       {sections.map((s) => {
-        const sold = s.avail === 0
+        const sold = highlight ? !highlight.includes(s.id) : s.avail === 0
         const isSel = selected === s.id
         const color = LEVEL_COLORS[s.level]
         const priced = event.levels.some((l) => l.id === s.level)
         const fill = isSel ? color : sold || !priced ? 'rgba(255,255,255,.06)' : color
-        const opacity = isSel ? 1 : sold || !priced ? 1 : 0.42 + s.avail * 4
+        const opacity = isSel ? 1 : sold || !priced ? 1 : highlight ? 0.95 : 0.42 + s.avail * 4
         return (
           <g key={s.id}>
             <motion.path

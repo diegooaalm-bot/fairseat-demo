@@ -4,8 +4,9 @@ import { DynamicQR } from '@/components/ticket/DynamicQR'
 import { Button } from '@/components/ui/Button'
 import { EVENTS, ADDR, type PersonId } from '@/data/world'
 import { usd } from '@/lib/money'
+import { capCents } from '@/lib/rules'
 import { haptic } from '@/lib/haptics'
-import { minutesToShow, useDemo, type Ticket } from '@/store/demo'
+import { listingOf, minutesToShow, useDemo, type Ticket } from '@/store/demo'
 import { useUI } from '@/store/ui'
 
 export function fmtCountdown(min: number) {
@@ -17,10 +18,10 @@ export function fmtCountdown(min: number) {
 export function TicketPanel({ ticket, person }: { ticket: Ticket; person: PersonId }) {
   const m = useDemo((s) => s.moment)
   const push = useDemo((s) => s.push)
-  const listing = useDemo((s) => s.listing)
+  const listing = useDemo((s) => listingOf(s, ticket.id))
   const cancel = useDemo((s) => s.cancelListing)
   const advanceTo = useDemo((s) => s.advanceTo)
-  const buyResale = useDemo((s) => s.buyResale)
+  const simulateBuyer = useSimulateBuyer()
   const playSwap = useUI((s) => s.playSwap)
   const toast = useUI((s) => s.showToast)
   const ev = EVENTS[ticket.eventId]
@@ -63,42 +64,41 @@ export function TicketPanel({ ticket, person }: { ticket: Ticket; person: Person
             </span>
           </div>
           <div className="mt-3 flex gap-2">
-            <Button size="sm" variant="secondary" onClick={cancel}>
+            <Button size="sm" variant="secondary" onClick={() => cancel(ticket.id)}>
               Cancel listing
             </Button>
-            <DemoButton
-              onClick={() => {
-                const id = buyResale('ben')
-                if (id) playSwap(person)
-              }}
-            >
-              Simulate a buyer
-            </DemoButton>
+            <DemoButton onClick={() => simulateBuyer(ticket.id, person) && playSwap(person)}>Simulate a buyer</DemoButton>
           </div>
         </motion.div>
       )}
 
       {!used && !isListed && (
-        <div className="mt-5 grid w-full grid-cols-2 gap-2.5">
-          <ActionTile
-            icon={<Gift size={20} />}
-            title="Gift"
-            sub={`${ticket.transfersLeft} of 2 left`}
-            onClick={() => push(person, { name: 'gift', params: { id: ticket.id } })}
-            disabled={ticket.transfersLeft <= 0}
-          />
-          <ActionTile
-            icon={locked ? <Lock size={20} /> : <ArrowLeftRight size={20} />}
-            title="Resell"
-            sub={locked ? 'Closed' : 'Fair price'}
-            dim={locked}
+        <div className="mt-5 flex w-full flex-col gap-2.5">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={() => {
-              if (locked) {
-                haptic('wall')
-                toast('Resale closes 2 hours before the show')
-              }
+              haptic(locked ? 'wall' : 'light')
+              if (locked) toast('Resale closes 2 hours before the show')
               push(person, { name: 'resell', params: { id: ticket.id } })
             }}
+            className={`flex items-center gap-3 rounded-[16px] p-3.5 text-left ${locked ? 'bg-ink-3 opacity-60 hairline' : 'bg-accent-fill text-white'}`}
+          >
+            <span className={`grid h-10 w-10 place-items-center rounded-[12px] ${locked ? 'bg-white/[0.06]' : 'bg-white/20'}`}>
+              {locked ? <Lock size={20} /> : <ArrowLeftRight size={20} />}
+            </span>
+            <span className="flex-1">
+              <span className="block text-[16px] font-semibold tracking-[-0.01em]">{locked ? 'Resale closed' : 'Can’t go? Sell it'}</span>
+              <span className={`block text-[12px] ${locked ? 'text-fg-3' : 'text-white/80'}`}>
+                {locked ? 'Closes 2 h before the show' : `To a verified fan · up to ${usd(capCents(ticket.faceCents))}`}
+              </span>
+            </span>
+          </motion.button>
+          <ActionTile
+            icon={<Gift size={20} />}
+            title="Gift to a friend"
+            sub={`Free · ${ticket.transfersLeft} of 2 transfers left`}
+            onClick={() => push(person, { name: 'gift', params: { id: ticket.id } })}
+            disabled={ticket.transfersLeft <= 0}
           />
         </div>
       )}
@@ -122,6 +122,17 @@ export function TicketPanel({ ticket, person }: { ticket: Ticket; person: Person
   )
 }
 
+/** Demo helper: a verified fan buys this listing (Ben for Maya's Bad Bunny seat). */
+export function useSimulateBuyer() {
+  return (ticketId: string, seller: PersonId) => {
+    const s = useDemo.getState()
+    const l = listingOf(s, ticketId)
+    if (!l) return null
+    if (l.eventId === 'nova' && seller === 'maya') return s.buyResale('ben')
+    return s.buyListing('fan', l.id)
+  }
+}
+
 function ActionTile({ icon, title, sub, onClick, disabled, dim }: { icon: React.ReactNode; title: string; sub: string; onClick: () => void; disabled?: boolean; dim?: boolean }) {
   return (
     <motion.button
@@ -131,7 +142,7 @@ function ActionTile({ icon, title, sub, onClick, disabled, dim }: { icon: React.
         onClick()
       }}
       disabled={disabled}
-      className={`flex items-center gap-3 rounded-[18px] bg-ink-3 p-3.5 text-left hairline disabled:opacity-40 ${dim ? 'opacity-60' : ''}`}
+      className={`flex items-center gap-3 rounded-[16px] bg-ink-3 p-3.5 text-left hairline disabled:opacity-40 ${dim ? 'opacity-60' : ''}`}
     >
       <span className="grid h-10 w-10 place-items-center rounded-[12px] bg-accent/15 text-accent-soft">{icon}</span>
       <span>

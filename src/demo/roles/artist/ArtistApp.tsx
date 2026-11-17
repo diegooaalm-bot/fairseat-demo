@@ -42,7 +42,7 @@ function Royalties() {
   const ambient = useDemo((x) => x.ambientResale)
   const [live, setLive] = useState(true)
   const [chips, setChips] = useState<{ id: string; mine: boolean }[]>([])
-  const seen = useRef<Set<string>>(new Set(s.ledger.filter((t) => t.kind === 'resale').map((t) => t.id)))
+  const seen = useRef<Set<string>>(new Set(s.ledger.filter((t) => t.kind === 'resale' && t.eventId === 'nova').map((t) => t.id)))
 
   useEffect(() => {
     if (!live) return
@@ -52,14 +52,14 @@ function Royalties() {
 
   // float a +$5.50 chip for every new resale
   useEffect(() => {
-    const fresh = s.ledger.filter((t) => t.kind === 'resale' && !seen.current.has(t.id))
+    const fresh = s.ledger.filter((t) => t.kind === 'resale' && t.eventId === 'nova' && !seen.current.has(t.id))
     if (!fresh.length) return
     fresh.forEach((t) => seen.current.add(t.id))
     haptic('light')
     setChips((c) => [...c, ...fresh.map((t) => ({ id: t.id, mine: t.from === ADDR.maya }))].slice(-6))
   }, [s.ledger])
 
-  const resales = s.ledger.filter((t) => t.kind === 'resale').slice(0, 6)
+  const resales = s.ledger.filter((t) => t.kind === 'resale' && t.eventId === 'nova').slice(0, 6)
   return (
     <Screen title="Royalties" tabBar roleButton>
       <div className="flex flex-col gap-4 px-4">

@@ -31,7 +31,7 @@
   "page": "https://commons.wikimedia.org/wiki/File:Stray_Kids_at_the_Music_Core_Mini_Fan_Meeting,_November_11,_2023.png",
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "author": "\ud2f0\ube44\ud150",
+  "author": "티비텐",
   "w": 3503,
   "h": 1416
  },
@@ -70,5 +70,59 @@
   "author": "BullDawg2021",
   "w": 4032,
   "h": 3024
+ },
+ "falcons": {
+  "title": "File:Washington Football Team at Atlanta Falcons (3 October 2021) JMG 5002 (51553793942) (cropped).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Washington_Football_Team_at_Atlanta_Falcons_(3_October_2021)_JMG_5002_(51553793942)_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "All-Pro Reels from District of Columbia, USA",
+  "w": 1920,
+  "h": 1307
+ },
+ "atlutd": {
+  "title": "File:Mercedes-Benz Stadium Roof Atlanta United 2018-10-21 - 17 14.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Stadium_Roof_Atlanta_United_2018-10-21_-_17_14.jpg",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Eric.Jason.Cross",
+  "w": 1920,
+  "h": 2560
+ },
+ "hamilton": {
+  "title": "File:Fox Theater night.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Fox_Theater_night.jpg",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "author": "Scott Ehardt",
+  "w": 1428,
+  "h": 1452
+ },
+ "cirque": {
+  "title": "File:RUN Cirque Show - December 2019 - Stierch 10.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:RUN_Cirque_Show_-_December_2019_-_Stierch_10.jpg",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Missvain",
+  "w": 1920,
+  "h": 1440
+ },
+ "monsterjam": {
+  "title": "File:Monster Jam Browns Stadium 2023.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Monster_Jam_Browns_Stadium_2023.jpg",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "JonRidinger",
+  "w": 1920,
+  "h": 805
+ },
+ "disney": {
+  "title": "File:Disney on Ice - The Incredibles.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Disney_on_Ice_-_The_Incredibles.jpg",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart",
+  "w": 1920,
+  "h": 1080
  }
 }

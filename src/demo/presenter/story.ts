@@ -1,4 +1,4 @@
-import { useDemo, type Role } from '@/store/demo'
+import { novaListing, useDemo, type Role } from '@/store/demo'
 import { useUI } from '@/store/ui'
 
 /**
@@ -102,7 +102,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The resale',
     title: 'Maya can’t go',
     role: 'maya',
-    say: 'A few weeks later Maya can’t go. She lists it. Watch the slider: it hits a wall at $110. This ticket knows the rules. She gets $104.50, the artist $5.50, and the buyer pays $113.30.',
+    say: 'A few weeks later Maya can’t go. She taps Sell. Watch the slider: it hits a wall at $110. This ticket knows the rules. She gets $104.50, the artist $5.50, and the buyer pays $113.30.',
     fact: '104.50 + 5.50 · buyer pays 113.30',
     apply: () => {
       fresh()
@@ -117,14 +117,30 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 4,
     chapterTitle: 'The resale',
+    title: 'The fair resale market',
+    role: 'ben',
+    say: 'Now the show is sold out. This is FairSeat’s resale market: every seat comes from a verified fan, and every price is checked against the cap written into the ticket. Never above 110% of face value. Sold-out shows come first, and there is Maya’s seat at $110.',
+    fact: 'Every listing ≤ 110% of face value',
+    apply: () => {
+      fresh()
+      S().ensure('listed')
+      U().setResaleSide('buy')
+      S().setTab('ben', 'resale')
+      S().setRole('ben')
+    },
+  },
+  {
+    chapter: 4,
+    chapterTitle: 'The resale',
     title: 'Ben buys it for $110',
     role: 'ben',
-    say: 'The show is sold out. Ben, a verified fan, finds Maya’s seat at $110, not $400 on a typical resale site. He pays, and in one all-or-nothing transaction the ticket and the money move at the same time. If any rule failed, nothing would move.',
+    say: 'Ben, a verified fan, opens Maya’s seat: $110, not $400 on a typical resale site. The price check shows face value, listing and cap side by side. He pays, and in one all-or-nothing transaction the ticket and the money move at the same time. If any rule failed, nothing would move.',
     fact: '$110 here · $400 elsewhere',
     apply: () => {
       fresh()
       S().ensure('listed')
-      S().setStack('ben', 'discover', [{ name: 'event', params: { id: 'nova' } }, { name: 'offer' }])
+      const l = novaListing(S())
+      S().setStack('ben', 'discover', l ? [{ name: 'event', params: { id: 'nova' } }, { name: 'offer', params: { id: l.id } }] : [{ name: 'event', params: { id: 'nova' } }])
       S().setRole('ben')
     },
   },

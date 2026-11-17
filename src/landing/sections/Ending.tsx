@@ -170,8 +170,8 @@ export function Footer() {
           FTC’s 2025 lawsuit, UK government and CMA findings (2025), FIFA Collect coverage (2026).
         </p>
         <p>
-          Artists, tours and venues in the demo are real; listings, dates, prices, seats and figures are illustrative. Bad Bunny’s tour has announced no U.S. dates and Taylor Swift has announced no tour: their
-          listings are hypothetical. FairSeat is not affiliated with, endorsed by or selling tickets for any artist, tour or venue, and no real tickets or payments are processed.
+          Artists, tours and venues in the demo are real; listings, dates, prices, seats and figures are illustrative. Bad Bunny’s tour has announced no U.S. dates and Taylor Swift has announced no tour; those dates, like the sports,
+          theater and family listings, are hypothetical. FairSeat is not affiliated with, endorsed by or selling tickets for any artist, tour or venue, and no real tickets or payments are processed.
         </p>
         <div>
           <div className="mb-1.5 font-semibold text-fg-2">Photo credits</div>

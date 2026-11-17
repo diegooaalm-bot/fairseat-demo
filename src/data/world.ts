@@ -6,9 +6,17 @@
 import { address } from '@/lib/prng'
 
 /** 'nova' is the featured show used by the canonical Maya → Ben story. */
-export type EventId = 'nova' | 'harry' | 'zach' | 'straykids' | 'bocelli' | 'taylor'
+export type EventId = 'nova' | 'harry' | 'zach' | 'straykids' | 'bocelli' | 'taylor' | 'atlutd' | 'falcons' | 'hamilton' | 'cirque' | 'monsterjam' | 'disney'
 export type ArtVariant = 'beams' | 'rings' | 'waves' | 'grid' | 'orbits'
-export type VenueId = 'mbs' | 'sfa'
+export type VenueId = 'mbs' | 'sfa' | 'fox'
+export type Category = 'concerts' | 'sports' | 'arts' | 'family'
+export const CATEGORIES: { id: Category | 'all'; label: string }[] = [
+  { id: 'all', label: 'All events' },
+  { id: 'concerts', label: 'Concerts' },
+  { id: 'sports', label: 'Sports' },
+  { id: 'arts', label: 'Arts & Theater' },
+  { id: 'family', label: 'Family' },
+]
 export type LevelId = 'floor' | '100' | '200' | '300'
 
 export interface PriceLevel {
@@ -34,7 +42,10 @@ export interface EventInfo {
   /** lowest face value; the featured show's $100 seats drive the canonical example */
   faceCents: number
   capacity: number
-  status: 'presale' | 'onsale' | 'waitlist'
+  status: 'presale' | 'onsale' | 'soldout'
+  category: Category
+  /** 'field': stadium in sports configuration (no stage, no floor seats) */
+  layout?: 'stage' | 'field' | 'dirt'
   genre: string
   photo: string
   photoPos?: string
@@ -62,6 +73,13 @@ const lv = (floor: number, l100: number, l200: number, l300?: number): PriceLeve
   { id: '200', label: '200 Level', cents: l200 * 100 },
   ...(l300 ? [{ id: '300' as const, label: '300 Level', cents: l300 * 100 }] : []),
 ]
+/** stadium without floor seats (sports, motorsports) */
+const lvStands = (l100: number, l200: number, l300: number): PriceLevel[] => lv(0, l100, l200, l300).slice(1)
+const lvTheatre = (orch: number, mezz: number, balc: number): PriceLevel[] => [
+  { id: 'floor', label: 'Orchestra', cents: orch * 100 },
+  { id: '100', label: 'Mezzanine', cents: mezz * 100 },
+  { id: '200', label: 'Balcony', cents: balc * 100 },
+]
 
 export const EVENTS: Record<EventId, EventInfo> = {
   nova: {
@@ -80,6 +98,7 @@ export const EVENTS: Record<EventId, EventInfo> = {
     faceCents: 10000,
     capacity: 71000,
     status: 'presale',
+    category: 'concerts',
     genre: 'Latin',
     photo: 'badbunny',
     photoPos: '50% 30%',
@@ -105,6 +124,7 @@ export const EVENTS: Record<EventId, EventInfo> = {
     faceCents: 8900,
     capacity: 71000,
     status: 'onsale',
+    category: 'concerts',
     genre: 'Pop',
     photo: 'harry',
     levels: lv(250, 170, 135, 89),
@@ -128,6 +148,7 @@ export const EVENTS: Record<EventId, EventInfo> = {
     faceCents: 7900,
     capacity: 71000,
     status: 'onsale',
+    category: 'concerts',
     genre: 'Country',
     photo: 'zach',
     levels: lv(225, 160, 129, 79),
@@ -151,6 +172,7 @@ export const EVENTS: Record<EventId, EventInfo> = {
     faceCents: 10900,
     capacity: 71000,
     status: 'onsale',
+    category: 'concerts',
     genre: 'K-pop',
     photo: 'straykids',
     levels: lv(299, 189, 149, 109),
@@ -174,6 +196,7 @@ export const EVENTS: Record<EventId, EventInfo> = {
     faceCents: 9900,
     capacity: 21000,
     status: 'onsale',
+    category: 'concerts',
     genre: 'Classical',
     photo: 'bocelli',
     photoPos: '42% 35%',
@@ -185,30 +208,185 @@ export const EVENTS: Record<EventId, EventInfo> = {
   taylor: {
     id: 'taylor',
     artist: 'Taylor Swift',
-    tour: 'The Life of a Showgirl',
-    venue: 'Tour not announced',
-    venueId: null,
+    tour: 'The Life of a Showgirl Tour',
+    venue: 'Mercedes-Benz Stadium',
+    venueId: 'mbs',
     city: 'Atlanta, GA',
-    dateLabel: 'Dates to be announced',
-    dow: '',
-    mon: 'TBA',
-    day: '—',
-    timeLabel: '',
-    startMin: 400 * DAY,
-    faceCents: 0,
-    capacity: 0,
-    status: 'waitlist',
+    dateLabel: 'Sat, Jul 17, 2027',
+    dow: 'SAT',
+    mon: 'JUL',
+    day: '17',
+    timeLabel: '7:00 PM',
+    startMin: 241 * DAY + 19 * 60,
+    faceCents: 12000,
+    capacity: 71000,
+    status: 'soldout',
+    category: 'concerts',
     genre: 'Pop',
     photo: 'taylor',
-    levels: [],
+    levels: lv(300, 200, 150, 120),
+    illustrative: true,
     palette: ['#FF5D8F', '#9B3DF0', '#FF9E6B', '#1C0A1E'],
     art: 'rings',
     seed: 61,
   },
+  atlutd: {
+    id: 'atlutd',
+    artist: 'Atlanta United vs. Inter Miami CF',
+    tour: 'MLS Regular Season',
+    venue: 'Mercedes-Benz Stadium',
+    venueId: 'mbs',
+    city: 'Atlanta, GA',
+    dateLabel: 'Sat, Mar 13, 2027',
+    dow: 'SAT',
+    mon: 'MAR',
+    day: '13',
+    timeLabel: '7:30 PM',
+    startMin: 115 * DAY + 19 * 60 + 30,
+    faceCents: 2900,
+    capacity: 42500,
+    status: 'onsale',
+    category: 'sports',
+    layout: 'field',
+    genre: 'Soccer',
+    photo: 'atlutd',
+    levels: lvStands(65, 45, 29),
+    illustrative: true,
+    palette: ['#C8102E', '#A19060', '#231F20', '#0B0B0B'],
+    art: 'grid',
+    seed: 71,
+  },
+  falcons: {
+    id: 'falcons',
+    artist: 'Atlanta Falcons vs. New Orleans Saints',
+    tour: 'NFL Regular Season',
+    venue: 'Mercedes-Benz Stadium',
+    venueId: 'mbs',
+    city: 'Atlanta, GA',
+    dateLabel: 'Sun, Dec 13, 2026',
+    dow: 'SUN',
+    mon: 'DEC',
+    day: '13',
+    timeLabel: '1:00 PM',
+    startMin: 25 * DAY + 13 * 60,
+    faceCents: 7900,
+    capacity: 71000,
+    status: 'onsale',
+    category: 'sports',
+    layout: 'field',
+    genre: 'Football',
+    photo: 'falcons',
+    levels: lvStands(189, 129, 79),
+    illustrative: true,
+    palette: ['#A71930', '#000000', '#A5ACAF', '#0B0B0B'],
+    art: 'grid',
+    seed: 73,
+  },
+  hamilton: {
+    id: 'hamilton',
+    artist: 'Hamilton',
+    tour: 'The Broadway musical · North American tour',
+    venue: 'Fox Theatre',
+    venueId: 'fox',
+    city: 'Atlanta, GA',
+    dateLabel: 'Tue, Mar 16, 2027',
+    dow: 'TUE',
+    mon: 'MAR',
+    day: '16',
+    timeLabel: '7:30 PM',
+    startMin: 118 * DAY + 19 * 60 + 30,
+    faceCents: 7900,
+    capacity: 4665,
+    status: 'onsale',
+    category: 'arts',
+    genre: 'Musical',
+    photo: 'hamilton',
+    levels: lvTheatre(189, 139, 79),
+    illustrative: true,
+    palette: ['#C9A227', '#7A1F1F', '#F5E6C8', '#120B08'],
+    art: 'grid',
+    seed: 79,
+  },
+  cirque: {
+    id: 'cirque',
+    artist: 'Cirque du Soleil',
+    tour: 'Corteo · Arena tour',
+    venue: 'State Farm Arena',
+    venueId: 'sfa',
+    city: 'Atlanta, GA',
+    dateLabel: 'Fri, Apr 9, 2027',
+    dow: 'FRI',
+    mon: 'APR',
+    day: '9',
+    timeLabel: '7:30 PM',
+    startMin: 142 * DAY + 19 * 60 + 30,
+    faceCents: 5900,
+    capacity: 12000,
+    status: 'onsale',
+    category: 'arts',
+    genre: 'Circus',
+    photo: 'cirque',
+    levels: lv(159, 109, 59),
+    illustrative: true,
+    palette: ['#F5B94A', '#B794F6', '#3E86FF', '#120B2A'],
+    art: 'orbits',
+    seed: 83,
+  },
+  monsterjam: {
+    id: 'monsterjam',
+    artist: 'Monster Jam',
+    tour: 'Stadium Championship Series',
+    venue: 'Mercedes-Benz Stadium',
+    venueId: 'mbs',
+    city: 'Atlanta, GA',
+    dateLabel: 'Sat, Jan 30, 2027',
+    dow: 'SAT',
+    mon: 'JAN',
+    day: '30',
+    timeLabel: '7:00 PM',
+    startMin: 73 * DAY + 19 * 60,
+    faceCents: 2500,
+    capacity: 60000,
+    status: 'onsale',
+    category: 'family',
+    layout: 'dirt',
+    genre: 'Motorsports',
+    photo: 'monsterjam',
+    levels: lvStands(55, 39, 25),
+    illustrative: true,
+    palette: ['#F28C38', '#FFC857', '#3CCFB4', '#24140A'],
+    art: 'beams',
+    seed: 89,
+  },
+  disney: {
+    id: 'disney',
+    artist: 'Disney On Ice',
+    tour: 'Let’s Dance!',
+    venue: 'State Farm Arena',
+    venueId: 'sfa',
+    city: 'Atlanta, GA',
+    dateLabel: 'Sat, Dec 19, 2026',
+    dow: 'SAT',
+    mon: 'DEC',
+    day: '19',
+    timeLabel: '11:00 AM',
+    startMin: 31 * DAY + 11 * 60,
+    faceCents: 2900,
+    capacity: 12000,
+    status: 'onsale',
+    category: 'family',
+    genre: 'Family',
+    photo: 'disney',
+    levels: lv(95, 55, 29),
+    illustrative: true,
+    palette: ['#5AC8FA', '#B794F6', '#FFFFFF', '#0B1030'],
+    art: 'waves',
+    seed: 97,
+  },
 }
 
-export const UPCOMING: EventId[] = ['harry', 'zach', 'straykids', 'bocelli']
-export const DISCOVER_ORDER: EventId[] = ['nova', 'harry', 'zach', 'straykids', 'bocelli', 'taylor']
+/** Everything except the featured show, by date. */
+export const UPCOMING: EventId[] = (Object.keys(EVENTS) as EventId[]).filter((id) => id !== 'nova').sort((a, b) => EVENTS[a].startMin - EVENTS[b].startMin)
 
 export const photoUrl = (key: string, size: 'wide' | 'card' = 'wide') => `${import.meta.env.BASE_URL}photos/${key}-${size}.webp`
 

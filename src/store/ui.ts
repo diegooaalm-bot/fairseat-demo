@@ -24,6 +24,14 @@ interface UIState {
   triggerAttack: () => void
   gateScan: number
   triggerGateScan: () => void
+  /** Resale tab: buy or sell side */
+  resaleSide: 'buy' | 'sell'
+  setResaleSide: (v: 'buy' | 'sell') => void
+  /** Discover: category filter and search */
+  category: string
+  setCategory: (v: string) => void
+  query: string
+  setQuery: (v: string) => void
 }
 
 export const useUI = create<UIState>((set) => ({
@@ -48,4 +56,10 @@ export const useUI = create<UIState>((set) => ({
   triggerAttack: () => set((s) => ({ attack: s.attack + 1 })),
   gateScan: 0,
   triggerGateScan: () => set((s) => ({ gateScan: s.gateScan + 1 })),
+  resaleSide: 'buy',
+  setResaleSide: (v) => set({ resaleSide: v }),
+  category: 'all',
+  setCategory: (v) => set({ category: v }),
+  query: '',
+  setQuery: (v) => set({ query: v }),
 }))

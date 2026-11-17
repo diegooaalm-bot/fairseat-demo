@@ -1,22 +1,22 @@
 import { motion, useScroll, useTransform } from 'motion/react'
-import { useRef, useState, type ReactNode } from 'react'
-import { BadgeCheck, CalendarDays, Check, ChevronLeft, Clock, Info, MapPin, Share, ShieldCheck, Users } from 'lucide-react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
+import { BadgeCheck, CalendarDays, Check, ChevronLeft, Clock, Info, MapPin, Share, ShieldCheck } from 'lucide-react'
 import { EventImage } from '@/components/art/EventImage'
 import { Button } from '@/components/ui/Button'
 import { EVENTS, LEVEL_COLORS, fanLevel, type EventId, type PersonId } from '@/data/world'
 import { haptic } from '@/lib/haptics'
-import { int, usd } from '@/lib/money'
-import { useDemo } from '@/store/demo'
-import { useUI } from '@/store/ui'
-import { VenueMap, sectionById, levelPrice } from './SeatMap'
+import { usd } from '@/lib/money'
+import { marketFor, novaStats, useDemo } from '@/store/demo'
+import { EventListings } from './Resale'
+import { VenueMap, defaultSection, levelPrice, sectionOf } from './SeatMap'
 
 export function EventDetail({ person, id, footer }: { person: PersonId; id: EventId; footer?: ReactNode }) {
   const ev = EVENTS[id]
   const pop = useDemo((s) => s.pop)
   const push = useDemo((s) => s.push)
-  const flags = useDemo((s) => s.flags)
-  const setFlag = useDemo((s) => s.setFlag)
-  const toast = useUI((s) => s.showToast)
+  const market = useDemo((s) => s.market)
+  const listings = useMemo(() => marketFor({ market } as Parameters<typeof marketFor>[0], id), [market, id])
+  const novaSoldOut = useDemo((s) => id === 'nova' && novaStats(s).soldOut)
   const badges = useDemo((s) => s[person].badges.length)
   const owns = useDemo((s) => s.tickets.some((t) => t.eventId === id && t.owner === person && t.status !== 'gone'))
   const lvl = fanLevel(badges)
@@ -25,10 +25,15 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
   const imgY = useTransform(scrollY, [-200, 0, 300], [-60, 0, 80])
   const imgScale = useTransform(scrollY, [-200, 0], [1.3, 1])
   const navBg = useTransform(scrollY, [160, 220], [0, 1])
-  const [sec, setSec] = useState<string | null>(ev.venueId === 'mbs' ? '312' : ev.venueId ? '104' : null)
-  const s = ev.venueId && sec ? sectionById(ev.venueId, sec) : null
-  const waitlist = ev.status === 'waitlist'
-  const joined = !!flags.waitlistTaylor
+  const soldOut = ev.status === 'soldout' || novaSoldOut
+  const others = listings.filter((l) => l.seller !== person)
+  const resaleSecs = [...new Set(listings.map((l) => l.section))]
+  const [sec, setSec] = useState<string | null>(soldOut && resaleSecs.length ? resaleSecs[0] : defaultSection(ev))
+  const s = sec ? sectionOf(ev, sec) : null
+  const inSec = listings.filter((l) => l.section === sec)
+  const from = others.length ? others[0].priceCents : 0
+  const payee = ev.category === 'concerts' ? 'artist' : ev.category === 'arts' ? 'production' : 'organizer'
+  const openOffer = (lid: string) => push(person, { name: 'offer', params: { id: lid } })
 
   const cta =
     footer ??
@@ -36,20 +41,9 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
       <Button size="lg" full variant="secondary" onClick={() => useDemo.getState().setTab(person, 'tickets')}>
         You’re going · View tickets
       </Button>
-    ) : waitlist ? (
-      <Button
-        size="lg"
-        full
-        variant={joined ? 'secondary' : 'primary'}
-        icon={joined ? <Check size={18} /> : <Users size={18} />}
-        onClick={() => {
-          if (joined) return
-          haptic('success')
-          setFlag('waitlistTaylor')
-          toast('You’re on the verified waitlist', 'ok')
-        }}
-      >
-        {joined ? 'You’re on the waitlist' : 'Join the verified waitlist'}
+    ) : soldOut ? (
+      <Button size="lg" full disabled={!others.length} onClick={() => others.length && openOffer(others[0].id)}>
+        {others.length ? `Buy fair resale · from ${usd(from)}` : 'Sold out · no resale listings yet'}
       </Button>
     ) : ev.status === 'presale' ? (
       <Button size="lg" full onClick={() => push(person, { name: 'queue', params: { id } })}>
@@ -60,6 +54,21 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
         Find tickets
       </Button>
     ))
+
+  const resaleBlock = (
+    <section>
+      <div className="mb-2 flex items-baseline justify-between">
+        <h2 className="text-[18px] font-semibold tracking-[-0.015em]">Fair resale</h2>
+        <span className="text-[12px] text-fg-3">{listings.length ? `${listings.length} ticket${listings.length > 1 ? 's' : ''} · from ${usd(listings[0].priceCents)}` : 'No listings yet'}</span>
+      </div>
+      <p className="mb-2.5 text-[13px] leading-snug text-fg-2">From verified fans who can’t go. Never above 110% of face value; 5% of every resale goes to the {payee}.</p>
+      {listings.length > 0 ? (
+        <EventListings id={id} header={false} viewer={person} listings={listings} onOpen={(l) => openOffer(l.id)} />
+      ) : (
+        <div className="rounded-[16px] bg-ink-3 p-4 text-[14px] text-fg-2 hairline">No resale tickets right now. If a fan can’t go, their seat appears here at a fair price.</div>
+      )}
+    </section>
+  )
 
   return (
     <div className="absolute inset-0 bg-ink">
@@ -92,70 +101,73 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
           </div>
 
           <div className="overflow-hidden rounded-[16px] bg-ink-3 hairline">
-            <InfoRow icon={<CalendarDays size={18} />} title={ev.dateLabel} sub={waitlist ? 'Join the waitlist to hear first' : `${ev.timeLabel} · Doors open 90 min before`} />
-            <InfoRow icon={<MapPin size={18} />} title={ev.venue} sub={waitlist ? 'Atlanta-area venues likely' : `${ev.city} · Clear bag policy`} />
+            <InfoRow icon={<CalendarDays size={18} />} title={ev.dateLabel} sub={`${ev.timeLabel} · Doors open 90 min before`} />
+            <InfoRow icon={<MapPin size={18} />} title={ev.venue} sub={`${ev.city} · Clear bag policy`} />
           </div>
 
-          {waitlist ? (
-            <div className="rounded-[16px] bg-ink-3 p-4 hairline">
-              <div className="text-[17px] font-semibold tracking-[-0.015em]">Verified waitlist</div>
-              <p className="mt-1 text-[14px] leading-snug text-fg-2">
-                No tour has been announced. Join now and, if dates come to Atlanta, verified fans on the waitlist get presale access first, ordered by fan history, not by who refreshes fastest.
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <Stat k="Fans waiting in Atlanta" v={int(42_318 + (joined ? 1 : 0))} />
-                <Stat k="Your access" v={`Level ${lvl.level} · ${lvl.priority === 'General' ? 'Fair draw' : lvl.priority}`} />
+          {ev.status === 'presale' && !owns && person === 'maya' && (
+            <div className="flex items-center gap-3 rounded-[16px] bg-accent/[0.12] p-4 hairline">
+              <BadgeCheck size={22} className="shrink-0 text-accent-soft" />
+              <div className="min-w-0">
+                <div className="text-[15px] font-semibold">Verified fan presale is live</div>
+                <div className="text-[13px] text-fg-2">
+                  Your access: Level {lvl.level} · {lvl.priority === 'General' ? 'fair draw' : lvl.priority}. Bots can’t join this line.
+                </div>
               </div>
             </div>
-          ) : (
-            <>
-              {ev.status === 'presale' && !owns && person === 'maya' && (
-                <div className="flex items-center gap-3 rounded-[16px] bg-accent/[0.12] p-4 hairline">
-                  <BadgeCheck size={22} className="shrink-0 text-accent-soft" />
-                  <div className="min-w-0">
-                    <div className="text-[15px] font-semibold">Verified fan presale is live</div>
-                    <div className="text-[13px] text-fg-2">
-                      Your access: Level {lvl.level} · {lvl.priority === 'General' ? 'fair draw' : lvl.priority}. Bots can’t join this line.
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Price levels */}
-              <section>
-                <div className="mb-2 flex items-baseline justify-between">
-                  <h2 className="text-[18px] font-semibold tracking-[-0.015em]">Tickets</h2>
-                  <span className="text-[12px] text-fg-3">All-in prices · no hidden fees</span>
-                </div>
-                <div className="overflow-hidden rounded-[16px] bg-ink-3 hairline">
-                  {ev.levels.map((l) => (
-                    <div key={l.id} className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3 last:border-0">
-                      <span className="flex items-center gap-2.5 text-[15px]">
-                        <span className="h-3 w-3 rounded-[3px]" style={{ background: LEVEL_COLORS[l.id] }} />
-                        {l.label}
-                      </span>
-                      <span className="text-[15px] font-semibold tabular">{usd(l.cents)}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Map */}
-              <section>
-                <div className="mb-2 flex items-baseline justify-between">
-                  <h2 className="text-[18px] font-semibold tracking-[-0.015em]">Seat map</h2>
-                  <span className="text-[12px] text-fg-3">{ev.venue}</span>
-                </div>
-                <div className="rounded-[16px] bg-ink-3 p-3 hairline">
-                  <VenueMap event={ev} selected={sec} onSelect={(x) => (haptic('light'), setSec(x))} />
-                  <div className="mt-2 flex items-center justify-between rounded-[12px] bg-white/[0.05] px-3.5 py-2.5 text-[14px]">
-                    <span className="font-semibold">{s ? `Section ${s.id}` : 'Tap a section'}</span>
-                    <span className="text-fg-2 tabular">{s ? `${usd(levelPrice(ev, s.level))} · ${Math.round(s.avail * 600)} left` : ''}</span>
-                  </div>
-                </div>
-              </section>
-            </>
           )}
+          {soldOut && (
+            <div className="flex items-center gap-3 rounded-[16px] bg-accent/[0.12] p-4 hairline">
+              <ShieldCheck size={22} className="shrink-0 text-accent-soft" />
+              <div className="min-w-0">
+                <div className="text-[15px] font-semibold">Sold out · fair resale is open</div>
+                <div className="text-[13px] text-fg-2">Buy from verified fans. Prices can’t go above 110% of face value, by design.</div>
+              </div>
+            </div>
+          )}
+
+          {soldOut && resaleBlock}
+
+          {/* Price levels */}
+          <section>
+            <div className="mb-2 flex items-baseline justify-between">
+              <h2 className="text-[18px] font-semibold tracking-[-0.015em]">{soldOut ? 'Face values' : 'Tickets'}</h2>
+              <span className="text-[12px] text-fg-3">{soldOut ? 'Resale cap = 110% of these' : 'All-in prices · no hidden fees'}</span>
+            </div>
+            <div className="overflow-hidden rounded-[16px] bg-ink-3 hairline">
+              {ev.levels.map((l) => (
+                <div key={l.id} className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3 last:border-0">
+                  <span className="flex items-center gap-2.5 text-[15px]">
+                    <span className="h-3 w-3 rounded-[3px]" style={{ background: LEVEL_COLORS[l.id] }} />
+                    {l.label}
+                  </span>
+                  <span className="text-[15px] font-semibold tabular">
+                    {usd(l.cents)}
+                    {soldOut && <span className="ml-2 text-[12px] font-normal text-fg-3">max resale {usd(Math.round(l.cents * 1.1))}</span>}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Map */}
+          <section>
+            <div className="mb-2 flex items-baseline justify-between">
+              <h2 className="text-[18px] font-semibold tracking-[-0.015em]">{soldOut ? 'Resale seat map' : 'Seat map'}</h2>
+              <span className="text-[12px] text-fg-3">{ev.venue}</span>
+            </div>
+            <div className="rounded-[16px] bg-ink-3 p-3 hairline">
+              <VenueMap event={ev} selected={sec} highlight={soldOut ? resaleSecs : undefined} onSelect={(x) => (haptic('light'), setSec(x))} />
+              <div className="mt-2 flex items-center justify-between gap-3 rounded-[12px] bg-white/[0.05] px-3.5 py-2.5 text-[14px]">
+                <span className="font-semibold">{s ? `Section ${s.id}` : 'Tap a section'}</span>
+                <span className="truncate text-fg-2 tabular">
+                  {!s ? '' : soldOut ? (inSec.length ? `${inSec.length} resale · ${usd(inSec[0].priceCents)}` : 'No resale here') : `${usd(levelPrice(ev, s.level))} · ${Math.round(s.avail * 600)} left`}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {!soldOut && resaleBlock}
 
           {/* Guarantee */}
           <section className="rounded-[16px] bg-ink-3 p-4 hairline">
@@ -170,7 +182,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
             </div>
             <ul className="mt-3 flex flex-col gap-2 text-[14px] text-fg-2">
               <Li>Resale never above 110% of face value</Li>
-              <Li>5% of every resale goes to the artist</Li>
+              <Li>5% of every resale goes to the {payee}</Li>
               <Li>Up to 4 tickets per verified fan</Li>
               <Li>Resale closes 2 hours before showtime</Li>
               <Li>Codes change every few seconds: screenshots and copies don’t work</Li>
@@ -179,22 +191,23 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
 
           <div className="flex items-start gap-2 px-1 text-[12px] leading-snug text-fg-3">
             <Info size={14} className="mt-0.5 shrink-0" />
-            Demo listing for an academic project. {ev.illustrative ? 'This date is illustrative and has not been announced. ' : ''}Prices and seats are illustrative; no real tickets are sold.
+            Demo listing for an academic project. {ev.illustrative ? 'This date is illustrative. ' : ''}Prices, seats and resale listings are illustrative; no real tickets are sold.
           </div>
-          {!waitlist && (
-            <div className="flex items-center gap-2 px-1 text-[12px] text-fg-3">
-              <Clock size={13} /> {ev.dateLabel} · {ev.timeLabel}
-            </div>
-          )}
+          <div className="flex items-center gap-2 px-1 text-[12px] text-fg-3">
+            <Clock size={13} /> {ev.dateLabel} · {ev.timeLabel}
+          </div>
         </div>
       </div>
 
       <div className="absolute inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-ink/95 px-5 pt-3 backdrop-blur-xl" style={{ paddingBottom: 'calc(var(--sab) + 12px)' }}>
-        {!waitlist && !(owns && ev.status === 'presale') && !footer && (
+        {!(owns && ev.status === 'presale') && !footer && (
           <div className="mb-2 flex items-baseline justify-between text-[13px]">
-            <span className={owns ? 'font-semibold text-ok' : 'text-fg-3'}>{owns ? 'You’re going · up to 4 per fan' : ev.status === 'presale' ? 'Presale · verified fans only' : 'On sale now'}</span>
+            <span className={owns ? 'font-semibold text-ok' : 'text-fg-3'}>
+              {owns ? 'You’re going · up to 4 per fan' : soldOut ? 'Sold out · fair resale only' : ev.status === 'presale' ? 'Presale · verified fans only' : 'On sale now'}
+            </span>
             <span className="text-fg-2">
-              From <b className="text-fg tabular">{usd(ev.faceCents)}</b>
+              {soldOut ? 'Face value from ' : 'From '}
+              <b className="text-fg tabular">{usd(ev.faceCents)}</b>
             </span>
           </div>
         )}
@@ -221,13 +234,5 @@ function Li({ children }: { children: ReactNode }) {
       <Check size={15} className="mt-0.5 shrink-0 text-ok" />
       {children}
     </li>
-  )
-}
-function Stat({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="rounded-[12px] bg-white/[0.04] p-3">
-      <div className="text-[16px] font-semibold tabular">{v}</div>
-      <div className="text-[11px] text-fg-3">{k}</div>
-    </div>
   )
 }
