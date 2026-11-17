@@ -39,7 +39,7 @@ export function FanApp({ person }: { person: PersonId }) {
       case 'queue':
         return <Queue person={person} />
       case 'seats':
-        return <Seats person={person} />
+        return <Seats person={person} id={r.params!.id as EventId} />
       case 'resell':
         return <Resell person={person} id={r.params!.id} />
       case 'offer':

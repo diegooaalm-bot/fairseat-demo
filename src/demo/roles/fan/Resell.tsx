@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
 import { useState } from 'react'
 import { BadgeCheck, CalendarClock, Check, Lock, ShieldCheck, Users } from 'lucide-react'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { Button } from '@/components/ui/Button'
 import { CapSlider } from '@/components/ui/CapSlider'
 import { NumberTicker } from '@/components/ui/NumberTicker'
@@ -15,6 +15,13 @@ import { useUI } from '@/store/ui'
 import { DemoButton, fmtCountdown } from './TicketPanel'
 
 const fmt = (n: number) => usd(Math.round(n))
+const closeTime = (t: string) => {
+  const m = t.match(/(\d+):(\d+) (AM|PM)/)
+  if (!m) return 'showtime − 2 h'
+  let h = Number(m[1]) - 2
+  if (h <= 0) h += 12
+  return `${h}:${m[2]} ${m[3]}`
+}
 
 export function Resell({ person, id }: { person: PersonId; id: string }) {
   const ticket = useDemo((s) => s.tickets.find((t) => t.id === id))
@@ -69,7 +76,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
               <Check size={34} strokeWidth={3} />
             </motion.span>
             <h2 className="mt-5 text-[30px] leading-tight font-bold tracking-[-0.03em]">Listed for {usd(listing!.priceCents)}</h2>
-            <p className="mt-2 max-w-[30ch] text-[16px] text-fg-2">41,200 verified fans are on the waitlist. When one buys, you get {usd(resaleBreakdown(listing!.priceCents).seller)} instantly.</p>
+            <p className="mt-2 max-w-[30ch] text-[16px] text-fg-2">88,200 verified fans are on the waitlist. When one buys, you get {usd(resaleBreakdown(listing!.priceCents).seller)} instantly.</p>
             <div className="mt-8 flex w-full flex-col gap-3">
               <DemoButton
                 className="self-center"
@@ -92,7 +99,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
             {/* ticket strip */}
             <div className="flex items-center gap-3 rounded-[18px] bg-ink-3 p-3 hairline">
               <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[12px]">
-                <EventArt event={ev} />
+                <EventImage id={ticket.eventId} size="card" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[15px] font-semibold">{ev.artist}</span>
@@ -146,7 +153,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
             {/* live split */}
             <div className="overflow-hidden rounded-[24px] bg-ink-3 hairline">
               <Split k="You receive" sub="Instantly, to your card" v={<NumberTicker value={br.seller} format={fmt} duration={0.4} />} big />
-              <Split k="Nova Bloom gets" sub="5% royalty on every resale" v={<NumberTicker value={br.royalty} format={fmt} duration={0.4} />} />
+              <Split k={`${ev.artist} gets`} sub="5% royalty on every resale" v={<NumberTicker value={br.royalty} format={fmt} duration={0.4} />} />
               <Split k="Buyer pays" sub={`Includes ${usd(br.fee)} service fee (3%)`} v={<NumberTicker value={br.buyerTotal} format={fmt} duration={0.4} />} />
             </div>
 
@@ -158,7 +165,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
                 <Users size={15} /> The buyer can hold 4 tickets at most
               </span>
               <span className="flex items-center gap-2">
-                <CalendarClock size={15} /> Resale closes {ev.dateLabel} at 6:00 PM, 2 h before the show
+                <CalendarClock size={15} /> Resale closes {ev.dateLabel.replace(/, \d{4}$/, '')} at {closeTime(ev.timeLabel)}, 2 h before the show
               </span>
             </div>
           </motion.div>

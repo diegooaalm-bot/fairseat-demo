@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Check, Lock, Music2 } from 'lucide-react'
 import { Mark } from '@/components/brand/Logo'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { EVENTS, type PersonId } from '@/data/world'
@@ -109,7 +109,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
         <Node at={P.buyer} label="Ben" sub="Verified buyer">
           <Avatar name="Ben" hue={200} size={54} />
         </Node>
-        <Node at={P.artist} label="Nova Bloom" sub="Artist · 5%">
+        <Node at={P.artist} label={EVENTS.nova.artist} sub="Artist · 5%">
           <span className="grid h-[54px] w-[54px] place-items-center rounded-full bg-[linear-gradient(140deg,#8b6cff,#3e3ab0)] text-white">
             <Music2 size={24} />
           </span>
@@ -164,8 +164,8 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
           }
           transition={phase >= 3 ? { type: 'spring', stiffness: 120, damping: 17 } : { type: 'spring', stiffness: 90, damping: 16 }}
         >
-          <EventArt event={EVENTS.nova} />
-          <span className="absolute inset-0 grid place-items-center text-[8px] font-extrabold tracking-[0.02em] text-white">NOVA BLOOM</span>
+          <EventImage id="nova" size="card" />
+          <span className="absolute inset-0 grid place-items-center bg-black/30 text-[9px] font-bold text-white">{EVENTS.nova.artist}</span>
         </motion.div>
 
         {/* moving: the money */}
@@ -198,7 +198,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
             style={{ paddingBottom: 'calc(var(--sab) + 14px)' }}
           >
             <p className="mb-4 text-center text-[14px] leading-snug text-fg-2">
-              Ben paid {usd(br.buyerTotal)}. Maya got {usd(br.seller)}, Nova Bloom {usd(br.royalty)}, FairSeat {usd(br.fee)}. If any rule had failed, no money would have moved.
+              Ben paid {usd(br.buyerTotal)}. Maya got {usd(br.seller)}, the artist {usd(br.royalty)}, FairSeat {usd(br.fee)}. If any rule had failed, no money would have moved.
             </p>
             <Button size="lg" full onClick={close}>
               Done

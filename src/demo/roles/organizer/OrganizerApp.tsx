@@ -1,13 +1,12 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, Bot, CalendarPlus, Check, DoorOpen, Gauge, LayoutDashboard, Music2, ShieldCheck, Ticket, Timer } from 'lucide-react'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { Button } from '@/components/ui/Button'
 import { NumberTicker } from '@/components/ui/NumberTicker'
 import { Pill } from '@/components/ui/Pill'
 import { Range } from '@/components/ui/Range'
 import { Segmented } from '@/components/ui/Segmented'
-import { EVENTS } from '@/data/world'
 import { haptic } from '@/lib/haptics'
 import { int, usd } from '@/lib/money'
 import { mulberry32 } from '@/lib/prng'
@@ -62,13 +61,13 @@ function Dashboard() {
     <Screen title="Live" tabBar roleButton titleAccessory={<Pill tone="ok" icon={<span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ok" />}>Live</Pill>}>
       <div className="flex flex-col gap-4 px-4">
         <div className="relative overflow-hidden rounded-[22px] p-4 hairline">
-          <EventArt event={EVENTS.nova} intensity={0.7} />
+          <EventImage id="nova" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,10,13,.85),rgba(10,10,13,.35))]" />
           <div className="relative flex items-center justify-between gap-3">
             <div>
-              <div className="text-[12px] font-semibold tracking-[0.06em] text-white/70 uppercase">Peachtree Live presents</div>
-              <div className="text-[22px] font-extrabold tracking-[-0.03em] uppercase">Nova Bloom</div>
-              <div className="text-[13px] text-white/75">Fri, Dec 11 · Peachtree Arena · $100</div>
+              <div className="text-[12px] font-semibold tracking-[0.06em] text-white/70 uppercase">Organizer console</div>
+              <div className="text-[22px] font-bold tracking-[-0.03em]">Bad Bunny</div>
+              <div className="text-[13px] text-white/75">Sat, Jun 26, 2027 · Mercedes-Benz Stadium</div>
             </div>
             <Pill tone={st.soldOut ? 'accent' : 'ok'}>{st.soldOut ? 'Sold out' : 'On sale'}</Pill>
           </div>
@@ -80,7 +79,7 @@ function Dashboard() {
               <CalendarPlus size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[15px] font-semibold">2nd show · Sat, Dec 12</div>
+              <div className="text-[15px] font-semibold">Night 2 · Sun, Jun 27, 2027</div>
               <div className="text-[12px] text-fg-3">{int(s.organizer.draft.capacity)} tickets issued · waitlist gets first access</div>
             </div>
           </motion.div>
@@ -254,12 +253,12 @@ function Create() {
                 <Field k="Show" v={draft.name} />
                 <Field k="Venue" v={`${draft.venue} · Atlanta`} />
                 <Field k="Date" v={draft.date} />
-                <p className="pt-1 text-[13px] text-fg-3">Added because 41,200 verified fans are on the waitlist for Dec 11.</p>
+                <p className="pt-1 text-[13px] text-fg-3">Added because 88,200 verified fans are on the waitlist for Jun 26.</p>
               </Card>
             )}
             {step === 1 && (
               <Card>
-                <Range label="Capacity" value={draft.capacity} min={2000} max={50000} step={1000} onChange={(v) => upd({ capacity: v })} format={(v) => int(v)} />
+                <Range label="Capacity" value={draft.capacity} min={5000} max={75000} step={1000} onChange={(v) => upd({ capacity: v })} format={(v) => int(v)} />
                 <Range label="Face value" value={draft.priceCents / 100} min={20} max={300} step={5} onChange={(v) => upd({ priceCents: v * 100 })} format={(v) => `$${v}`} />
                 <div className="rounded-[14px] bg-white/[0.04] p-3 text-[13px] text-fg-2">
                   FairSeat fee: $1.50 × {int(draft.capacity)} = <b className="text-fg">{usd(draft.capacity * 150, { cents: false })}</b>, paid by you. Fans pay face value, no surprise fees.

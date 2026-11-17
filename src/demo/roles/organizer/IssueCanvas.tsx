@@ -6,6 +6,8 @@ import { mulberry32 } from '@/lib/prng'
  * Draws incrementally so only newly issued seats are painted each frame.
  */
 export function IssueCanvas({ total = 20000, duration = 2600, onProgress, onDone, run }: { total?: number; duration?: number; onProgress: (n: number) => void; onDone: () => void; run: boolean }) {
+  // draw at most ~24k dots (a dot can stand for several seats); the counter still reports `total`
+  const dots = Math.min(total, 24000)
   const ref = useRef<HTMLCanvasElement>(null)
   const cbs = useRef({ onProgress, onDone })
   cbs.current = { onProgress, onDone }
@@ -35,7 +37,7 @@ export function IssueCanvas({ total = 20000, duration = 2600, onProgress, onDone
     }
     let made = 0
     for (let i = 0; i < rings; i++) {
-      const n = i === rings - 1 ? total - made : Math.round((ringLen[i] / lenSum) * total)
+      const n = i === rings - 1 ? dots - made : Math.round((ringLen[i] / lenSum) * dots)
       made += n
       for (let k = 0; k < n; k++) {
         const a = (4 + (172 * (k + 0.5)) / n) * (Math.PI / 180)
@@ -74,12 +76,12 @@ export function IssueCanvas({ total = 20000, duration = 2600, onProgress, onDone
         ctx.fillStyle = lit % 9 === 0 ? '#bcd6ff' : '#3e86ff'
         ctx.fillRect(s.x - 0.8, s.y - 0.8, 1.6, 1.6)
       }
-      cbs.current.onProgress(lit)
+      cbs.current.onProgress(lit >= seats.length ? total : Math.round((lit / seats.length) * total))
       if (p < 1) raf = requestAnimationFrame(loop)
       else cbs.current.onDone()
     }
     raf = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(raf)
-  }, [run, total, duration])
+  }, [run, total, dots, duration])
   return <canvas ref={ref} className="block h-[220px] w-full" aria-hidden="true" />
 }

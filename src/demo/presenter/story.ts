@@ -66,21 +66,9 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 3,
     chapterTitle: 'The purchase',
-    title: 'Verify once',
-    role: 'maya',
-    say: 'Maya signs up with a passkey and verifies once: ID and a quick selfie. No wallet, no seed phrase, no crypto. If you can use Apple Pay, you can use FairSeat.',
-    fact: 'One person, one account',
-    apply: () => {
-      fresh()
-      S().setRole('maya')
-    },
-  },
-  {
-    chapter: 3,
-    chapterTitle: 'The purchase',
     title: 'The fair queue',
     role: 'maya',
-    say: 'Presale day. Watch what happens to the bots: they hit the identity shield. Only verified humans get through. Fans with more shows get earlier windows; everyone else is a fair draw, so speed doesn’t matter.',
+    say: 'Presale day for Bad Bunny at Mercedes-Benz Stadium. Maya verified her identity once, when she signed up, like opening a bank account. Watch the bots: they hit the identity shield. Only verified humans get through, and priority goes to fans with real history.',
     fact: 'Bots blocked, live',
     apply: () => {
       fresh()
@@ -93,9 +81,9 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 3,
     chapterTitle: 'The purchase',
-    title: 'Four per fan, then pay',
+    title: 'Pick a seat and pay',
     role: 'maya',
-    say: 'She picks a seat. Up to four per person: try a fifth and the rule pushes back. She pays $100 with her card, double-click, done. The ticket can’t be copied or faked.',
+    say: 'She picks Section 312, Row 14, Seat 7: $100, all-in, no surprise fees. Up to four per person: try a fifth and the rule pushes back. She pays with her card, double-click, done. The ticket can’t be copied or faked.',
     fact: '$100 face value · no fees for the fan',
     apply: () => {
       fresh()
@@ -114,7 +102,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The resale',
     title: 'Maya can’t go',
     role: 'maya',
-    say: 'Two weeks later Maya can’t go. She lists it. Watch the slider: it hits a wall at $110. This ticket knows the rules. She gets $104.50, the artist $5.50, and the buyer pays $113.30.',
+    say: 'A few weeks later Maya can’t go. She lists it. Watch the slider: it hits a wall at $110. This ticket knows the rules. She gets $104.50, the artist $5.50, and the buyer pays $113.30.',
     fact: '104.50 + 5.50 · buyer pays 113.30',
     apply: () => {
       fresh()
@@ -131,7 +119,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The resale',
     title: 'Ben buys it for $110',
     role: 'ben',
-    say: 'Ben, a verified fan, finds Maya’s seat at $110, not $400 elsewhere. He pays, and in one all-or-nothing transaction the ticket and the money move at the same time. If any rule failed, nothing would move.',
+    say: 'The show is sold out. Ben, a verified fan, finds Maya’s seat at $110, not $400 on a typical resale site. He pays, and in one all-or-nothing transaction the ticket and the money move at the same time. If any rule failed, nothing would move.',
     fact: '$110 here · $400 elsewhere',
     apply: () => {
       fresh()
@@ -145,7 +133,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'Ben gets in',
     title: 'At the door',
     role: 'gate',
-    say: 'Show night. Ben’s code changes every five seconds and is signed by his phone. Scan: welcome, Ben. Now try a screenshot, or Maya’s old ticket: rejected. And it keeps working offline.',
+    say: 'Show night at Mercedes-Benz Stadium. Ben’s code changes every five seconds and is signed by his phone. Scan: welcome, Ben. Now try a screenshot, or Maya’s old ticket: rejected. And it keeps working offline.',
     fact: 'Signed QR · works offline',
     apply: () => {
       fresh()
@@ -179,7 +167,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The artist gets paid',
     title: '5% of every resale',
     role: 'artist',
-    say: 'And the artist? Every resale pays Nova Bloom 5%, instantly. There’s Maya’s $5.50. With traditional resale, the artist gets nothing.',
+    say: 'And the artist? Every resale pays the artist 5%, instantly. There’s Maya’s $5.50 going to Bad Bunny’s team. With traditional resale, the artist gets nothing.',
     fact: '+$5.50 per resale · $0 elsewhere',
     apply: () => {
       fresh()

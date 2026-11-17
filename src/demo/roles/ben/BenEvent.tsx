@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { BadgeCheck, ShieldCheck, Users } from 'lucide-react'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { Button } from '@/components/ui/Button'
 import { NumberTicker } from '@/components/ui/NumberTicker'
 import { Pill } from '@/components/ui/Pill'
@@ -127,7 +127,7 @@ export function ResaleOffer() {
           sub: `Sec ${ticket.section} · Row ${ticket.row} · Seat ${ticket.seat}`,
           art: (
             <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[11px]">
-              <EventArt event={ev} />
+              <EventImage id={ticket.eventId} size="card" />
             </span>
           ),
         }}

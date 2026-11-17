@@ -110,7 +110,7 @@ export function Wallet({ person }: { person: PersonId }) {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-[15px] font-semibold">Sold to a verified fan</span>
-                      <span className="block truncate text-[13px] text-fg-3">{EVENTS[tx.eventId].artist} · Sec 112 · Row F · Seat 7</span>
+                      <span className="block truncate text-[13px] text-fg-3">{EVENTS[tx.eventId].artist} · Sec 312 · Row 14 · Seat 7</span>
                     </span>
                     <span className="text-[15px] font-semibold text-ok tabular">+{usd(tx.breakdown!.seller)}</span>
                   </motion.button>

@@ -2,10 +2,9 @@ import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowDown, BadgeCheck, Music2, Play, ShieldCheck } from 'lucide-react'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { IPhoneFrame, FRAME_H, FRAME_W } from '@/components/device/IPhoneFrame'
 import { CapSlider } from '@/components/ui/CapSlider'
-import { EVENTS } from '@/data/world'
 import { usd } from '@/lib/money'
 import { resaleBreakdown } from '@/lib/rules'
 import { Container } from '../ui'
@@ -18,10 +17,8 @@ export function Hero() {
     <section className="relative overflow-hidden pt-[calc(env(safe-area-inset-top)+88px)] pb-16 sm:pb-24 lg:min-h-[100svh]">
       <motion.div style={{ opacity: glowO }} className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute -top-[35%] left-1/2 h-[110%] w-[110%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(62,134,255,.32),transparent)]" />
-        <div
-          className="absolute -top-[10%] left-1/2 h-[120%] w-[160%] -translate-x-1/2 opacity-70"
-          style={{ background: 'conic-gradient(from 160deg at 50% 0%, transparent 0deg, rgba(141,184,255,.10) 6deg, transparent 12deg, transparent 24deg, rgba(141,184,255,.07) 28deg, transparent 33deg, transparent 330deg)' }}
-        />
+        <img src={`${import.meta.env.BASE_URL}photos/mbs-bg.webp`} alt="" fetchPriority="low" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-[0.16]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,13,.55)_0%,rgba(10,10,13,.85)_60%,#0a0a0d_100%)]" />
       </motion.div>
       <Container className="relative grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="text-center lg:text-left">
@@ -29,8 +26,8 @@ export function Hero() {
             <ShieldCheck size={14} className="text-accent-soft" /> Fair resale for concert tickets
           </motion.div>
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 18 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.9, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 text-[clamp(52px,9vw,124px)] leading-[0.92] font-bold tracking-[-0.055em]"
           >
@@ -116,11 +113,11 @@ function HeroScreen() {
       <div className="text-center text-[17px] font-semibold">Resell</div>
       <div className="mt-4 flex items-center gap-3 rounded-[18px] bg-ink-3 p-3 hairline">
         <span className="relative h-12 w-12 overflow-hidden rounded-[12px]">
-          <EventArt event={EVENTS.nova} />
+          <EventImage id="nova" size="card" />
         </span>
         <span className="flex-1">
-          <span className="block text-[15px] font-semibold">Nova Bloom</span>
-          <span className="block text-[13px] text-fg-3">Sec 112 · Row F · Seat 7</span>
+          <span className="block text-[15px] font-semibold">Bad Bunny</span>
+          <span className="block text-[13px] text-fg-3">Sec 312 · Row 14 · Seat 7</span>
         </span>
         <span className="text-right text-[12px] text-fg-3">
           You paid
@@ -145,7 +142,7 @@ function HeroScreen() {
       <div className="mt-4 overflow-hidden rounded-[24px] bg-ink-3 hairline">
         {[
           ['You receive', usd(br.seller), true],
-          ['Nova Bloom gets', usd(br.royalty), false],
+          ['Artist gets (5%)', usd(br.royalty), false],
           ['Buyer pays', usd(br.buyerTotal), false],
         ].map(([k, val, big]) => (
           <div key={k as string} className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3.5 last:border-0">

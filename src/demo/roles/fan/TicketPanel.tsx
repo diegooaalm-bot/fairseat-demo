@@ -117,11 +117,6 @@ export function TicketPanel({ ticket, person }: { ticket: Ticket; person: Person
           Skip to after the show
         </DemoButton>
       )}
-      {ticket.eventId === 'velvet' && !used && m === 'presale' && (
-        <DemoButton className="mt-4" icon={<FastForward size={14} />} onClick={() => advanceTo('velvetAfter')}>
-          Skip to after tonight’s show
-        </DemoButton>
-      )}
       <div className="h-6" />
     </div>
   )

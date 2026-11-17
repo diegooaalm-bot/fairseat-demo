@@ -71,8 +71,8 @@ function Royalties() {
                 <Music2 size={16} />
               </span>
               <div>
-                <div className="text-[14px] font-semibold">Nova Bloom</div>
-                <div className="text-[11px] text-white/60">The Afterglow Tour · all dates</div>
+                <div className="text-[14px] font-semibold">Bad Bunny</div>
+                <div className="text-[11px] text-white/60">DeBÍ TiRAR MáS FOToS World Tour · illustrative</div>
               </div>
             </div>
             <label className="flex items-center gap-2 text-[12px] text-white/70">
@@ -137,7 +137,7 @@ function Royalties() {
                   <ArrowLeftRight size={15} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[14px] font-semibold">{t.eventLabel ?? 'Afterglow Tour · Atlanta'}</span>
+                  <span className="block truncate text-[14px] font-semibold">{t.eventLabel ?? 'Mercedes-Benz Stadium · Atlanta'}</span>
                   <span className="block text-[12px] text-fg-3">
                     Resold at {usd(t.priceCents ?? 0)} · within cap
                   </span>

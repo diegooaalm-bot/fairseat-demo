@@ -5,6 +5,7 @@ import { Play } from 'lucide-react'
 import { Logo } from '@/components/brand/Logo'
 import { QRMark } from '@/components/ticket/DynamicQR'
 import { useIsDesktop } from '@/hooks/useMedia'
+import credits from '@/data/photo-credits.json'
 import { Container, Eyebrow, H2, Reveal } from '../ui'
 
 /* ───────── 11 · Why now ───────── */
@@ -166,8 +167,35 @@ export function Footer() {
         <p className="text-[14px] text-fg-2">Academic concept · Blockchains &amp; Crypto Assets · Goizueta Business School · Fall 2026. Not a real product.</p>
         <p>
           Business figures ($123,000 revenue, $80,000 royalties, ≈ $1,100 blockchain cost) are illustrative hypotheses, not forecasts. Market figures come from public sources: Ticketmaster on the Eras Tour presale (2022), the
-          FTC’s 2025 lawsuit, UK government and CMA findings (2025), FIFA Collect coverage (2026). Artists, tours and venues in the demo are fictional.
+          FTC’s 2025 lawsuit, UK government and CMA findings (2025), FIFA Collect coverage (2026).
         </p>
+        <p>
+          Artists, tours and venues in the demo are real; listings, dates, prices, seats and figures are illustrative. Bad Bunny’s tour has announced no U.S. dates and Taylor Swift has announced no tour: their
+          listings are hypothetical. FairSeat is not affiliated with, endorsed by or selling tickets for any artist, tour or venue, and no real tickets or payments are processed.
+        </p>
+        <div>
+          <div className="mb-1.5 font-semibold text-fg-2">Photo credits</div>
+          <ul className="grid gap-1 sm:grid-cols-2">
+            {Object.entries(credits as Record<string, { title: string; page: string; license: string; licenseUrl: string; author: string }>)
+              .filter(([k]) => k !== 'mbs2')
+              .map(([k, c]) => (
+                <li key={k} className="min-w-0 truncate">
+                  <a href={c.page} target="_blank" rel="noreferrer" className="underline decoration-white/20 underline-offset-2 hover:text-fg">
+                    {c.title.replace(/^File:/, '').replace(/\.(jpg|png)$/i, '')}
+                  </a>{' '}
+                  · {c.author} ·{' '}
+                  {c.licenseUrl ? (
+                    <a href={c.licenseUrl} target="_blank" rel="noreferrer" className="underline decoration-white/20 underline-offset-2 hover:text-fg">
+                      {c.license}
+                    </a>
+                  ) : (
+                    c.license
+                  )}
+                  , cropped
+                </li>
+              ))}
+          </ul>
+        </div>
       </Container>
     </footer>
   )

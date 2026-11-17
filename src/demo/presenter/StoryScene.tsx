@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { Bot } from 'lucide-react'
 import { AppIcon, Logo } from '@/components/brand/Logo'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { NumberTicker } from '@/components/ui/NumberTicker'
 import { EVENTS } from '@/data/world'
 import { mulberry32 } from '@/lib/prng'
@@ -53,12 +53,12 @@ function Poster({ scene }: { scene: Scene }) {
         </motion.h2>
         <motion.div initial={{ opacity: 0, rotate: -6, y: 30 }} animate={{ opacity: 1, rotate: -3, y: 0 }} transition={{ delay: 0.3, type: 'spring', stiffness: 120, damping: 14 }} className="relative mt-8">
           <div className="relative aspect-[1.586] overflow-hidden rounded-[22px] shadow-[0_30px_60px_-20px_rgba(0,0,0,.9)] hairline-2">
-            <EventArt event={EVENTS.nova} />
+            <EventImage id="nova" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(0,0,0,.6))]" />
             <div className="absolute inset-0 flex flex-col justify-between p-5">
-              <div className="text-[22px] font-extrabold tracking-[-0.035em] uppercase">Nova Bloom</div>
+              <div className="text-[22px] font-bold tracking-[-0.03em]">{EVENTS.nova.artist}</div>
               <div className="flex items-end justify-between">
-                <span className="text-[12px] text-white/75">Face value $100</span>
+                <span className="text-[12px] text-white/75">Sec 312 · Face value $100</span>
                 <motion.span className="text-[52px] leading-none font-bold tracking-[-0.05em]" initial={{ color: '#f5f5f7' }} animate={{ color: '#ff453a' }} transition={{ delay: 1.2, duration: 1.4 }}>
                   <NumberTicker value={400} from={100} format={(n) => `$${Math.round(n)}`} duration={2.2} />
                 </motion.span>

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useRef, useState } from 'react'
 import { Bot, Music2, Store, User } from 'lucide-react'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { NumberTicker } from '@/components/ui/NumberTicker'
 import { EVENTS } from '@/data/world'
 import { mulberry32 } from '@/lib/prng'
@@ -63,12 +63,12 @@ export function Hook() {
           </div>
           <motion.div style={{ rotate: tilt, scale }} className="relative mx-auto w-full max-w-[420px]">
             <div className="relative aspect-[1.586] overflow-hidden rounded-[26px] shadow-[0_40px_80px_-30px_rgba(0,0,0,.9)] hairline-2">
-              <EventArt event={EVENTS.nova} />
+              <EventImage id="nova" />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(0,0,0,.6))]" />
               <div className="absolute inset-0 flex flex-col justify-between p-5">
-                <div className="text-[24px] font-extrabold tracking-[-0.035em] uppercase">Nova Bloom</div>
+                <div className="text-[24px] font-bold tracking-[-0.03em]">{EVENTS.nova.artist}</div>
                 <div className="flex items-end justify-between">
-                  <div className="text-[13px] text-white/75">Sec 112 · Row F · Seat 7</div>
+                  <div className="text-[13px] text-white/75">Sec 312 · Row 14 · Seat 7</div>
                   <motion.div style={{ color: reduced ? '#ff453a' : color }} className="text-[56px] leading-none font-bold tracking-[-0.05em] tabular">
                     ${value}
                   </motion.div>

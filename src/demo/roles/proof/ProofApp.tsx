@@ -215,7 +215,7 @@ export function CodePanel({ tx }: { tx: Tx }) {
     cap: `${usd(tx.priceCents ?? 0)} ${reverted ? '>' : '≤'} $110.00`,
     verified: 'verified ✓',
     limit: 'holds 0 · max 4',
-    window: 'closes Dec 11, 6 PM',
+    window: 'closes Jun 26, 6 PM',
     royalty: br ? `→ artist ${usd(br.royalty)}` : '',
     seller: br ? `→ seller ${usd(br.seller)}` : '',
     transfer: 'atomic · same transaction, all or nothing',

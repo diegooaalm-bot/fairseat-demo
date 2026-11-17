@@ -14,7 +14,7 @@ import { useMedia } from '@/hooks/useMedia'
 import { Container, Eyebrow, H2, Reveal } from '../ui'
 
 const STEPS = [
-  { n: 'Issue', t: 'Every seat becomes a unique ticket.', d: 'The organizer issues 20,000 tickets. Each carries its own rules: face value, a 110% resale cap and 5% to the artist. They can’t be copied or faked.' },
+  { n: 'Issue', t: 'Every seat becomes a unique ticket.', d: 'The organizer issues one ticket per seat: 71,000 at Mercedes-Benz Stadium. Each carries its own rules: face value, a 110% resale cap and 5% to the artist. They can’t be copied or faked.' },
   { n: 'Sale', t: 'Verified fans buy with a card.', d: 'One person, one account, verified once. Up to 4 tickets each. When demand explodes, a fair draw with priority for real fans, not the fastest bot.' },
   { n: 'In the app', t: 'The ticket lives on your phone.', d: 'Like a boarding pass in your wallet. Gift it to a verified friend, a limited number of times, so a “gift” can’t hide a resale.' },
   { n: 'Resale', t: 'Can’t go? Resell. Fairly.', d: 'Never above $110. In one all-or-nothing step, Maya gets $104.50, the artist $5.50 and the buyer pays $113.30. Resale closes 2 hours before the show.' },
@@ -132,10 +132,10 @@ function Scene({ i }: { i: number }) {
         <Frame title="Issue tickets">
           <div className="mt-6 text-center">
             <div className="text-[56px] leading-none font-bold tracking-[-0.045em] tabular">{n.toLocaleString('en-US')}</div>
-            <div className="text-[15px] text-fg-3">tickets issued · Peachtree Arena</div>
+            <div className="text-[15px] text-fg-3">tickets issued · Mercedes-Benz Stadium</div>
           </div>
           <div className="mt-6 rounded-[24px] bg-[radial-gradient(100%_80%_at_50%_0%,#121c38,#0a0a0d)] p-2 hairline">
-            <IssueCanvas run onProgress={setN} onDone={() => {}} duration={2400} />
+            <IssueCanvas run total={71000} onProgress={setN} onDone={() => {}} duration={2400} />
           </div>
           <div className="mt-5 flex flex-col gap-2">
             {['Cap 110% · max $110', '5% to the artist on every resale', 'Up to 4 per fan'].map((x) => (
@@ -154,7 +154,7 @@ function Scene({ i }: { i: number }) {
               <FaceID state={ok ? 'success' : 'scan'} size={86} />
             </div>
             <div className="mt-6 text-[24px] font-semibold">{ok ? 'You’re going.' : 'Face ID'}</div>
-            <div className="mt-1 text-[15px] text-fg-3">Nova Bloom · Sec 112 · Row F · Seat 7</div>
+            <div className="mt-1 text-[15px] text-fg-3">Bad Bunny · Sec 312 · Row 14 · Seat 7</div>
             <div className="mt-8 w-full rounded-[20px] bg-ink-3 p-4 text-left hairline">
               <Row k="1 ticket" v="$100.00" />
               <Row k="Service fee" v="$0.00" />
@@ -170,7 +170,7 @@ function Scene({ i }: { i: number }) {
       return (
         <Frame title="My Tickets">
           <div className="mt-4">
-            <TicketCard ticket={{ eventId: 'nova', section: '112', row: 'F', seat: 7, faceCents: 10000, tokenId: 18169 }} />
+            <TicketCard ticket={{ eventId: 'nova', section: '312', row: '14', seat: 7, faceCents: 10000, tokenId: 18169 }} />
           </div>
           <div className="mt-6 flex justify-center">
             <DynamicQR tokenId={18169} owner="0x7a3e19c0" size={190} />
@@ -202,7 +202,7 @@ function Scene({ i }: { i: number }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0f5f2b] px-8 text-center">
           <BadgeCheck size={96} strokeWidth={1.6} />
           <div className="mt-5 text-[42px] leading-none font-bold tracking-[-0.04em]">Welcome, Ben</div>
-          <div className="mt-3 text-[18px] text-white/85">Sec 112 · Row F · Seat 7</div>
+          <div className="mt-3 text-[18px] text-white/85">Sec 312 · Row 14 · Seat 7</div>
           <span className="mt-6 inline-flex items-center gap-2 rounded-full bg-black/25 px-3 py-1.5 text-[14px] font-semibold">
             <CloudOff size={15} /> Validated offline · 2.4 s
           </span>
@@ -213,7 +213,7 @@ function Scene({ i }: { i: number }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_40%_at_50%_40%,rgba(242,193,78,.22),transparent)]" />
           <motion.div initial={{ rotateY: -360, scale: 0.6 }} animate={{ rotateY: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 60, damping: 12 }}>
-            <Medal badge={{ id: 'x', eventId: 'nova', artist: 'Nova Bloom', venue: 'Peachtree Arena', date: 'Dec 11, 2026', hue: 220 }} size={230} />
+            <Medal badge={{ id: 'x', eventId: 'nova', artist: 'Bad Bunny', venue: 'Mercedes-Benz Stadium', date: 'Jun 26, 2027', hue: 220 }} size={230} />
           </motion.div>
           <div className="mt-8 text-[40px] font-bold tracking-[-0.04em]">
             <span className="text-gradient-gold">I was there.</span>

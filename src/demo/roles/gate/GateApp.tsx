@@ -72,7 +72,7 @@ export function GateApp() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[17px] font-semibold tracking-[-0.02em]">{GATE_NAME}</div>
-            <div className="text-[12px] text-white/60">Peachtree Arena · Nova Bloom</div>
+            <div className="text-[12px] text-white/60">Mercedes-Benz Stadium · Bad Bunny</div>
           </div>
           <RoleButton />
         </div>
@@ -130,7 +130,7 @@ export function GateApp() {
         <div className="rounded-[26px] bg-ink-2/90 p-4 backdrop-blur-xl hairline">
           {!doors ? (
             <div className="flex flex-col items-center gap-3 py-2 text-center">
-              <div className="text-[18px] font-semibold tracking-[-0.02em]">Doors open Fri, Dec 11 · 7:00 PM</div>
+              <div className="text-[18px] font-semibold tracking-[-0.02em]">Doors open Sat, Jun 26 · 6:30 PM</div>
               <div className="text-[13px] text-fg-3">The scanner downloads the list of valid tickets before doors open.</div>
               <DemoButton icon={<FastForward size={14} />} onClick={() => advanceTo('doors')}>
                 Jump to show night

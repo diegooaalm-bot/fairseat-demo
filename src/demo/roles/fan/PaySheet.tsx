@@ -116,10 +116,11 @@ export function PaySheet({
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between py-3">
+        <div className="flex items-center justify-between pt-3">
           <span className="text-[17px] text-fg-2">Pay FairSeat</span>
           <span className="text-[24px] font-bold tracking-[-0.02em] tabular">{usd(totalCents)}</span>
         </div>
+        <div className="pb-2 text-[11px] text-fg-3">Simulated payment for a class demo · no real charge</div>
 
         {/* confirm area */}
         <div className="relative mt-1 grid h-[118px] place-items-center">

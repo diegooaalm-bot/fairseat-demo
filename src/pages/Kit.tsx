@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Bell, CreditCard, Fingerprint, Gift, Home, Search, ShieldCheck, Ticket, User } from 'lucide-react'
 import { AppIcon, Logo, Mark } from '@/components/brand/Logo'
-import { EventArt } from '@/components/art/EventArt'
+import { EventImage } from '@/components/art/EventImage'
 import { IPhoneFrame } from '@/components/device/IPhoneFrame'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
@@ -117,8 +117,8 @@ export default function Kit() {
         <Section title="Tickets & codes">
           <div className="grid items-center gap-8 md:grid-cols-[auto_auto] md:justify-start">
             <div className="flex w-full max-w-[400px] flex-col gap-4">
-              <TicketCard ticket={{ eventId: 'nova', section: '112', row: 'F', seat: 7, faceCents: 10000, tokenId: 14207 }} tilt />
-              <TicketCard ticket={{ eventId: 'velvet', section: 'GA', row: 'Floor', seat: 214, faceCents: 4500, tokenId: 3021 }} tilt />
+              <TicketCard ticket={{ eventId: 'nova', section: '312', row: '14', seat: 7, faceCents: 10000, tokenId: 14207 }} tilt />
+              <TicketCard ticket={{ eventId: 'harry', section: '118', row: '22', seat: 9, faceCents: 17000, tokenId: 3021 }} tilt />
             </div>
             <div className="flex flex-col items-center gap-3">
               <DynamicQR tokenId={14207} owner="0x2b9d04ae" />
@@ -131,7 +131,7 @@ export default function Kit() {
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {DISCOVER_ORDER.map((id) => (
               <div key={id} className="relative aspect-[4/5] overflow-hidden rounded-[22px] hairline">
-                <EventArt event={EVENTS[id]} />
+                <EventImage id={id} size="card" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                   <div className="text-[17px] font-bold tracking-[-0.02em]">{EVENTS[id].artist}</div>
                   <div className="text-[12px] text-white/75">{EVENTS[id].venue}</div>
@@ -253,13 +253,13 @@ function ShellDemo() {
       <Screen title="Discover" tabBar titleAccessory={<Avatar name="Maya" hue={330} size={34} />}>
         <div className="flex flex-col gap-5 px-5">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[26px] hairline">
-            <EventArt event={EVENTS.nova} />
+            <EventImage id="nova" />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5">
               <Pill tone="glass" icon={<ShieldCheck size={13} />}>
                 Fair Resale Protected
               </Pill>
-              <div className="mt-3 text-[30px] leading-none font-extrabold tracking-[-0.035em]">Nova Bloom</div>
-              <div className="mt-1 text-[14px] text-white/80">The Afterglow Tour · Peachtree Arena</div>
+              <div className="mt-3 text-[30px] leading-none font-bold tracking-[-0.035em]">Bad Bunny</div>
+              <div className="mt-1 text-[14px] text-white/80">DeBÍ TiRAR MáS FOToS · Mercedes-Benz Stadium</div>
             </div>
           </div>
           <ListGroup header="This week">
@@ -297,7 +297,7 @@ function SheetDemo() {
         <div className="flex flex-col gap-4 px-5 pb-4">
           <ListGroup>
             <Row icon={<CreditCard size={18} className="text-accent" />} title="Card •••• 4242" subtitle="Debit" chevron />
-            <Row icon={<Gift size={18} className="text-fg-2" />} title="Nova Bloom · Sec 112" value="$100.00" />
+            <Row icon={<Gift size={18} className="text-fg-2" />} title="Bad Bunny · Sec 312" value="$100.00" />
           </ListGroup>
           <div className="flex items-center justify-between px-1 text-[17px]">
             <span className="text-fg-2">Total</span>
