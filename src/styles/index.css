@@ -1,0 +1,193 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+/* ───────────────────────── Design tokens ─────────────────────────
+   One accent (Follow-Spot Blue). Gold only for "I was there" badges.
+   Semantic ok/err never double as accent. */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter Variable', Inter, system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  --color-ink: #0a0a0d;
+  --color-ink-2: #111116;
+  --color-ink-3: #1a1a21;
+  --color-ink-4: #24242d;
+  --color-ink-5: #30303b;
+
+  --color-fg: #f5f5f7;
+  --color-fg-2: #b0b0ba;
+  --color-fg-3: #8a8a96;
+
+  --color-paper: #f5f5f7;
+  --color-paper-2: #e8e8ed;
+  --color-paper-ink: #111114;
+  --color-paper-mute: #6b6b76;
+
+  --color-accent: #3e86ff;
+  --color-accent-deep: #2563eb;
+  --color-accent-fill: #2b6bf0;
+  --color-accent-soft: #8db8ff;
+  --color-accent-on-light: #1d4ed8;
+  --color-stage: #5ac8fa;
+  --color-stage-2: #7c6bff;
+
+  --color-gold: #f2c14e;
+  --color-gold-deep: #c9962a;
+
+  --color-ok: #30d158;
+  --color-err: #ff453a;
+  --color-warn: #ffd60a;
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-2xl: 36px;
+
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --tracking-tightest: -0.045em;
+  --tracking-tighter: -0.035em;
+  --tracking-tight: -0.02em;
+}
+
+/* Safe-area variables. In the desktop iPhone frame we override them. */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--color-ink);
+  }
+  body {
+    margin: 0;
+    touch-action: manipulation;
+    background: var(--color-ink);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'ss01', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+  button { cursor: pointer; font: inherit; color: inherit; }
+  input, select, textarea { font-size: 16px; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 6px; }
+  ::selection { background: color-mix(in srgb, var(--color-accent) 40%, transparent); }
+  h1, h2, h3, h4 { text-wrap: balance; }
+}
+
+@layer utilities {
+  .tabular { font-variant-numeric: tabular-nums; }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .glass {
+    background: color-mix(in srgb, var(--color-ink-2) 72%, transparent);
+    backdrop-filter: saturate(180%) blur(22px);
+    -webkit-backdrop-filter: saturate(180%) blur(22px);
+  }
+  .glass-light {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: saturate(160%) blur(18px);
+    -webkit-backdrop-filter: saturate(160%) blur(18px);
+  }
+  .hairline { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+  .hairline-2 { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+  .touch-none-select { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  .squircle { border-radius: 22%; }
+  .text-gradient-accent {
+    background: linear-gradient(100deg, var(--color-accent) 0%, var(--color-stage) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-gold {
+    background: linear-gradient(100deg, #ffe39a 0%, var(--color-gold) 45%, var(--color-gold-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+}
+
+/* The app shell inside the phone never rubber-bands the page */
+.app-root {
+  overscroll-behavior: none;
+}
+.scroll-y {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* iOS-like range input (accessible native slider) */
+input[type='range'].range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  --p: 50%;
+  touch-action: pan-y;
+}
+input[type='range'].range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-accent) var(--p), rgba(255, 255, 255, 0.12) var(--p));
+}
+input[type='range'].range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-accent) var(--p), rgba(255, 255, 255, 0.12) var(--p));
+}
+input[type='range'].range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -10px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.15s;
+}
+input[type='range'].range:active::-webkit-slider-thumb { transform: scale(1.1); }
+input[type='range'].range::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+}
+input[type='range'].range.light::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--color-accent-on-light) var(--p), rgba(0, 0, 0, 0.1) var(--p));
+}
+input[type='range'].range.light::-moz-range-track {
+  background: linear-gradient(90deg, var(--color-accent-on-light) var(--p), rgba(0, 0, 0, 0.1) var(--p));
+}
