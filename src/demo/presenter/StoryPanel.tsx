@@ -112,7 +112,7 @@ const INTRO: Record<Role, string> = {
   maya: 'The fan. She verifies once, buys at face value and, if she can’t go, resells fairly. She never sees the word crypto.',
   ben: 'The buyer. He finds Maya’s seat at $105 instead of $400 elsewhere, and walks in with a code that can’t be copied.',
   organizer: 'Real demand by zone, bots blocked, every resale within the cap, and rules chosen per jurisdiction.',
-  artist: '2% of every resale, paid instantly. Plus the pilot model: what one mid-size venue earns the artist and the platform in a year.',
+  artist: '2% of face value on every resale, paid instantly. Plus the pilot model: what one mid-size venue earns the artist and the platform in a year.',
   gate: 'A QR signed by the owner that changes every 5 seconds. Screenshots and resold tickets fail. Works offline.',
   proof: 'Every resale is public and every rule is code. Nobody, not even Proof of Seat, can break the rules.',
 }

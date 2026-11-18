@@ -190,9 +190,9 @@ const CODE = [
   { code: '  require(isVerified(buyer))', kind: 'req', check: 'verified' },
   { code: '  require(ticketsOf(buyer) < 4)', kind: 'req', check: 'limit' },
   { code: '  require(now < eventStart - 2h)', kind: 'req', check: 'window' },
-  { code: '  pay(artist, price * 2%)', kind: 'pay', note: 'royalty' },
-  { code: '  pay(platform, price * 2%)', kind: 'pay', note: 'fee' },
-  { code: '  pay(seller, price * 96%)', kind: 'pay', note: 'seller' },
+  { code: '  pay(artist, faceValue * 2%)', kind: 'pay', note: 'royalty' },
+  { code: '  pay(platform, faceValue * 1%)', kind: 'pay', note: 'fee' },
+  { code: '  pay(seller, price - faceValue * 3%)', kind: 'pay', note: 'seller' },
   { code: '  transfer(ticket, seller -> buyer)', kind: 'pay', note: 'transfer' },
 ] as const
 
@@ -336,8 +336,8 @@ function TxDetail({ id }: { id: string }) {
             {[
               ['Buyer paid', usd(br.buyerTotal)],
               ['Seller received', usd(br.seller)],
-              ['Artist royalty (2%)', usd(br.royalty)],
-              ['Proof of Seat fee (2%)', usd(br.fee)],
+              ['Artist royalty (2% of face)', usd(br.royalty)],
+              ['Proof of Seat fee (1% of face)', usd(br.fee)],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between border-b border-white/[0.06] px-4 py-2.5 text-[14px] last:border-0">
                 <span className="text-fg-2">{k}</span>

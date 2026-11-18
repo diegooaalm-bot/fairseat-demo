@@ -54,8 +54,8 @@ export function BuildingBlocks() {
 /* ───────── Slide 10 · The rules written into the contract ───────── */
 const RULES = [
   ['Resale cap', '105%', 'Max resale price. A $100 ticket can’t sell above $105.', 'text-deck-blue'],
-  ['Royalty', '2%', 'Of every resale goes to the artist’s address, automatically.', 'text-deck-teal'],
-  ['Marketplace', '1', 'Tokens only move through our official marketplace contract.', 'text-deck-ink'],
+  ['Royalty', '2%', 'Of face value, on every resale, to the artist’s address, automatically.', 'text-deck-teal'],
+  ['Marketplace', 'Any', 'Any ticketing app can list it. Every sale settles through our contract, same rules.', 'text-deck-ink'],
   ['Ticket limit', '4', 'Tickets per verified person, per event, to stop bots.', 'text-deck-ink'],
 ]
 export function ContractRules() {
@@ -111,8 +111,8 @@ export function ContractRules() {
                 <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4">
                   <Tile k="Buyer pays, all-in" v={br.buyerTotal} />
                   <Tile k="Seller keeps" v={br.seller} c="text-[#8db8ff]" />
-                  <Tile k="Artist · 2%" v={br.royalty} c="text-[#5fd6c2]" />
-                  <Tile k="Platform · 2%" v={br.fee} />
+                  <Tile k="Artist · 2% of face" v={br.royalty} c="text-[#5fd6c2]" />
+                  <Tile k="Platform · 1% of face" v={br.fee} />
                 </div>
               </div>
               <div className="flex flex-col justify-center border-t border-white/10 bg-[#0a0c10] p-6 font-mono text-[13px] leading-[1.9] sm:p-8 lg:border-t-0 lg:border-l">

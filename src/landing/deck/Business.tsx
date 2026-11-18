@@ -4,20 +4,20 @@ import { Card, Container, Reveal, Section, SlideHead, Sources } from './ui'
 
 /* ───────── Slide 11 · Business model: following the $105 ───────── */
 const SPLIT = [
-  { k: 'Seller keeps', v: '$100.80', w: 76, c: 'bg-deck-blue' },
-  { k: 'Platform', v: '$2.10', w: 12, c: 'bg-deck-slate' },
-  { k: 'Artist', v: '$2.10', w: 12, c: 'bg-deck-teal' },
+  { k: 'Seller keeps', v: '$102.00', w: 76, c: 'bg-deck-blue' },
+  { k: 'Artist', v: '$2.00', w: 13, c: 'bg-deck-teal' },
+  { k: 'Platform', v: '$1.00', w: 11, c: 'bg-deck-slate' },
 ]
 export function Following105() {
   const cards = [
-    { icon: CircleDollarSign, t: 'How we earn', d: 'A 1% fee on primary sales and a 2% fee on resales, paid by the seller.', tone: 'bg-deck-blue/10 text-deck-blue' },
+    { icon: CircleDollarSign, t: 'How we earn', d: 'A 1% fee on primary sales, paid by the organizer, and 1% of face value on every resale.', tone: 'bg-deck-blue/10 text-deck-blue' },
     { icon: Ban, t: 'No platform token', d: 'A ticketing app doesn’t need one, and FTX’s FTT showed the risk.', tone: 'bg-deck-red/10 text-deck-red' },
     { icon: CircleCheck, t: 'Who wins', d: 'Fans pay the same or less. Artists gain a new revenue stream. Brokers lose the markup.', tone: 'bg-deck-green/12 text-deck-green-ink' },
   ]
   return (
     <Section id="business">
       <Container>
-        <SlideHead kicker="Part 4 · Business model" title="Business Model: Following the $105" sub="A $100 ticket resold at the $105 cap, with a 2% resale fee and 2% artist royalty." />
+        <SlideHead kicker="Part 4 · Business model" title="Business Model: Following the $105" sub="A $100 ticket resold at the $105 cap: the seller gets face value + 2%, the artist 2% and the platform 1%." />
         <Reveal delay={0.1} className="mt-12">
           <div className="flex h-[92px] gap-[3px] overflow-hidden rounded-[18px] sm:h-[104px]">
             {SPLIT.map((s, i) => (

@@ -2,9 +2,10 @@ import { motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
-import { CHAPTERS, Eras, FanVideo, Hero, Roadmap } from './deck/Opening'
+import { CHAPTERS, Eras, Hero, IntroVideo, Roadmap } from './deck/Opening'
 import { Broken, Scalping } from './deck/Problem'
-import { Alternatives, TokenChanges } from './deck/Solution'
+import { TokenChanges } from './deck/Solution'
+import { Alternatives } from './deck/Alternatives'
 import { BuildingBlocks, ContractRules } from './deck/How'
 import { BuyIn, Following105, Risks } from './deck/Business'
 import { Footer, ThankYou, TryDemo } from './deck/Closing'
@@ -30,8 +31,8 @@ export default function Landing() {
     <div className="relative bg-white text-deck-ink">
       <Nav />
       <main>
+        <IntroVideo />
         <Hero />
-        <FanVideo />
         <Eras />
         <Roadmap />
         <Broken />
@@ -55,7 +56,10 @@ function Nav() {
   const { scrollY } = useScroll()
   const [light, setLight] = useState(false)
   const [active, setActive] = useState<string | null>(null)
-  useMotionValueEvent(scrollY, 'change', (v) => setLight(v > window.innerHeight - 64))
+  useMotionValueEvent(scrollY, 'change', () => {
+    const t = document.getElementById('title')
+    setLight(!!t && t.getBoundingClientRect().bottom < 64)
+  })
   useEffect(() => {
     const ids = [...CHAPTERS.map(([id]) => id), 'rules', 'business', 'demo']
     const els = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]

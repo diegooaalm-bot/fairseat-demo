@@ -52,7 +52,7 @@ export default function Kit() {
             <div className="flex flex-col gap-3 rounded-[28px] bg-ink-2 p-6 hairline">
               <div className="text-[64px] leading-none font-bold tracking-[-0.045em]">Knows the rules.</div>
               <div className="text-[28px] font-semibold tracking-[-0.025em]">Resell at a fair price</div>
-              <div className="text-[17px] text-fg-2">Your seat goes to a verified fan. You keep $100.80 of $105, the artist gets $2.10.</div>
+              <div className="text-[17px] text-fg-2">Your seat goes to a verified fan. You keep $102 of $105, the artist gets $2.</div>
               <div className="text-[44px] font-semibold tracking-[-0.03em] tabular">$105.00</div>
               <code className="font-mono text-[13px] text-fg-2">require(price &lt;= faceValue * 105%)</code>
             </div>

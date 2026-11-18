@@ -181,7 +181,7 @@ export const NOVA_BASELINE = {
   soldBefore: 4_512,
   botsBlocked: 184_331,
   tourResales: 1_186,
-  tourRoyaltyCents: 1_186 * 210,
+  tourRoyaltyCents: 1_186 * 200,
   waitlist: { Orchestra: 3_120, Mezzanine: 2_480, Balcony: 1_905 },
   gateSeconds: 2.4,
 }

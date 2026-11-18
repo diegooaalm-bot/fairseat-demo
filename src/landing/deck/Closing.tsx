@@ -5,60 +5,46 @@ import { ArrowUpRight } from 'lucide-react'
 import { Logo, Mark } from '@/components/brand/Logo'
 import { QRMark } from '@/components/ticket/DynamicQR'
 import credits from '@/data/photo-credits.json'
-import { Container, Reveal, Section, SlideHead } from './ui'
+import { Container, Reveal } from './ui'
 
 const DEMO_URL = 'https://diegooaalm-bot.github.io/fairseat-demo/#/demo'
 
-/* ───────── Slide 14 · Try Proof of Seat ───────── */
+/* ───────── Slide 14 · Try Proof of Seat: a QR big enough to scan from the back of the room ───────── */
 export function TryDemo() {
-  const roles = [
-    ['Fan', 'buy at face value, resell under the 105% cap'],
-    ['Artist', 'watch the 2% royalty arrive on every resale'],
-    ['Gate', 'scan a ticket at the door'],
-    ['Shared ledger', 'every view reads from one record'],
-  ]
+  const roles = ['Fan: buy and resell under the 105% cap', 'Artist: 2% on every resale', 'Gate: scan at the door', 'One shared ledger']
   return (
-    <Section id="demo">
-      <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <SlideHead kicker="Demo" title="Try Proof of Seat" sub="Scan to open the live demo on your phone." />
-            <Reveal delay={0.1}>
-              <ul className="mt-8 flex flex-col gap-3">
-                {roles.map(([k, d]) => (
-                  <li key={k} className="flex items-start gap-3 text-[18px] leading-snug">
-                    <span className="mt-[9px] h-2 w-2 shrink-0 rounded-full bg-deck-blue" />
-                    <span>
-                      <b className="font-semibold">{k}:</b> <span className="text-deck-slate">{d}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link to="/demo" className="inline-flex h-[52px] items-center gap-2 rounded-full bg-deck-blue px-6 text-[16px] font-semibold text-white transition-transform hover:scale-[1.03] active:scale-[0.97]">
-                  Open the demo <ArrowUpRight size={17} />
-                </Link>
-                <span className="font-mono text-[14px] text-deck-blue-ink underline underline-offset-4">diegooaalm-bot.github.io/fairseat-demo</span>
-              </div>
-            </Reveal>
-          </div>
-          <Reveal delay={0.15} className="mx-auto w-full max-w-[400px]">
-            <motion.div
-              initial={{ rotate: -3, scale: 0.94 }}
-              whileInView={{ rotate: 0, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="rounded-[32px] border border-deck-line bg-white p-7 shadow-[0_40px_80px_-40px_rgba(13,15,20,.45)]"
-            >
-              <QRMark text={DEMO_URL} size={340} fg="#0d0f14" className="h-auto w-full" />
-              <div className="mt-4 flex items-center justify-center gap-2 text-[14px] font-semibold text-deck-mute">
-                <Mark size={18} className="text-deck-blue" /> Scan with your camera
-              </div>
-            </motion.div>
-          </Reveal>
+    <section id="demo" className="relative flex min-h-[100svh] scroll-mt-0 flex-col items-center justify-center bg-white px-5 py-20 text-deck-ink">
+      <Reveal className="text-center">
+        <span className="mx-auto block h-[3px] w-8 rounded-full bg-deck-blue" />
+        <div className="mt-4 text-[13px] font-semibold tracking-[0.14em] text-deck-blue-ink uppercase">Demo</div>
+        <h2 className="mt-2 text-[clamp(34px,5vw,64px)] leading-[1] font-bold tracking-[-0.045em]">Scan to try the demo</h2>
+      </Reveal>
+      <motion.a
+        href={DEMO_URL}
+        aria-label="Open the live demo"
+        initial={{ scale: 0.92, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="mt-6 block rounded-[28px] border border-deck-line bg-white p-[clamp(12px,1.6vw,24px)] shadow-[0_40px_90px_-40px_rgba(13,15,20,.45)]"
+        style={{ width: 'min(64svh, 88vw, 720px)' }}
+      >
+        <QRMark text={DEMO_URL} size={600} fg="#000000" className="block h-auto w-full" />
+      </motion.a>
+      <Reveal delay={0.1} className="mt-6 text-center">
+        <div className="font-mono text-[clamp(16px,1.8vw,22px)] font-semibold text-deck-blue-ink">diegooaalm-bot.github.io/fairseat-demo</div>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {roles.map((r) => (
+            <span key={r} className="rounded-full bg-deck-bg px-3 py-1.5 text-[13px] font-medium text-deck-slate">
+              {r}
+            </span>
+          ))}
         </div>
-      </Container>
-    </Section>
+        <Link to="/demo" className="mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-deck-blue px-5 text-[15px] font-semibold text-white sm:hidden">
+          Open the demo <ArrowUpRight size={16} />
+        </Link>
+      </Reveal>
+    </section>
   )
 }
 

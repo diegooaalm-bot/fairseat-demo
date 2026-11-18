@@ -91,7 +91,7 @@ function Dashboard() {
           <Kpi label="Bots blocked" tone="err" icon={<Bot size={16} />} value={<NumberTicker value={st.botsBlocked} format={fmtInt} duration={0.6} />} sub="Identity check at the door" />
           <Kpi label="Resales within cap" tone="ok" icon={<ShieldCheck size={16} />} value="100%" sub={`${int(st.resales)} resales · none above $105`} />
           <Kpi label="Avg. entry time" tone="accent" icon={<Timer size={16} />} value={`${NOVA_BASELINE.gateSeconds} s`} sub="Works offline at the gate" />
-          <Kpi label="Artist royalties" tone="gold" icon={<Music2 size={16} />} value={<NumberTicker value={st.royaltyCents} format={fmtUsd} />} sub="2% of every resale" />
+          <Kpi label="Artist royalties" tone="gold" icon={<Music2 size={16} />} value={<NumberTicker value={st.royaltyCents} format={fmtUsd} />} sub="2% of face value on every resale" />
         </div>
 
         {/* Real waitlist */}
@@ -268,7 +268,7 @@ function Create() {
             {step === 2 && (
               <Card>
                 <Range label="Resale cap" value={r.capPct} min={100} max={125} step={5} onChange={(v) => updR({ capPct: v })} format={(v) => `${v}% · max ${usd((draft.priceCents * v) / 100, { cents: false })}`} hint="Default 105%. Nobody can sell above this, not even you." />
-                <Range label="Artist royalty" value={r.royaltyPct} min={0} max={5} step={1} onChange={(v) => updR({ royaltyPct: v })} format={(v) => `${v}% of every resale`} />
+                <Range label="Artist royalty" value={r.royaltyPct} min={0} max={5} step={1} onChange={(v) => updR({ royaltyPct: v })} format={(v) => `${v}% of face value per resale`} />
                 <Range label="Tickets per fan" value={r.maxPerPerson} min={1} max={8} onChange={(v) => updR({ maxPerPerson: v })} format={(v) => `${v}`} />
                 <Range label="Resale closes" value={r.resaleCloseHours} min={0} max={24} onChange={(v) => updR({ resaleCloseHours: v })} format={(v) => (v ? `${v} h before` : 'at showtime')} />
                 <Range label="Gifts per ticket" value={r.maxTransfers} min={0} max={5} onChange={(v) => updR({ maxTransfers: v })} format={(v) => `${v} transfers`} />
@@ -293,8 +293,8 @@ function Create() {
                     <div className="mt-1 text-[13px] leading-snug text-fg-2">{j.note}</div>
                   </div>
                   <RuleRow k="Resale cap" v={`${r.capPct}% (${usd((draft.priceCents * r.capPct) / 100, { cents: false })})`} state={j.openMarket ? 'On Proof of Seat' : 'Enforced'} warn={j.openMarket} />
-                  <RuleRow k="Transfer to other markets" v={j.openMarket ? 'Allowed by state law' : 'Official market only'} state={j.openMarket ? 'Open' : 'Locked'} warn={j.openMarket} />
-                  <RuleRow k="Artist royalty" v={`${r.royaltyPct}% of every resale`} state={j.openMarket ? 'On Proof of Seat' : 'Enforced'} warn={j.openMarket} />
+                  <RuleRow k="Marketplaces" v={j.openMarket ? 'Any, plus uncapped by state law' : 'Any app, through the contract'} state={j.openMarket ? 'Open' : 'Enforced'} warn={j.openMarket} />
+                  <RuleRow k="Artist royalty" v={`${r.royaltyPct}% of face per resale`} state={j.openMarket ? 'On Proof of Seat' : 'Enforced'} warn={j.openMarket} />
                   <RuleRow k="Tickets per fan" v={`${r.maxPerPerson}`} state="Enforced" />
                   <RuleRow k="Resale window" v={`Closes ${r.resaleCloseHours} h before`} state="Enforced" />
                   <RuleRow k="Verified buyers only" v="Identity checked once" state="Enforced" />

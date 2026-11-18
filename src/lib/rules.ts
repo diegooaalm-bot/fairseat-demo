@@ -1,17 +1,18 @@
 /**
  * Proof of Seat rules engine. Pure functions, integer cents.
- * Resale is capped at 105% of face value. On every resale, 2% of the price goes to the artist
- * and 2% to the platform, both paid by the seller: a $100 ticket resold at $105 leaves the seller
- * $100.80, the platform $2.10 and the artist $2.10. The buyer pays the listing price, all-in.
- * Primary sales carry a 1% fee, paid by the organizer.
+ * Resale is capped at 105% of face value. On every resale the artist gets 2% of face value and
+ * the platform 1% of face value, out of the price: a $100 ticket resold at the $105 cap leaves the
+ * seller $102 (face value + 2%), the artist $2 and the platform $1. The buyer pays the listing
+ * price, all-in. Primary sales carry a 1% fee, paid by the organizer.
+ * Any marketplace can list a ticket; every resale settles through the contract, which applies these rules.
  */
 
 export type Jurisdiction = 'UK' | 'GA' | 'NY' | 'CO'
 
 export interface Rules {
   capPct: number // resale cap, % of face value
-  royaltyPct: number // to the artist, % of the resale price, paid by the seller
-  feePct: number // Proof of Seat resale fee, % of the resale price, paid by the seller (it also pays the gas)
+  royaltyPct: number // to the artist, % of face value, out of every resale price
+  feePct: number // Proof of Seat resale fee, % of face value, out of every resale price (it also pays the gas)
   primaryFeePct: number // Proof of Seat primary fee, % of face value, paid by the organizer
   maxPerPerson: number
   resaleCloseHours: number
@@ -22,7 +23,7 @@ export interface Rules {
 export const DEFAULT_RULES: Rules = {
   capPct: 105,
   royaltyPct: 2,
-  feePct: 2,
+  feePct: 1,
   primaryFeePct: 1,
   maxPerPerson: 4,
   resaleCloseHours: 2,
@@ -42,9 +43,9 @@ export interface ResaleBreakdown {
 }
 
 /** Who gets what when a ticket with this face value is resold at this price. */
-export function resaleBreakdown(priceCents: number, _faceCents?: number, rules: Pick<Rules, 'royaltyPct' | 'feePct'> = DEFAULT_RULES): ResaleBreakdown {
-  const royalty = Math.round((priceCents * rules.royaltyPct) / 100)
-  const fee = Math.round((priceCents * rules.feePct) / 100)
+export function resaleBreakdown(priceCents: number, faceCents: number, rules: Pick<Rules, 'royaltyPct' | 'feePct'> = DEFAULT_RULES): ResaleBreakdown {
+  const royalty = Math.round((faceCents * rules.royaltyPct) / 100)
+  const fee = Math.round((faceCents * rules.feePct) / 100)
   return { price: priceCents, royalty, seller: priceCents - royalty - fee, fee, buyerTotal: priceCents }
 }
 
@@ -66,7 +67,7 @@ export const JURISDICTIONS: Record<Jurisdiction, JurisdictionProfile> = {
     capOnPlatform: true,
     openMarket: false,
     headline: 'Full cap, everywhere',
-    note: 'Every resale goes through the Proof of Seat market and is capped. Compliance is automatic and provable.',
+    note: 'Any marketplace can list the ticket; every resale settles through the Proof of Seat contract and is capped. Compliance is automatic and provable.',
   },
   GA: {
     id: 'GA',
@@ -75,7 +76,7 @@ export const JURISDICTIONS: Record<Jurisdiction, JurisdictionProfile> = {
     capOnPlatform: true,
     openMarket: false,
     headline: 'Full cap, everywhere',
-    note: 'Like most states: resale only through the official market, capped, with royalties.',
+    note: 'Like most states: resale on any marketplace, always through the contract, capped, with royalties.',
   },
   NY: {
     id: 'NY',
@@ -154,11 +155,10 @@ export const FESTIVAL_DEFAULTS: FestivalInput = { capacity: 50_000, price: 60, r
 export function festival(i: FestivalInput, rules: Rules = DEFAULT_RULES) {
   const primaryFee = i.capacity * i.price * (rules.primaryFeePct / 100)
   const resales = Math.round((i.capacity * i.resoldPct) / 100)
-  const resalePrice = (i.price * rules.capPct) / 100 // assume resales at the cap
-  const resaleFee = resales * resalePrice * (rules.feePct / 100)
+  const resaleFee = resales * i.price * (rules.feePct / 100)
   const revenue = primaryFee + resaleFee
-  const royalties = resales * resalePrice * (rules.royaltyPct / 100)
-  const sellerBonus = resales * (resalePrice * (1 - (rules.royaltyPct + rules.feePct) / 100) - i.price)
+  const royalties = resales * i.price * (rules.royaltyPct / 100)
+  const sellerBonus = resales * i.price * ((rules.capPct - 100 - rules.royaltyPct - rules.feePct) / 100) // at the cap
   const ops = i.capacity + resales + i.capacity // issue + resales + badges
   const chainCost = ops * 0.01
   return { primaryFee, resales, resaleFee, revenue, royalties, sellerBonus, ops, chainCost, cap: (i.price * rules.capPct) / 100 }

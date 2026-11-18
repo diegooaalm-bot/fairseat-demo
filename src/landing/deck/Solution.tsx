@@ -1,8 +1,8 @@
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
-import { Check, Lock, Search, ShieldCheck, Star, X } from 'lucide-react'
+import { Lock, Search, ShieldCheck, Star } from 'lucide-react'
 import { Mark } from '@/components/brand/Logo'
 import { QRMark } from '@/components/ticket/DynamicQR'
-import { Card, Container, Reveal, Section, SlideHead, Sources } from './ui'
+import { Card, Container, Reveal, Section, SlideHead } from './ui'
 
 /* ───────── Slide 7 · What the token changes ───────── */
 export function TokenChanges() {
@@ -94,98 +94,5 @@ function TokenTicket() {
         </div>
       </motion.div>
     </div>
-  )
-}
-
-/* ───────── Slide 8 · Better than the alternatives ───────── */
-const COLS = [
-  {
-    kicker: 'Inside one company',
-    who: 'Ticketmaster',
-    big: 'Face value',
-    bigK: 'is the most a fan can resell for, but only via the opt-in Face Value Exchange',
-    stats: [
-      ['$0', 'to the artist from any resale'],
-      ['2022', 'NFTs on Flow: souvenirs, not the ticket'],
-    ],
-    head: 'The catch',
-    rows: ['Only works inside one company’s app', 'That company can change the rules', 'Resale is its business'],
-    us: false,
-  },
-  {
-    kicker: 'On a blockchain today',
-    who: 'FIFA, startups',
-    big: '100,000+',
-    bigK: 'FIFA “Right to Buy” tokens: the right to buy a ticket, not the ticket',
-    stats: [
-      ['$999', 'one “Right to Final” token, ticket paid on top'],
-      ['Dec 2025', 'KYD Labs: “NFT ticketing doesn’t work”'],
-    ],
-    head: 'The catch',
-    rows: ['The token wasn’t the ticket', 'Fans paid twice: token, then ticket', 'No cap on the price'],
-    us: false,
-  },
-  {
-    kicker: 'Our approach',
-    who: 'Proof of Seat',
-    big: '105%',
-    bigK: 'resale cap, enforced by the contract on every transfer',
-    stats: [
-      ['2%', 'of every resale goes to the artist'],
-      ['4', 'tickets per verified person, per event'],
-    ],
-    head: 'What changes',
-    rows: ['The token is the ticket', 'Rules are code anyone can check', 'Fans can still resell, capped at 105%'],
-    us: true,
-  },
-]
-export function Alternatives() {
-  return (
-    <Section id="why" tone="gray">
-      <Container>
-        <SlideHead kicker="Part 2 · Why it wins" title="Better Than the Alternatives" sub="Ticketmaster could add a cap tomorrow. Every fix so far is a policy the platform can also turn off." />
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
-          {COLS.map((c, i) => (
-            <Reveal key={c.who} delay={i * 0.12}>
-              <div className={`flex h-full flex-col rounded-[26px] border p-6 ${c.us ? 'border-deck-blue/30 bg-[#eaf1fe] shadow-[0_30px_60px_-35px_rgba(43,107,240,.6)]' : 'border-deck-line bg-white'}`}>
-                <div className="text-[12px] font-semibold tracking-[0.12em] text-deck-mute uppercase">{c.kicker}</div>
-                <div className={`text-[20px] font-semibold tracking-[-0.02em] ${c.us ? 'text-deck-blue-ink' : ''}`}>{c.who}</div>
-                <div className={`mt-6 text-[clamp(44px,4.6vw,58px)] leading-none font-bold tracking-[-0.045em] ${c.us ? 'text-deck-blue' : ''}`}>{c.big}</div>
-                <div className="mt-2 text-[14px] leading-snug text-deck-mute">{c.bigK}</div>
-                <div className="mt-5 flex flex-col gap-2.5 border-t border-black/[0.07] pt-4">
-                  {c.stats.map(([v, k]) => (
-                    <div key={k} className="flex items-baseline gap-3">
-                      <span className="w-[78px] shrink-0 text-[16px] font-bold tracking-[-0.02em] whitespace-nowrap">{v}</span>
-                      <span className="text-[14px] leading-snug text-deck-slate">{k}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-auto pt-6">
-                  <div className={`text-[12px] font-bold tracking-[0.14em] uppercase ${c.us ? 'text-deck-green-ink' : 'text-deck-red'}`}>{c.head}</div>
-                  <ul className="mt-3 flex flex-col gap-2.5">
-                    {c.rows.map((r, j) => (
-                      <motion.li
-                        key={r}
-                        initial={{ opacity: 0, x: -8 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 + i * 0.12 + j * 0.08 }}
-                        className="flex items-start gap-2.5 text-[15px] leading-snug"
-                      >
-                        <span className={`mt-[1px] grid h-5 w-5 shrink-0 place-items-center rounded-full ${c.us ? 'bg-deck-green text-white' : 'bg-deck-red/12 text-deck-red'}`}>
-                          {c.us ? <Check size={12} strokeWidth={3} /> : <X size={12} strokeWidth={3} />}
-                        </span>
-                        {r}
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-        <Sources>Sources: Ticketmaster Face Value Exchange help pages; FIFA Collect; Live Nation (Olivia Dean, Nov 2025); KYD Labs conference talk (Dec 2025).</Sources>
-      </Container>
-    </Section>
   )
 }
