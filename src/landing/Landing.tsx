@@ -5,6 +5,7 @@ import { Logo } from '@/components/brand/Logo'
 import { Hero } from './sections/Hero'
 import { BigIdea, Cases, FollowTheMoney, Hook, Problem } from './sections/Story'
 import { BuildingBlocks, HowItWorks } from './sections/HowItWorks'
+import { PartialFixes } from './sections/PartialFixes'
 import { Business, Pilot, Risks, Rules, WhyBlockchain } from './sections/Value'
 import { Close, Footer } from './sections/Ending'
 
@@ -34,6 +35,7 @@ export default function Landing() {
         <Problem />
         <Cases />
         <FollowTheMoney />
+        <PartialFixes />
         <BigIdea />
         <WhyBlockchain />
         <HowItWorks />

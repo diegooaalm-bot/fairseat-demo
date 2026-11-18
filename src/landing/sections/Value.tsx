@@ -63,8 +63,8 @@ export function WhyBlockchain() {
         </Reveal>
         <Reveal delay={0.15} className="mt-8">
           <p className="max-w-[78ch] text-[15px] leading-relaxed text-fg-3">
-            Ticketmaster already uses rotating barcodes (SafeTix), and its Flow NFTs (since 2022) are collectibles on top of a normal ticket. Our difference: the token <i>is</i> the ticket, the cap and royalty are enforced, and anyone
-            can check the record.
+            Face Value Exchange shows a company can cap prices on its own app, and SafeTix and the Flow NFTs sit on top of a normal ticket. Our difference: the token <i>is</i> the ticket, the cap and royalty are enforced on every
+            transfer, and anyone can check the record.
           </p>
         </Reveal>
         <Reveal delay={0.2} className="mt-14">

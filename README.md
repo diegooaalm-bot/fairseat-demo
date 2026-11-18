@@ -11,7 +11,7 @@ rules written into code: resale capped at **105%** of face value, **2%** to the 
 
 <img src="docs/qr-demo.png" alt="QR code to the live demo" width="180">
 
-- `/#/` — the product page, in the same order as the slides: hook, the problem, three cases, where the markup goes, the solution,
+- `/#/` — the product page, in the same order as the slides: hook, the problem, three cases, where the markup goes, partial fixes (Ticketmaster’s Face Value Exchange, FIFA’s Right to Buy tokens), the solution,
   why a blockchain, a ticket’s life, the building blocks, the rules (with an interactive slider), business model, risks, pilot plan.
 - `/#/demo` — the live demo app: 6 roles that share one state (Maya, Ben, Organizer, Artist, Gate, Proof) and Story mode.
 - `/#/share` — a full-screen QR to the demo, for the projector.

@@ -80,7 +80,8 @@ export function Footer() {
         <p className="text-[14px] text-fg-2">Academic concept · Blockchains &amp; Crypto Assets · Goizueta Business School · Fall 2026. Not a real product.</p>
         <p>
           Business figures are illustrative hypotheses, not forecasts. Market figures are the ones cited in our presentation: CNN and Fortune (Eras Tour presale, Nov 2022); Pitchfork via Benzinga (Eras resale prices, 2023); AP and Arab News
-          (2026 World Cup Final resale, Apr 2026); TicketData via Field Level Media and Bleacher Report (Super Bowl LX prices).
+          (2026 World Cup Final resale, Apr 2026); TicketData via Field Level Media and Bleacher Report (Super Bowl LX prices). Partial fixes: Live Nation newsroom and Hypebot (Olivia Dean and Face Value Exchange, Nov 2025); TechCrunch (SafeTix, 2019); Decrypt (Ticketmaster
+          NFTs on Flow, 2022); Bloomberg and CasinoBeats (FIFA Collect and the Gespa complaint, Oct 2025); Crypto Briefing (Right to Buy tokens, 2026); Input (Big Neon); Solana Compass (KYD Labs at Breakpoint 2025).
         </p>
         <p>
           Artists, teams and venues in the demo are real, mid-size and independent; dates, listings, prices, seats and figures are illustrative. Proof of Seat is not affiliated with, endorsed by or selling tickets for any artist, team
