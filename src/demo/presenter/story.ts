@@ -102,8 +102,8 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The resale',
     title: 'Maya can’t go',
     role: 'maya',
-    say: 'A few weeks later Maya can’t go. She taps Sell. Watch the slider: it hits a wall at $105. A sale above the cap isn’t against the rules, it’s impossible: the contract rejects it. Of the $105, Maya gets $102, the artist $2 and Proof of Seat $1.',
-    fact: '$102 seller · $2 artist · $1 platform',
+    say: 'A few weeks later Maya can’t go. She taps Sell. Watch the slider: it hits a wall at $105. A sale above the cap isn’t against the rules, it’s impossible: the contract rejects it. Of the $105, Maya keeps $100.80, the artist gets $2.10 and Proof of Seat $2.10.',
+    fact: '$100.80 seller · $2.10 artist · $2.10 platform',
     apply: () => {
       fresh()
       S().ensure('mayaBought')
@@ -183,8 +183,8 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The artist gets paid',
     title: '2% of every resale',
     role: 'artist',
-    say: 'And the artist? Every resale pays the artist 2% of face value, automatically. There’s Maya’s $2 going to Faye Webster’s team. With traditional resale, the artist gets $0.',
-    fact: '+$2 per resale · $0 elsewhere',
+    say: 'And the artist? Every resale pays the artist 2%, automatically. There’s Maya’s $2.10 going to Faye Webster’s team. With traditional resale, the artist gets $0.',
+    fact: '+$2.10 per resale · $0 elsewhere',
     apply: () => {
       fresh()
       S().ensure('after')

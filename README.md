@@ -2,7 +2,7 @@
 
 An interactive product concept for **Blockchains & Crypto Assets** (Goizueta Business School, Emory · Fall 2026),
 built to match the final presentation *Tickets on the Blockchain*. Proof of Seat turns every ticket into a token with its resale
-rules written into code: resale capped at **105%** of face value, **2%** to the artist on every resale, **1%** to the platform,
+rules written into code: resale capped at **105%** of face value, **2%** of every resale to the artist, **2%** to the platform (paid by the seller),
 **4** tickets per verified person, resale closes **2 h** before the show, and tokens only move through the official marketplace.
 
 > Academic concept. Not a real product. Business figures are illustrative hypotheses. Artists, teams and venues are real; listings are illustrative (see below).
@@ -11,8 +11,9 @@ rules written into code: resale capped at **105%** of face value, **2%** to the 
 
 <img src="docs/qr-demo.png" alt="QR code to the live demo" width="180">
 
-- `/#/` — the product page, in the same order as the slides: hook, the problem, three cases, where the markup goes, partial fixes (Ticketmaster’s Face Value Exchange, FIFA’s Right to Buy tokens), the solution,
-  why a blockchain, a ticket’s life, the building blocks, the rules (with an interactive slider), business model, risks, pilot plan.
+- `/#/` — the product page, one section per slide of the final deck (*Proof of Seat*): title, the fan video, the Eras presale, roadmap,
+  why ticketing is broken, scalping in action, what the token changes, better than the alternatives, how it works, the rules (with an
+  interactive slider), business model, who buys in, risks, the demo QR and questions. The fan video lives in `public/video/`.
 - `/#/demo` — the live demo app: 6 roles that share one state (Maya, Ben, Organizer, Artist, Gate, Proof) and Story mode.
 - `/#/share` — a full-screen QR to the demo, for the projector.
 
@@ -61,7 +62,7 @@ Start in Story mode on the projector (or on your phone). Each line: **what to ta
 | 0:10 | → (Chapter 2) | *“Meet Proof of Seat. One seat, one token, one owner. Resale capped at 105%, 2% to the artist, 4 tickets per verified fan.”* |
 | 0:18 | → (The fair queue) — the bot attack plays by itself | *“Presale for Faye Webster at the Fox Theatre, a mid-size venue like the ones we’d pilot with. Bots hit the identity check; only verified people get through.”* |
 | 0:27 | → (Pick a seat and pay): Mezzanine M3 is open; tap Row 14 seat 7, then four more | *“$100, all-in. Four tickets per person: try a fifth and the rule pushes back.”* Deselect, tap **$100.00**, double-tap **Double-click to pay**. |
-| 0:38 | → (Maya can’t go): drag the slider hard to the right, or tap **Max allowed** | *“She can’t go, so she taps Sell. It hits a wall at $105: the contract rejects anything above. $102 for her, $2 for the artist, $1 for us.”* |
+| 0:38 | → (Maya can’t go): drag the slider hard to the right, or tap **Max allowed** | *“She can’t go, so she taps Sell. It hits a wall at $105: the contract rejects anything above. $100.80 for her, $2.10 for the artist, $2.10 for us.”* |
 | 0:49 | → (The fair resale market) | *“The show is sold out. Every seat here comes from a verified fan, every price under the cap. There’s Maya’s seat at $105.”* |
 | 0:57 | → (Ben buys): **Buy for $105.00**, double-tap to pay | *“Ben pays $105 all-in, not $400 plus fees. One all-or-nothing transaction: the ticket and the money move at the same time.”* |
 | 1:06 | → (At the door): click **Scan** (desktop) or **Scan Ben’s phone** | *“His QR changes every few seconds and is signed by his wallet. Welcome, Ben.”* Tap **Screenshot** → *“A screenshot fails.”* |
@@ -76,7 +77,7 @@ Outside Story mode you can browse like a real ticketing app:
 - **Resale** is its own tab. *Buy tickets* lists every resale seat from verified fans (sold-out shows first), with face value, price and markup.
   *Sell a ticket* lists your tickets with their maximum resale price.
 - Opening a listing shows a **price check** (face value · listed at · max allowed), a comparison with open resale sites and a bar of
-  **where the money goes** (seller, artist 2% of face, Proof of Seat 1% of face). The buyer pays the listing price, all-in.
+  **where the money goes** (seller, artist 2%, Proof of Seat 2%). The buyer pays the listing price, all-in.
 - **Manchester Orchestra is sold out**, so its page only offers fair resale. Maya also owns a Japanese Breakfast ticket she can sell at once
   (dashed **DEMO · Simulate a verified buyer** completes the sale).
 
@@ -121,14 +122,13 @@ All photos come from Wikimedia Commons under free licenses, cropped and resized 
 - Dad’s Garage — “Dads Garage Dragon Con September 6 2026 0851” by John Manard, CC BY-SA 4.0
 - Center for Puppetry Arts — “SANTAANDRUDOLPHCFPA” by BakedintheHole, CC0
 - Fox Theatre — “Fox Theater night” by Scott Ehardt, public domain
-- Eras Tour (the hook on the product page) — “Taylor Swift Eras Tour London 20240819 1989era” by BrigidLIS, CC BY 4.0
 
 ## What’s inside
 
 - Vite + React 19 + TypeScript + Tailwind CSS 4 + Motion. Zustand for the shared, persisted demo state. `qrcode` (core encoder) for real QR codes. Lucide icons.
 - 100% static and deterministic: a seeded PRNG, a fixed demo clock (presale day, show night, after the show) and no network calls.
 - PWA via `vite-plugin-pwa` (precached, offline after first load). HashRouter, so it works on GitHub Pages without server config.
-- `src/lib/rules.ts` is the rules engine: cap, royalty, fee and the four resale checks. A $100 ticket resold at the $105 cap: the buyer pays $105, the seller gets $102, the artist $2, Proof of Seat $1.
+- `src/lib/rules.ts` is the rules engine: cap, royalty, fee and the four resale checks. A $100 ticket resold at the $105 cap: the buyer pays $105, the seller gets $100.80, the artist $2.10, Proof of Seat $2.10.
 - `src/store/demo.ts` is the single ledger every role reads from, the same idea as the blockchain itself.
 - `src/demo/presenter/story.ts` defines the 7 chapters (12 steps) of Story mode.
 
@@ -143,10 +143,10 @@ and the demo at `https://<user>.github.io/<repo>/#/demo`.
 | Rule | Default |
 |---|---|
 | Resale cap | 105% of face value |
-| Split of a resale at the cap | seller face value + 2%, artist 2%, Proof of Seat 1% (all % of face value) |
-| Artist royalty | 2% of face value on every resale, paid instantly |
-| Proof of Seat resale fee | 1% of face value, out of the price (the buyer pays the listing price, all-in); it also pays the gas |
-| Proof of Seat primary fee | $1.50 per ticket, paid by the organizer |
+| Split of a resale at the cap | seller $100.80, artist $2.10, Proof of Seat $2.10 on a $105 resale (2% + 2% of the price, paid by the seller) |
+| Artist royalty | 2% of every resale, paid instantly |
+| Proof of Seat resale fee | 2% of every resale, paid by the seller (the buyer pays the listing price, all-in); it also pays the gas |
+| Proof of Seat primary fee | 1% of face value, paid by the organizer |
 | Per-person limit | 4 tickets per verified person, per event |
 | Marketplace | tokens only move through the official marketplace contract |
 | Resale window | closes 2 h before the show |

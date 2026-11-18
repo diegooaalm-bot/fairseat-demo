@@ -245,7 +245,7 @@ function HowSelling() {
   const steps = [
     ['Set your price', 'Anything up to 105% of what you paid. The ticket blocks higher prices.'],
     ['A verified fan buys it', 'Only real, verified fans. They pay the price you set, with no fees on top.'],
-    ['Everyone is paid at once', 'The artist gets 2% of face value, Proof of Seat 1%, you keep the rest. Ticket and money move together.'],
+    ['Everyone is paid at once', 'The artist gets 2%, Proof of Seat 2%, you keep the rest. Ticket and money move together.'],
   ]
   return (
     <div className="rounded-[16px] bg-ink-3 p-4 hairline">
@@ -365,7 +365,7 @@ export function Offer({ person, id }: { person: PersonId; id: string }) {
               <div className="text-[20px] font-bold tabular">{usd(br.buyerTotal)}</div>
             </div>
             <div className="mb-3 text-[12px] text-fg-3">
-              All-in: no fees on top. Proof of Seat’s 1% comes out of the price.
+              All-in: no fees on top. The seller pays the 2% fee and the 2% royalty.
             </div>
             <MoneySplit priceCents={l.priceCents} faceCents={l.faceCents} artist={shortArtist(ev.artist)} seller={l.sellerName === 'Verified fan' ? 'Seller' : l.sellerName} />
           </div>

@@ -1,17 +1,18 @@
 /**
  * Proof of Seat rules engine. Pure functions, integer cents.
- * Resale is capped at 105% of face value. The 5% above face is split:
- * 2% to the seller, 2% to the artist, 1% to the platform (all % of face value).
- * The buyer pays the listing price, all-in: no fees on top.
+ * Resale is capped at 105% of face value. On every resale, 2% of the price goes to the artist
+ * and 2% to the platform, both paid by the seller: a $100 ticket resold at $105 leaves the seller
+ * $100.80, the platform $2.10 and the artist $2.10. The buyer pays the listing price, all-in.
+ * Primary sales carry a 1% fee, paid by the organizer.
  */
 
 export type Jurisdiction = 'UK' | 'GA' | 'NY' | 'CO'
 
 export interface Rules {
   capPct: number // resale cap, % of face value
-  royaltyPct: number // to the artist, % of face value, on every resale
-  feePct: number // Proof of Seat resale fee, % of face value, taken from the price (it also pays the gas)
-  primaryFeeCents: number // Proof of Seat primary fee per ticket, paid by the organizer
+  royaltyPct: number // to the artist, % of the resale price, paid by the seller
+  feePct: number // Proof of Seat resale fee, % of the resale price, paid by the seller (it also pays the gas)
+  primaryFeePct: number // Proof of Seat primary fee, % of face value, paid by the organizer
   maxPerPerson: number
   resaleCloseHours: number
   maxTransfers: number // gifts per ticket
@@ -21,8 +22,8 @@ export interface Rules {
 export const DEFAULT_RULES: Rules = {
   capPct: 105,
   royaltyPct: 2,
-  feePct: 1,
-  primaryFeeCents: 150,
+  feePct: 2,
+  primaryFeePct: 1,
   maxPerPerson: 4,
   resaleCloseHours: 2,
   maxTransfers: 2,
@@ -41,9 +42,9 @@ export interface ResaleBreakdown {
 }
 
 /** Who gets what when a ticket with this face value is resold at this price. */
-export function resaleBreakdown(priceCents: number, faceCents: number, rules: Pick<Rules, 'royaltyPct' | 'feePct'> = DEFAULT_RULES): ResaleBreakdown {
-  const royalty = Math.round((faceCents * rules.royaltyPct) / 100)
-  const fee = Math.round((faceCents * rules.feePct) / 100)
+export function resaleBreakdown(priceCents: number, _faceCents?: number, rules: Pick<Rules, 'royaltyPct' | 'feePct'> = DEFAULT_RULES): ResaleBreakdown {
+  const royalty = Math.round((priceCents * rules.royaltyPct) / 100)
+  const fee = Math.round((priceCents * rules.feePct) / 100)
   return { price: priceCents, royalty, seller: priceCents - royalty - fee, fee, buyerTotal: priceCents }
 }
 
@@ -151,12 +152,13 @@ export interface FestivalInput {
 export const FESTIVAL_DEFAULTS: FestivalInput = { capacity: 50_000, price: 60, resoldPct: 15 }
 
 export function festival(i: FestivalInput, rules: Rules = DEFAULT_RULES) {
-  const primaryFee = i.capacity * (rules.primaryFeeCents / 100)
+  const primaryFee = i.capacity * i.price * (rules.primaryFeePct / 100)
   const resales = Math.round((i.capacity * i.resoldPct) / 100)
-  const resaleFee = resales * i.price * (rules.feePct / 100)
+  const resalePrice = (i.price * rules.capPct) / 100 // assume resales at the cap
+  const resaleFee = resales * resalePrice * (rules.feePct / 100)
   const revenue = primaryFee + resaleFee
-  const royalties = resales * i.price * (rules.royaltyPct / 100)
-  const sellerBonus = resales * i.price * ((rules.capPct - 100 - rules.royaltyPct - rules.feePct) / 100)
+  const royalties = resales * resalePrice * (rules.royaltyPct / 100)
+  const sellerBonus = resales * (resalePrice * (1 - (rules.royaltyPct + rules.feePct) / 100) - i.price)
   const ops = i.capacity + resales + i.capacity // issue + resales + badges
   const chainCost = ops * 0.01
   return { primaryFee, resales, resaleFee, revenue, royalties, sellerBonus, ops, chainCost, cap: (i.price * rules.capPct) / 100 }

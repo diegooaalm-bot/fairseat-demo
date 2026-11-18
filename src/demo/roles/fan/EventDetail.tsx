@@ -61,7 +61,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
         <h2 className="text-[18px] font-semibold tracking-[-0.015em]">Fair resale</h2>
         <span className="text-[12px] text-fg-3">{listings.length ? `${listings.length} ticket${listings.length > 1 ? 's' : ''} · from ${usd(listings[0].priceCents)}` : 'No listings yet'}</span>
       </div>
-      <p className="mb-2.5 text-[13px] leading-snug text-fg-2">From verified fans who can’t go. Never above 105% of face value; 2% of face value goes to the {payee} on every resale.</p>
+      <p className="mb-2.5 text-[13px] leading-snug text-fg-2">From verified fans who can’t go. Never above 105% of face value; 2% of every resale goes to the {payee}.</p>
       {listings.length > 0 ? (
         <EventListings id={id} header={false} viewer={person} listings={listings} onOpen={(l) => openOffer(l.id)} />
       ) : (
@@ -182,7 +182,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
             </div>
             <ul className="mt-3 flex flex-col gap-2 text-[14px] text-fg-2">
               <Li>Resale never above 105% of face value</Li>
-              <Li>2% of face value goes to the {payee} on every resale</Li>
+              <Li>2% of every resale goes to the {payee}</Li>
               <Li>Up to 4 tickets per verified fan</Li>
               <Li>Resale closes 2 hours before showtime</Li>
               <Li>Codes change every few seconds: screenshots and copies don’t work</Li>

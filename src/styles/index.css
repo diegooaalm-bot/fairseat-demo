@@ -38,6 +38,21 @@
   --color-err: #ff453a;
   --color-warn: #ffd60a;
 
+  /* Presentation palette (the Proof of Seat deck), used by the product page */
+  --color-deck-ink: #0d0f14;
+  --color-deck-slate: #3f4350;
+  --color-deck-mute: #5f6370;
+  --color-deck-bg: #f5f6f8;
+  --color-deck-line: #e6e7ec;
+  --color-deck-blue: #2b6bf0;
+  --color-deck-blue-ink: #1f56d6;
+  --color-deck-green: #1e9e47;
+  --color-deck-green-ink: #157a36;
+  --color-deck-red: #d93a3f;
+  --color-deck-teal: #139c86;
+  --color-deck-teal-ink: #0d7a69;
+  --color-deck-amber: #b86e00;
+
   --radius-xs: 8px;
   --radius-sm: 12px;
   --radius-md: 16px;

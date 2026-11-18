@@ -131,7 +131,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
             <Music2 size={24} />
           </span>
         </Node>
-        <Node at={P.house} label="Proof of Seat" sub="Platform · 1%">
+        <Node at={P.house} label="Proof of Seat" sub="Platform · 2%">
           <span className="grid h-[54px] w-[54px] place-items-center rounded-full bg-ink-4 hairline-2">
             <Mark size={28} className="text-accent" />
           </span>

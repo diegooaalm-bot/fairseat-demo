@@ -40,7 +40,7 @@ function Royalties() {
   const st = novaStats(s)
   const ambient = useDemo((x) => x.ambientResale)
   const [live, setLive] = useState(true)
-  const [chips, setChips] = useState<{ id: string; mine: boolean }[]>([])
+  const [chips, setChips] = useState<{ id: string; mine: boolean; cents: number }[]>([])
   const seen = useRef<Set<string>>(new Set(s.ledger.filter((t) => t.kind === 'resale' && t.eventId === 'nova').map((t) => t.id)))
 
   useEffect(() => {
@@ -49,13 +49,13 @@ function Royalties() {
     return () => clearInterval(t)
   }, [live, ambient])
 
-  // float a +$2.00 chip for every new resale
+  // float a +$x.xx chip for every new resale
   useEffect(() => {
     const fresh = s.ledger.filter((t) => t.kind === 'resale' && t.eventId === 'nova' && !seen.current.has(t.id))
     if (!fresh.length) return
     fresh.forEach((t) => seen.current.add(t.id))
     haptic('light')
-    setChips((c) => [...c, ...fresh.map((t) => ({ id: t.id, mine: t.from === ADDR.maya }))].slice(-6))
+    setChips((c) => [...c, ...fresh.map((t) => ({ id: t.id, mine: t.from === ADDR.maya, cents: t.breakdown?.royalty ?? 210 }))].slice(-6))
   }, [s.ledger])
 
   const resales = s.ledger.filter((t) => t.kind === 'resale' && t.eventId === 'nova').slice(0, 6)
@@ -95,14 +95,14 @@ function Royalties() {
                     onAnimationComplete={() => setChips((x) => x.filter((y) => y.id !== c.id))}
                     className={`absolute right-0 rounded-full px-2 py-0.5 text-[13px] font-bold ${c.mine ? 'bg-gold text-[#1a1306]' : 'bg-ok text-ink'}`}
                   >
-                    +$2.00{c.mine ? ' · Maya' : ''}
+                    +{usd(c.cents)}{c.mine ? ' · Maya' : ''}
                   </motion.span>
                 ))}
               </AnimatePresence>
             </div>
           </div>
           <div className="mt-2 text-[13px] text-white/70 tabular">
-            {int(st.resales)} fair resales × 2% of face value · paid instantly, no invoices
+            {int(st.resales)} fair resales × 2% of the price · paid instantly, no invoices
           </div>
         </div>
 
@@ -119,7 +119,7 @@ function Royalties() {
             <div className="rounded-[18px] bg-accent/12 p-3.5 ring-1 ring-accent/40">
               <div className="text-[12px] font-semibold text-accent-soft">Proof of Seat</div>
               <div className="mt-1 text-[13px] text-fg-2">Resold at $105</div>
-              <div className="mt-3 text-[34px] leading-none font-bold tracking-[-0.04em]">$2.00</div>
+              <div className="mt-3 text-[34px] leading-none font-bold tracking-[-0.04em]">$2.10</div>
               <div className="mt-1 text-[12px] text-fg-3">to the artist, instantly</div>
             </div>
           </div>
@@ -162,16 +162,16 @@ function PilotModel() {
       <div className="flex flex-col gap-4 px-4">
         <div className="grid grid-cols-2 gap-2.5">
           <Big label="Proof of Seat revenue" value={f.revenue} sub={`${usd(f.primaryFee * 100, { cents: false })} primary + ${usd(f.resaleFee * 100, { cents: false })} resale`} className="col-span-2" accent />
-          <Big label="New artist royalties" value={f.royalties} sub="2% of face on every resale" gold />
+          <Big label="New artist royalties" value={f.royalties} sub="2% of every resale" gold />
           <Big label="Blockchain cost" value={f.chainCost} approx sub={`${int(f.ops)} ops × ≈ $0.01`} />
         </div>
         <div className="flex flex-col gap-5 rounded-[24px] bg-ink-3 p-4 hairline">
           <Range label="Tickets sold per year" value={v.capacity} min={5000} max={150000} step={5000} onChange={(x) => set('capacity', x)} format={(x) => int(x)} />
           <Range label="Average face value" value={v.price} min={20} max={200} step={5} onChange={(x) => set('price', x)} format={(x) => `$${x}`} />
-          <Range label="Share resold" value={v.resoldPct} min={0} max={40} step={1} onChange={(x) => set('resoldPct', x)} format={(x) => `${x}%`} hint="Every resale pays 2% of face to the artist and 1% to us" />
+          <Range label="Share resold" value={v.resoldPct} min={0} max={40} step={1} onChange={(x) => set('resoldPct', x)} format={(x) => `${x}%`} hint="Every resale pays 2% to the artist and 2% to us" />
         </div>
         <p className="px-1 text-[12px] leading-snug text-fg-3">
-          Illustrative hypothesis, not a forecast. Defaults: one mid-size venue’s year, 50,000 tickets at $60 on average, 15% resold. $1.50 per ticket from the organizer, 1% of face on each resale. The technology is the cheap part.
+          Illustrative hypothesis, not a forecast. Defaults: one mid-size venue’s year, 50,000 tickets at $60 on average, 15% resold. A 1% fee on primary sales and 2% on resales, paid by the seller; resales assumed at the cap. The technology is the cheap part.
           {!isDefault && (
             <button className="ml-1 font-semibold text-accent-soft" onClick={() => setV(FESTIVAL_DEFAULTS)}>
               Reset to defaults
