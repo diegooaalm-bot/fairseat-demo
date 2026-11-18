@@ -14,9 +14,9 @@ import { Container, Eyebrow, H2, Reveal } from '../ui'
 
 const STEPS = [
   { n: 'Buy', today: 'Bots clear the sale in minutes.', t: 'One verified ID, a per-person limit.', d: 'Fans verify once and buy with a card. Up to 4 tickets per person per event, so bots and brokers can’t clear the sale.' },
-  { n: 'Hold', today: 'A PDF or screenshot anyone can copy.', t: 'A rotating QR signed by the owner’s wallet.', d: 'The ticket lives in the app like a boarding pass. The code changes every few seconds and only works on the owner’s phone.' },
+  { n: 'Hold', today: 'A PDF or screenshot anyone can copy.', t: 'One token, in one wallet, at a time.', d: 'The ticket lives in the app like a boarding pass. It can only sit in one wallet, so it can’t be copied or sold twice.' },
   { n: 'Resell', today: 'Any price, and the artist gets $0.', t: 'Capped at 105%, 2% to the artist.', d: 'Can’t go? Sell it to a verified fan for up to $105 on a $100 ticket. The seller keeps $102, the artist gets $2 and Proof of Seat $1, in one all-or-nothing step.' },
-  { n: 'Scan', today: 'The first copy through the door wins.', t: 'One token, in one wallet, at a time.', d: 'The scanner checks the signature against the shared record. Screenshots and resold tickets fail, and it works offline.' },
+  { n: 'Scan', today: 'The first copy through the door wins.', t: 'A rotating QR signed by the owner’s wallet.', d: 'The code changes every few seconds and only works on the owner’s phone. Screenshots and resold tickets fail, and the scanner works offline.' },
   { n: 'After', today: 'Your history belongs to the ticketing company.', t: 'Proof of attendance.', d: 'After the show, an “I was there” badge that can’t be sold. It earns early access to the next presale.' },
 ]
 
