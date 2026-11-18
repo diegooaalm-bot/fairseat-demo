@@ -77,7 +77,7 @@ export function FanPass({ person }: { person: PersonId }) {
 
         <div className="flex items-start gap-3 rounded-[20px] bg-ink-3 p-4 text-[13px] leading-snug text-fg-3 hairline">
           <Lock size={16} className="mt-0.5 shrink-0" />
-          Your name, ID and selfie stay encrypted with FairSeat. Badges prove you were there without revealing who you are.
+          Your name, ID and selfie stay encrypted with Proof of Seat. Badges prove you were there without revealing who you are.
         </div>
       </div>
     </Screen>

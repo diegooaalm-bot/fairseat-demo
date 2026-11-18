@@ -21,7 +21,7 @@ export default function DemoPage() {
   const desktop = useIsDesktop()
   useStoryKeys()
   useEffect(() => {
-    document.title = 'FairSeat · Live demo'
+    document.title = 'Proof of Seat · Live demo'
   }, [])
   return desktop ? <DesktopShell /> : <MobileShell />
 }
@@ -54,7 +54,7 @@ function DesktopShell() {
     <div className="relative flex h-dvh flex-col overflow-hidden bg-ink">
       <StageLight />
       <header className="relative z-10 flex h-16 shrink-0 items-center justify-between gap-6 px-6">
-        <Link to="/" className="shrink-0" aria-label="FairSeat home">
+        <Link to="/" className="shrink-0" aria-label="Proof of Seat home">
           <Logo size={20} />
         </Link>
         <Segmented<Role>

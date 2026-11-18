@@ -1,34 +1,27 @@
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useRef, useState } from 'react'
-import { Bot, Music2, Store, User } from 'lucide-react'
-import { EventImage } from '@/components/art/EventImage'
-import { NumberTicker } from '@/components/ui/NumberTicker'
-import { EVENTS } from '@/data/world'
+import { Bot, Database, Eye, Lock, Music2, Search, ShieldCheck, Star, Store, User, Users, Zap, Copy } from 'lucide-react'
+import { photoUrl } from '@/data/world'
 import { mulberry32 } from '@/lib/prng'
-import { Container, Eyebrow, H2, Reveal } from '../ui'
+import { Container, Eyebrow, H2, Lead, Reveal } from '../ui'
 
-/* ───────── 2 · The hook: Maya's $100 ticket becomes $400 ───────── */
+/* ───────── 2 · The hook (slide 2): the Eras presale ───────── */
 export function Hook() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const reduced = useReducedMotion()
-  const price = useTransform(scrollYProgress, [0.35, 0.72], [100, 400])
-  const [shown, setShown] = useState(100)
+  const price = useTransform(scrollYProgress, [0.4, 0.74], [449, 35438])
+  const [shown, setShown] = useState(449)
   useMotionValueEvent(price, 'change', (v) => setShown(Math.round(v)))
-  const color = useTransform(scrollYProgress, [0.35, 0.72], ['#f5f5f7', '#ff453a'])
+  const color = useTransform(scrollYProgress, [0.4, 0.74], ['#f5f5f7', '#ff453a'])
   const tilt = useTransform(scrollYProgress, [0, 0.35, 0.72, 1], [-6, 0, 4, 6])
   const scale = useTransform(scrollYProgress, [0, 0.3], [0.9, 1])
   const bots = useTransform(scrollYProgress, [0.2, 0.5], [0, 1])
-  const beats = [
-    'Meet Maya. A student here in Atlanta.',
-    'She waited two hours in a virtual queue. Sold out in minutes.',
-    'Ten minutes later, her $100 seat was listed at $400.',
-    'Maya didn’t lose to other fans. She lost to bots.',
-  ]
+  const beats = ['November 2022. The Eras Tour presale.', 'The site crashed under the demand.', 'The next day, one Atlanta floor seat was listed for $35,438.', 'Face value of a standard ticket: $49 to $449.']
   const [beat, setBeat] = useState(0)
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setBeat(v < 0.24 ? 0 : v < 0.47 ? 1 : v < 0.74 ? 2 : 3))
+  useMotionValueEvent(scrollYProgress, 'change', (v) => setBeat(v < 0.24 ? 0 : v < 0.45 ? 1 : v < 0.74 ? 2 : 3))
   const b = reduced ? 3 : beat
-  const value = reduced ? 400 : shown
+  const value = reduced ? 35438 : shown
   return (
     <section ref={ref} className="relative" style={{ height: reduced ? 'auto' : '320vh' }}>
       <div className={`${reduced ? 'py-28' : 'sticky top-0 h-[100svh]'} flex items-center overflow-hidden`}>
@@ -47,7 +40,11 @@ export function Hook() {
                 >
                   {b === 3 ? (
                     <>
-                      Maya didn’t lose to other fans. <span className="text-err">She lost to bots.</span>
+                      Face value of a standard ticket: <span className="text-accent-soft">$49 to $449.</span>
+                    </>
+                  ) : b === 2 ? (
+                    <>
+                      The next day, one Atlanta floor seat was listed for <span className="text-err">$35,438.</span>
                     </>
                   ) : (
                     beats[b]
@@ -60,24 +57,23 @@ export function Hook() {
                 <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === b ? 'w-8 bg-fg' : 'w-3 bg-white/20'}`} />
               ))}
             </div>
+            <p className="mt-6 text-[12px] tracking-[0.06em] text-fg-3 uppercase">Sources: CNN; Fortune (Nov 2022)</p>
           </div>
           <motion.div style={{ rotate: tilt, scale }} className="relative mx-auto w-full max-w-[420px]">
             <div className="relative aspect-[1.586] overflow-hidden rounded-[26px] shadow-[0_40px_80px_-30px_rgba(0,0,0,.9)] hairline-2">
-              <EventImage id="nova" />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(0,0,0,.6))]" />
+              <img src={photoUrl('taylor')} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.25)_0%,transparent_40%,rgba(0,0,0,.7))]" />
               <div className="absolute inset-0 flex flex-col justify-between p-5">
-                <div className="text-[24px] font-bold tracking-[-0.03em]">{EVENTS.nova.artist}</div>
-                <div className="flex items-end justify-between">
-                  <div className="text-[13px] text-white/75">Sec 312 · Row 14 · Seat 7</div>
-                  <motion.div style={{ color: reduced ? '#ff453a' : color }} className="text-[56px] leading-none font-bold tracking-[-0.05em] tabular">
-                    ${value}
-                  </motion.div>
+                <div>
+                  <div className="text-[13px] font-semibold tracking-[0.08em] text-white/80 uppercase">Resale listing · 2022</div>
+                  <div className="text-[22px] font-bold tracking-[-0.03em]">Eras Tour · Atlanta · Floor</div>
                 </div>
+                <motion.div style={{ color: reduced ? '#ff453a' : color }} className="self-end text-[clamp(44px,6vw,58px)] leading-none font-bold tracking-[-0.05em] tabular">
+                  ${value.toLocaleString('en-US')}
+                </motion.div>
               </div>
             </div>
-            <div className="mt-4 text-center text-[14px] text-fg-3">
-              Face value $100 · {value > 100 ? `+${Math.round(((value - 100) / 100) * 100)}% markup` : 'set by the artist'}
-            </div>
+            <div className="mt-4 text-center text-[14px] text-fg-3">Top standard face value $449 · about 80× that</div>
           </motion.div>
         </Container>
       </div>
@@ -110,28 +106,33 @@ function BotDot({ d, progress }: { d: { x: number; y: number; s: number; d: numb
   )
 }
 
-/* ───────── 3 · The problem: three numbers ───────── */
+/* ───────── 3 · Why ticketing is broken (slide 4) ───────── */
 export function Problem() {
-  const stats = [
-    { v: 3.5, fmt: (n: number) => `${n.toFixed(1)}B`, k: 'requests hit Ticketmaster in the Eras Tour presale (2022). Four times its previous record.' },
-    { v: 3.7, fmt: (n: number) => `$${n.toFixed(1)}B`, k: 'in resale fees collected by Ticketmaster from 2019 to 2024, according to the FTC lawsuit.' },
-    { v: 6, fmt: (n: number) => `${Math.round(n)}×`, k: 'face value: resale prices found by UK authorities. Up to six times what the artist set.' },
+  const cards = [
+    { icon: Zap, t: 'Bots & scalpers', d: 'Bots buy the moment a sale opens, then relist at several times face value.' },
+    { icon: Copy, t: 'Fake & duplicate tickets', d: 'One PDF sold to five buyers: only the first one gets in. Bitcoin’s double-spend problem, for tickets.' },
+    { icon: Users, t: 'Artists earn $0 on resale', d: 'The markup goes to brokers and resale platforms, not the artist or venue.' },
+    { icon: Database, t: 'One company’s ledger', d: 'A single company keeps the only record of who owns each ticket, and sets the fees.' },
   ]
   return (
     <section className="bg-paper py-28 text-paper-ink sm:py-36">
       <Container>
         <Reveal>
-          <Eyebrow light>The problem</Eyebrow>
-          <H2 className="mt-4 max-w-[16ch]">This isn’t one bad day. It’s the system.</H2>
+          <Eyebrow light>Part 1 · The problem</Eyebrow>
+          <H2 className="mt-4 max-w-[16ch]">Why ticketing is broken</H2>
+          <Lead light className="mt-5">
+            Four problems a regular ticketing database can’t fix on its own.
+          </Lead>
         </Reveal>
-        <div className="mt-16 grid gap-10 md:grid-cols-3 md:gap-8">
-          {stats.map((s, i) => (
-            <Reveal key={i} delay={i * 0.12}>
-              <div className="border-t border-black/10 pt-6">
-                <div className="text-[clamp(64px,8vw,104px)] leading-none font-bold tracking-[-0.055em]">
-                  <NumberTicker value={s.v} from={0} format={s.fmt} duration={1.8} startOnView />
-                </div>
-                <p className="mt-4 max-w-[30ch] text-[17px] leading-snug text-paper-mute">{s.k}</p>
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {cards.map((c, i) => (
+            <Reveal key={c.t} delay={i * 0.08}>
+              <div className="h-full rounded-[24px] bg-white p-6 shadow-[0_1px_0_rgba(0,0,0,.04),0_20px_40px_-30px_rgba(0,0,0,.25)]">
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-err/10 text-[#c9352c]">
+                  <c.icon size={20} />
+                </span>
+                <div className="mt-4 text-[19px] font-semibold tracking-[-0.02em]">{c.t}</div>
+                <div className="mt-1.5 text-[15px] leading-snug text-paper-mute">{c.d}</div>
               </div>
             </Reveal>
           ))}
@@ -141,23 +142,95 @@ export function Problem() {
   )
 }
 
-/* ───────── 4 · Follow the money ───────── */
+/* ───────── 4 · Three cases (slides 5–7) ───────── */
+export function Cases() {
+  const cases = [
+    {
+      tag: 'Case 1 · Concerts',
+      t: 'Taylor Swift’s Eras Tour',
+      big: '$3,801',
+      bigK: 'Average resale price, North American Eras dates (July 2023)',
+      rows: [
+        ['$157', 'Average resale price, Reputation Tour (2018)'],
+        ['+2,321%', 'Jump in average resale price between the two tours'],
+      ],
+      src: 'Pitchfork via Benzinga (2023)',
+    },
+    {
+      tag: 'Case 2 · World Cup',
+      t: 'The 2026 World Cup Final',
+      big: '$2.3M',
+      bigK: 'Asking price for one lower-level seat behind the goal, on FIFA’s own resale marketplace (April 2026)',
+      rows: [
+        ['~$10,900', 'Face value of a top-tier final ticket sold directly by FIFA'],
+        ['15% + 15%', 'FIFA’s cut: a fee from the buyer and another from the seller. No price cap.'],
+      ],
+      src: 'AP; Arab News (Apr 2026)',
+    },
+    {
+      tag: 'Case 3 · Super Bowl',
+      t: 'Super Bowl LX',
+      big: '$6,620',
+      bigK: 'Cheapest get-in price the day after the matchup was set',
+      rows: [
+        ['$3,361', 'Get-in price hours before kickoff, as resellers dumped seats'],
+        ['$950', 'Lowest face value: an upper-level corner seat'],
+      ],
+      src: 'TicketData via Field Level Media; Bleacher Report',
+    },
+  ]
+  return (
+    <section className="py-28 sm:py-36">
+      <Container>
+        <Reveal>
+          <Eyebrow>Three cases</Eyebrow>
+          <H2 className="mt-4 max-w-[17ch]">Concerts, the World Cup, the Super Bowl.</H2>
+          <Lead className="mt-5">The same problem, at every scale: the markup goes to whoever resells, never to the fan or the artist.</Lead>
+        </Reveal>
+        <div className="mt-14 grid gap-4 lg:grid-cols-3">
+          {cases.map((c, i) => (
+            <Reveal key={c.t} delay={i * 0.1}>
+              <div className="flex h-full flex-col rounded-[28px] bg-ink-2 p-6 hairline">
+                <div className="text-[13px] font-semibold text-accent-soft">{c.tag}</div>
+                <div className="mt-1 text-[20px] font-semibold tracking-[-0.02em]">{c.t}</div>
+                <div className="mt-5 text-[clamp(52px,6vw,72px)] leading-none font-bold tracking-[-0.05em] text-err">{c.big}</div>
+                <div className="mt-2 text-[14px] leading-snug text-fg-2">{c.bigK}</div>
+                <div className="mt-5 flex flex-col gap-3 border-t border-white/[0.07] pt-4">
+                  {c.rows.map(([v, k]) => (
+                    <div key={k} className="flex items-baseline gap-3">
+                      <span className="w-[112px] shrink-0 text-[19px] font-bold tracking-[-0.02em] whitespace-nowrap tabular">{v}</span>
+                      <span className="text-[13px] leading-snug text-fg-3">{k}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-auto pt-5 text-[11px] tracking-[0.04em] text-fg-3 uppercase">Source: {c.src}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+/* ───────── 5 · Where the markup goes (slide 8) ───────── */
 export function FollowTheMoney() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 75%', 'end 60%'] })
   const nodes = [
-    { icon: Music2, t: 'Artist sets', v: '$100', s: 'the price they think is fair', tone: 'text-accent-soft' },
+    { icon: Music2, t: 'Artist & venue set', v: '$100', s: 'face value, paid to them once', tone: 'text-accent-soft' },
     { icon: Bot, t: 'Bots buy', v: 'in ms', s: 'beating the per-person limit', tone: 'text-err' },
     { icon: Store, t: 'Broker relists', v: '$400', s: 'on a resale site', tone: 'text-err' },
-    { icon: User, t: 'Fan pays', v: '$400+', s: 'plus fees, or stays home', tone: 'text-warn' },
+    { icon: User, t: 'The fan pays', v: '$400+', s: 'plus buyer fees of about 20–35%', tone: 'text-warn' },
   ]
   const line = useTransform(scrollYProgress, [0, 0.8], ['0%', '100%'])
   return (
-    <section ref={ref} className="relative py-28 sm:py-36">
+    <section ref={ref} className="relative bg-ink-2/40 py-28 sm:py-36">
       <Container>
         <Reveal>
-          <Eyebrow>Follow the money</Eyebrow>
+          <Eyebrow>Where the markup goes</Eyebrow>
           <H2 className="mt-4 max-w-[18ch]">Everybody gets paid. Except the artist.</H2>
+          <Lead className="mt-5">Illustrative: a $100 ticket bought by a bot and resold for $400.</Lead>
         </Reveal>
         <div className="relative mt-16">
           <div className="absolute top-[34px] right-[12%] left-[12%] hidden h-[2px] bg-white/10 md:block">
@@ -177,11 +250,17 @@ export function FollowTheMoney() {
           </div>
         </div>
         <Reveal delay={0.3} className="mt-16">
-          <div className="mx-auto max-w-[760px] rounded-[28px] bg-ink-2 p-8 text-center hairline">
-            <div className="text-[clamp(28px,3.6vw,44px)] leading-[1.08] font-bold tracking-[-0.035em]">
-              The artist gets <span className="text-err">$0</span> of the extra $300.
-            </div>
-            <p className="mt-3 text-[17px] text-fg-3">The middlemen and the platforms capture all of it.</p>
+          <div className="mx-auto grid max-w-[880px] gap-3 sm:grid-cols-3">
+            {[
+              ['The fan pays', '$400+', 'text-warn'],
+              ['The broker keeps', '$300', 'text-err'],
+              ['Artist gets on resale', '$0', 'text-fg'],
+            ].map(([k, v, tone]) => (
+              <div key={k} className="rounded-[24px] bg-ink-2 p-6 text-center hairline">
+                <div className="text-[13px] font-semibold tracking-[0.06em] text-fg-3 uppercase">{k}</div>
+                <div className={`mt-2 text-[48px] leading-none font-bold tracking-[-0.045em] ${tone}`}>{v}</div>
+              </div>
+            ))}
           </div>
         </Reveal>
       </Container>
@@ -189,26 +268,53 @@ export function FollowTheMoney() {
   )
 }
 
-/* ───────── 5 · The big idea ───────── */
+/* ───────── 6 · The solution (slides 9–10) ───────── */
 export function BigIdea() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] })
-  const words = 'What if the ticket itself knew the rules?'.split(' ')
+  const words = 'One seat. One token. One owner.'.split(' ')
   const reduced = useReducedMotion()
   const glow = useTransform(scrollYProgress, [0.3, 1], [0, 1])
+  const cards = [
+    { icon: Lock, t: 'No double-selling', d: 'One token, one wallet. It can’t be sold to two buyers.' },
+    { icon: ShieldCheck, t: 'Rules in code', d: 'The 105% resale cap and the artist’s 2% run on every transfer, automatically.' },
+    { icon: Search, t: 'Anyone can verify', d: 'Fans, venues and artists can check a ticket’s history before buying.' },
+    { icon: Star, t: 'Proof of attendance', d: 'After the show, the token earns past fans early access to the next presale.' },
+  ]
   return (
-    <section ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden py-28">
-      <motion.div style={{ opacity: glow }} className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_45%,rgba(62,134,255,.28),transparent)]" />
-      <Container className="relative text-center">
-        <h2 className="mx-auto max-w-[14ch] text-[clamp(52px,9vw,128px)] leading-[0.95] font-bold tracking-[-0.055em]">
-          {words.map((w, i) => (
-            <Word key={i} p={scrollYProgress} i={i} n={words.length} reduced={!!reduced} accent={i >= 3}>
-              {w}
-            </Word>
+    <section ref={ref} className="relative overflow-hidden py-28 sm:py-36">
+      <motion.div style={{ opacity: glow }} className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_35%,rgba(62,134,255,.28),transparent)]" />
+      <Container className="relative">
+        <div className="text-center">
+          <Eyebrow>Part 2 · Our solution</Eyebrow>
+          <h2 className="mx-auto mt-6 max-w-[12ch] text-[clamp(52px,9vw,124px)] leading-[0.95] font-bold tracking-[-0.055em]">
+            {words.map((w, i) => (
+              <Word key={i} p={scrollYProgress} i={i} n={words.length} reduced={!!reduced} accent={i >= 4}>
+                {w}
+              </Word>
+            ))}
+          </h2>
+          <Reveal delay={0.2}>
+            <p className="mx-auto mt-8 max-w-[40ch] text-[clamp(18px,2vw,22px)] text-fg-2">
+              Every ticket is a token on a public ledger, so it can’t sit in two wallets or be sold twice. The seat, the date and the original price live in the token itself.
+            </p>
+          </Reveal>
+        </div>
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {cards.map((c, i) => (
+            <Reveal key={c.t} delay={i * 0.08}>
+              <div className="h-full rounded-[24px] bg-ink-2 p-6 hairline">
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-accent/15 text-accent-soft">
+                  <c.icon size={20} />
+                </span>
+                <div className="mt-4 text-[19px] font-semibold tracking-[-0.02em]">{c.t}</div>
+                <div className="mt-1.5 text-[15px] leading-snug text-fg-2">{c.d}</div>
+              </div>
+            </Reveal>
           ))}
-        </h2>
-        <Reveal delay={0.2}>
-          <p className="mx-auto mt-10 max-w-[34ch] text-[clamp(18px,2vw,22px)] text-fg-2">Meet FairSeat: every ticket is a unique digital ticket with its rules written inside. Nobody can sell it for more, and nobody can switch the rules off.</p>
+        </div>
+        <Reveal delay={0.2} className="mt-6 flex items-center justify-center gap-2 text-center text-[14px] text-fg-3">
+          <Eye size={15} /> Option to discuss: soulbound (non-transferable) tickets for the biggest shows, so there is no resale at all.
         </Reveal>
       </Container>
     </section>
@@ -223,3 +329,4 @@ function Word({ p, i, n, children, reduced, accent }: { p: MotionValue<number>; 
     </motion.span>
   )
 }
+

@@ -18,8 +18,8 @@ export default defineConfig({
       disable: process.env.NO_PWA === '1',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'FairSeat',
-        short_name: 'FairSeat',
+        name: 'Proof of Seat',
+        short_name: 'Proof of Seat',
         description: 'The ticket that knows the rules.',
         theme_color: '#0A0A0D',
         background_color: '#0A0A0D',

@@ -1,12 +1,111 @@
 {
- "badbunny": {
-  "title": "File:Bad Bunny Performs.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Bad_Bunny_Performs.jpg",
+ "faye": {
+  "title": "File:Faye Webster at Rough Trade (47945510488).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Faye_Webster_at_Rough_Trade_(47945510488).jpg",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Paul Hudson from United Kingdom",
+  "w": 1920,
+  "h": 1280
+ },
+ "manchester": {
+  "title": "File:Manchester Orchestra live performance 1.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Manchester_Orchestra_live_performance_1.jpg",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Matthewvetter",
+  "w": 1920,
+  "h": 2560
+ },
+ "jbreakfast": {
+  "title": "File:Japanese Breakfast - 51520453152.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Japanese_Breakfast_-_51520453152.jpg",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "author": "David Lee",
+  "w": 1920,
+  "h": 1280
+ },
+ "lakestreetdive": {
+  "title": "File:Lake Street Dive 2022.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Lake_Street_Dive_2022.jpg",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "author": "Jay Godwin",
+  "w": 1920,
+  "h": 1313
+ },
+ "waxahatchee": {
+  "title": "File:Waxahatchee at the Neptune Theatre in 2017.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Waxahatchee_at_the_Neptune_Theatre_in_2017.jpg",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "author": "David Lee",
+  "w": 1920,
+  "h": 1280
+ },
+ "lucydacus": {
+  "title": "File:Lucy Dacus 2019.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Lucy_Dacus_2019.jpg",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "David Lee",
+  "w": 1920,
+  "h": 1920
+ },
+ "dream": {
+  "title": "File:260527 Lynx Dream JohnMc210 (55298398176) (cropped).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:260527_Lynx_Dream_JohnMc210_(55298398176)_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "John Mac",
+  "w": 1920,
+  "h": 1439
+ },
+ "gatech": {
+  "title": "File:McCamish Pavilion Interior.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File:McCamish_Pavilion_Interior.JPG",
   "license": "CC0",
   "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "author": "Comecoquito",
-  "w": 4032,
-  "h": 2268
+  "author": "Thomsonmg2000",
+  "w": 1920,
+  "h": 1280
+ },
+ "aso": {
+  "title": "File:Atlanta Symphony Hall, inside.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Atlanta_Symphony_Hall,_inside.jpg",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Jud McCranie",
+  "w": 1199,
+  "h": 899
+ },
+ "improv": {
+  "title": "File:Dads Garage Dragon Con September 6 2026 0851.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File:Dads_Garage_Dragon_Con_September_6_2026_0851.JPG",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "John Manard",
+  "w": 1920,
+  "h": 1280
+ },
+ "puppetry": {
+  "title": "File:SANTAANDRUDOLPHCFPA.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:SANTAANDRUDOLPHCFPA.jpg",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "author": "BakedintheHole",
+  "w": 1920,
+  "h": 2550
+ },
+ "fox": {
+  "title": "File:Fox Theater night.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Fox_Theater_night.jpg",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "author": "Scott Ehardt",
+  "w": 1428,
+  "h": 1452
  },
  "taylor": {
   "title": "File:Taylor Swift Eras Tour London 20240819 1989era.jpg",
@@ -16,113 +115,5 @@
   "author": "BrigidLIS",
   "w": 4032,
   "h": 3024
- },
- "harry": {
-  "title": "File:Harry Styles - Love On Tour @ Jeunesse Arena (52555729295).jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Harry_Styles_-_Love_On_Tour_@_Jeunesse_Arena_(52555729295).jpg",
-  "license": "CC BY-SA 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "author": "Leticia Moraes from Rio de Janeiro, Brasil",
-  "w": 5075,
-  "h": 3806
- },
- "straykids": {
-  "title": "File:Stray Kids at the Music Core Mini Fan Meeting, November 11, 2023.png",
-  "page": "https://commons.wikimedia.org/wiki/File:Stray_Kids_at_the_Music_Core_Mini_Fan_Meeting,_November_11,_2023.png",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "author": "티비텐",
-  "w": 3503,
-  "h": 1416
- },
- "zach": {
-  "title": "File:Zach Bryan Encore \"With Heaven on Top Tour, 2026\".jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Zach_Bryan_Encore_%22With_Heaven_on_Top_Tour,_2026%22.jpg",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "author": "Laiki McKenzie",
-  "w": 3024,
-  "h": 4032
- },
- "bocelli": {
-  "title": "File:Concierto Andrea Bocelli (48721053312).jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Concierto_Andrea_Bocelli_(48721053312).jpg",
-  "license": "CC BY 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-  "author": "InfoGibraltar",
-  "w": 2598,
-  "h": 1772
- },
- "mbs": {
-  "title": "File:Mercedes-Benz Stadium Interior in 2024.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Stadium_Interior_in_2024.jpg",
-  "license": "CC BY 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-  "author": "BullDawg2021",
-  "w": 4032,
-  "h": 3024
- },
- "mbs2": {
-  "title": "File:Mercedes Benz Stadium field view.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Mercedes_Benz_Stadium_field_view.jpg",
-  "license": "CC BY 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-  "author": "BullDawg2021",
-  "w": 4032,
-  "h": 3024
- },
- "falcons": {
-  "title": "File:Washington Football Team at Atlanta Falcons (3 October 2021) JMG 5002 (51553793942) (cropped).jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Washington_Football_Team_at_Atlanta_Falcons_(3_October_2021)_JMG_5002_(51553793942)_(cropped).jpg",
-  "license": "CC BY-SA 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "author": "All-Pro Reels from District of Columbia, USA",
-  "w": 1920,
-  "h": 1307
- },
- "atlutd": {
-  "title": "File:Mercedes-Benz Stadium Roof Atlanta United 2018-10-21 - 17 14.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Stadium_Roof_Atlanta_United_2018-10-21_-_17_14.jpg",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "author": "Eric.Jason.Cross",
-  "w": 1920,
-  "h": 2560
- },
- "hamilton": {
-  "title": "File:Fox Theater night.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Fox_Theater_night.jpg",
-  "license": "Public domain",
-  "licenseUrl": "",
-  "author": "Scott Ehardt",
-  "w": 1428,
-  "h": 1452
- },
- "cirque": {
-  "title": "File:RUN Cirque Show - December 2019 - Stierch 10.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:RUN_Cirque_Show_-_December_2019_-_Stierch_10.jpg",
-  "license": "CC BY 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-  "author": "Missvain",
-  "w": 1920,
-  "h": 1440
- },
- "monsterjam": {
-  "title": "File:Monster Jam Browns Stadium 2023.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Monster_Jam_Browns_Stadium_2023.jpg",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "author": "JonRidinger",
-  "w": 1920,
-  "h": 805
- },
- "disney": {
-  "title": "File:Disney on Ice - The Incredibles.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Disney_on_Ice_-_The_Incredibles.jpg",
-  "license": "CC BY-SA 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "author": "Miguel Discart",
-  "w": 1920,
-  "h": 1080
  }
 }

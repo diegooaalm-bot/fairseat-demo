@@ -117,7 +117,7 @@ export function Seats({ person, id }: { person: PersonId; id: EventId }) {
                 {sel.length} / {max} max
               </motion.span>
             </div>
-            <SeatGrid eventId={id} section={section} level={sec.level} selected={sel} onToggle={toggle} shakeKey={shake} suggest={section === '312' && !sel.length ? '14-7' : undefined} />
+            <SeatGrid eventId={id} section={section} venue={ev.venueId ?? undefined} level={sec.level} selected={sel} onToggle={toggle} shakeKey={shake} suggest={section === 'M3' && id === 'nova' && !sel.length ? '14-7' : undefined} />
             <div className="mt-3 flex items-center justify-center gap-4 text-[11px] text-fg-3">
               <span className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded-[4px] opacity-45" style={{ background: LEVEL_COLORS[sec.level] }} /> Available
@@ -131,7 +131,7 @@ export function Seats({ person, id }: { person: PersonId; id: EventId }) {
             </div>
           </div>
           <div className="flex items-center gap-2 px-1 pb-2 text-[12px] text-fg-3">
-            <ShieldCheck size={14} className="text-accent-soft" /> Fair Resale Protected · resale capped at {usd(Math.round(price * 1.1))} for this seat
+            <ShieldCheck size={14} className="text-accent-soft" /> Fair Resale Protected · resale capped at {usd(Math.round(price * 1.05))} for this seat
           </div>
         </div>
       </Screen>

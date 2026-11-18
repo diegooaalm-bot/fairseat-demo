@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
 import { Hero } from './sections/Hero'
-import { BigIdea, FollowTheMoney, Hook, Problem } from './sections/Story'
-import { HowItWorks } from './sections/HowItWorks'
-import { Audiences, Business, TryResale, WhyBlockchain } from './sections/Value'
-import { Close, Footer, WhyNow } from './sections/Ending'
+import { BigIdea, Cases, FollowTheMoney, Hook, Problem } from './sections/Story'
+import { BuildingBlocks, HowItWorks } from './sections/HowItWorks'
+import { Business, Pilot, Risks, Rules, WhyBlockchain } from './sections/Value'
+import { Close, Footer } from './sections/Ending'
 
 export default function Landing() {
   useEffect(() => {
-    document.title = 'FairSeat · The ticket that knows the rules'
+    document.title = 'Proof of Seat · One seat. One token. One owner.'
     // hash links (#how) live inside the HashRouter route, so scroll manually
     const onClick = (e: MouseEvent) => {
       const a = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null
@@ -32,14 +32,16 @@ export default function Landing() {
         <Hero />
         <Hook />
         <Problem />
+        <Cases />
         <FollowTheMoney />
         <BigIdea />
-        <HowItWorks />
-        <TryResale />
-        <Audiences />
         <WhyBlockchain />
+        <HowItWorks />
+        <BuildingBlocks />
+        <Rules />
         <Business />
-        <WhyNow />
+        <Risks />
+        <Pilot />
         <Close />
       </main>
       <Footer />
@@ -57,7 +59,7 @@ function Nav() {
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between px-5 sm:px-8">
-        <Link to="/" aria-label="FairSeat home">
+        <Link to="/" aria-label="Proof of Seat home">
           <Logo size={19} />
         </Link>
         <nav className="flex items-center gap-1 sm:gap-6">

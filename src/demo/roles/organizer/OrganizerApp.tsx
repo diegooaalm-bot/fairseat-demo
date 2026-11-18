@@ -66,8 +66,8 @@ function Dashboard() {
           <div className="relative flex items-center justify-between gap-3">
             <div>
               <div className="text-[12px] font-semibold tracking-[0.06em] text-white/70 uppercase">Organizer console</div>
-              <div className="text-[22px] font-bold tracking-[-0.03em]">Bad Bunny</div>
-              <div className="text-[13px] text-white/75">Sat, Jun 26, 2027 · Mercedes-Benz Stadium</div>
+              <div className="text-[22px] font-bold tracking-[-0.03em]">Faye Webster</div>
+              <div className="text-[13px] text-white/75">Sat, Jun 26, 2027 · Fox Theatre</div>
             </div>
             <Pill tone={st.soldOut ? 'accent' : 'ok'}>{st.soldOut ? 'Sold out' : 'On sale'}</Pill>
           </div>
@@ -87,11 +87,11 @@ function Dashboard() {
 
         <div className="grid grid-cols-2 gap-2.5">
           <Kpi label="Tickets sold" icon={<Ticket size={16} />} value={<NumberTicker value={st.sold} format={fmtInt} />} sub={`of ${int(st.capacity)} · 4 per fan max`} />
-          <Kpi label="Primary revenue" icon={<Gauge size={16} />} value={<NumberTicker value={st.revenueCents} format={fmtUsd} />} sub="FairSeat fee $1.50 / ticket" />
+          <Kpi label="Primary revenue" icon={<Gauge size={16} />} value={<NumberTicker value={st.revenueCents} format={fmtUsd} />} sub="Proof of Seat fee $1.50 / ticket" />
           <Kpi label="Bots blocked" tone="err" icon={<Bot size={16} />} value={<NumberTicker value={st.botsBlocked} format={fmtInt} duration={0.6} />} sub="Identity check at the door" />
-          <Kpi label="Resales within cap" tone="ok" icon={<ShieldCheck size={16} />} value="100%" sub={`${int(st.resales)} resales · none above $110`} />
+          <Kpi label="Resales within cap" tone="ok" icon={<ShieldCheck size={16} />} value="100%" sub={`${int(st.resales)} resales · none above $105`} />
           <Kpi label="Avg. entry time" tone="accent" icon={<Timer size={16} />} value={`${NOVA_BASELINE.gateSeconds} s`} sub="Works offline at the gate" />
-          <Kpi label="Artist royalties" tone="gold" icon={<Music2 size={16} />} value={<NumberTicker value={st.royaltyCents} format={fmtUsd} />} sub="5% of every resale, tour-wide" />
+          <Kpi label="Artist royalties" tone="gold" icon={<Music2 size={16} />} value={<NumberTicker value={st.royaltyCents} format={fmtUsd} />} sub="2% of face value on every resale" />
         </div>
 
         {/* Real waitlist */}
@@ -179,7 +179,7 @@ function Create() {
             {[
               ['One unique token per seat', 'ERC-721 on Base'],
               [`Rules written into each one`, `cap ${r.capPct}% · royalty ${r.royaltyPct}% (ERC-2981) · ${r.maxPerPerson} per fan`],
-              ['Network fees paid by FairSeat', `≈ ${usd(Math.round(draft.capacity * 1))} total · ≈ $0.01 each`],
+              ['Network fees paid by Proof of Seat', `≈ ${usd(Math.round(draft.capacity * 1))} total · ≈ $0.01 each`],
             ].map(([a, b], i) => (
               <motion.div
                 key={a}
@@ -253,7 +253,7 @@ function Create() {
                 <Field k="Show" v={draft.name} />
                 <Field k="Venue" v={`${draft.venue} · Atlanta`} />
                 <Field k="Date" v={draft.date} />
-                <p className="pt-1 text-[13px] text-fg-3">Added because 88,200 verified fans are on the waitlist for Jun 26.</p>
+                <p className="pt-1 text-[13px] text-fg-3">Added because 7,505 verified fans are on the waitlist for Jun 26.</p>
               </Card>
             )}
             {step === 1 && (
@@ -261,14 +261,14 @@ function Create() {
                 <Range label="Capacity" value={draft.capacity} min={5000} max={75000} step={1000} onChange={(v) => upd({ capacity: v })} format={(v) => int(v)} />
                 <Range label="Face value" value={draft.priceCents / 100} min={20} max={300} step={5} onChange={(v) => upd({ priceCents: v * 100 })} format={(v) => `$${v}`} />
                 <div className="rounded-[14px] bg-white/[0.04] p-3 text-[13px] text-fg-2">
-                  FairSeat fee: $1.50 × {int(draft.capacity)} = <b className="text-fg">{usd(draft.capacity * 150, { cents: false })}</b>, paid by you. Fans pay face value, no surprise fees.
+                  Proof of Seat fee: $1.50 × {int(draft.capacity)} = <b className="text-fg">{usd(draft.capacity * 150, { cents: false })}</b>, paid by you. Fans pay face value, no surprise fees.
                 </div>
               </Card>
             )}
             {step === 2 && (
               <Card>
-                <Range label="Resale cap" value={r.capPct} min={100} max={150} step={5} onChange={(v) => updR({ capPct: v })} format={(v) => `${v}% · max ${usd((draft.priceCents * v) / 100, { cents: false })}`} hint="Default 110%. Nobody can sell above this, not even you." />
-                <Range label="Artist royalty" value={r.royaltyPct} min={0} max={10} step={1} onChange={(v) => updR({ royaltyPct: v })} format={(v) => `${v}% of each resale`} />
+                <Range label="Resale cap" value={r.capPct} min={100} max={125} step={5} onChange={(v) => updR({ capPct: v })} format={(v) => `${v}% · max ${usd((draft.priceCents * v) / 100, { cents: false })}`} hint="Default 105%. Nobody can sell above this, not even you." />
+                <Range label="Artist royalty" value={r.royaltyPct} min={0} max={5} step={1} onChange={(v) => updR({ royaltyPct: v })} format={(v) => `${v}% of face value per resale`} />
                 <Range label="Tickets per fan" value={r.maxPerPerson} min={1} max={8} onChange={(v) => updR({ maxPerPerson: v })} format={(v) => `${v}`} />
                 <Range label="Resale closes" value={r.resaleCloseHours} min={0} max={24} onChange={(v) => updR({ resaleCloseHours: v })} format={(v) => (v ? `${v} h before` : 'at showtime')} />
                 <Range label="Gifts per ticket" value={r.maxTransfers} min={0} max={5} onChange={(v) => updR({ maxTransfers: v })} format={(v) => `${v} transfers`} />
@@ -292,15 +292,15 @@ function Create() {
                     <div className="mt-1 text-[19px] font-semibold tracking-[-0.02em]">{j.headline}</div>
                     <div className="mt-1 text-[13px] leading-snug text-fg-2">{j.note}</div>
                   </div>
-                  <RuleRow k="Resale cap" v={`${r.capPct}% (${usd((draft.priceCents * r.capPct) / 100, { cents: false })})`} state={j.openMarket ? 'On FairSeat' : 'Enforced'} warn={j.openMarket} />
+                  <RuleRow k="Resale cap" v={`${r.capPct}% (${usd((draft.priceCents * r.capPct) / 100, { cents: false })})`} state={j.openMarket ? 'On Proof of Seat' : 'Enforced'} warn={j.openMarket} />
                   <RuleRow k="Transfer to other markets" v={j.openMarket ? 'Allowed by state law' : 'Official market only'} state={j.openMarket ? 'Open' : 'Locked'} warn={j.openMarket} />
-                  <RuleRow k="Artist royalty" v={`${r.royaltyPct}% per resale`} state={j.openMarket ? 'On FairSeat' : 'Enforced'} warn={j.openMarket} />
+                  <RuleRow k="Artist royalty" v={`${r.royaltyPct}% of face per resale`} state={j.openMarket ? 'On Proof of Seat' : 'Enforced'} warn={j.openMarket} />
                   <RuleRow k="Tickets per fan" v={`${r.maxPerPerson}`} state="Enforced" />
                   <RuleRow k="Resale window" v={`Closes ${r.resaleCloseHours} h before`} state="Enforced" />
                   <RuleRow k="Verified buyers only" v="Identity checked once" state="Enforced" />
                 </motion.div>
                 <div className="flex items-start gap-2 px-1 text-[12px] leading-snug text-fg-3">
-                  <DoorOpen size={14} className="mt-0.5 shrink-0" /> The rules are written into the ticket contract when you issue. After that, nobody can change them, including you and FairSeat.
+                  <DoorOpen size={14} className="mt-0.5 shrink-0" /> The rules are written into the ticket contract when you issue. After that, nobody can change them, including you and Proof of Seat.
                 </div>
               </>
             )}

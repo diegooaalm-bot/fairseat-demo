@@ -15,7 +15,7 @@ export const ROLE_META: Record<Role, RoleMeta> = {
   maya: { id: 'maya', name: 'Maya', short: 'Maya', sub: 'Fan · can’t make it', hue: 330, person: true },
   ben: { id: 'ben', name: 'Ben', short: 'Ben', sub: 'Fan · looking for a seat', hue: 200, person: true },
   organizer: { id: 'organizer', name: 'Organizer', short: 'Organizer', sub: 'Event organizer', hue: 220, icon: LayoutDashboard },
-  artist: { id: 'artist', name: 'Artist', short: 'Artist', sub: 'Bad Bunny team', hue: 265, icon: Music2 },
-  gate: { id: 'gate', name: 'Gate', short: 'Gate', sub: 'Scanner · North Gate', hue: 150, icon: ScanLine },
+  artist: { id: 'artist', name: 'Artist', short: 'Artist', sub: 'Faye Webster team', hue: 265, icon: Music2 },
+  gate: { id: 'gate', name: 'Gate', short: 'Gate', sub: 'Scanner · Fox Theatre', hue: 150, icon: ScanLine },
   proof: { id: 'proof', name: 'Proof', short: 'Proof', sub: 'Public audit', hue: 40, icon: ShieldCheck },
 }

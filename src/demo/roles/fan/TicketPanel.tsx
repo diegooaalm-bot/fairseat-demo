@@ -122,7 +122,7 @@ export function TicketPanel({ ticket, person }: { ticket: Ticket; person: Person
   )
 }
 
-/** Demo helper: a verified fan buys this listing (Ben for Maya's Bad Bunny seat). */
+/** Demo helper: a verified fan buys this listing (Ben for Maya's Faye Webster seat). */
 export function useSimulateBuyer() {
   return (ticketId: string, seller: PersonId) => {
     const s = useDemo.getState()

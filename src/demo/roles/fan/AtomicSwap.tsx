@@ -37,7 +37,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
   const reduced = useReducedMotion()
   const [phase, setPhase] = useState<Phase>(0)
   const [checks, setChecks] = useState(0)
-  const br = tx?.breakdown ?? resaleBreakdown(11000)
+  const br = tx?.breakdown ?? resaleBreakdown(10500, 10000)
 
   useEffect(() => {
     setPhase(0)
@@ -76,7 +76,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
       : seller === 'Verified fan'
         ? 'Buying from a verified fan…'
         : `Buying ${seller}’s seat…`
-  const capLabel = (tx?.checks?.find((c) => c.id === 'cap')?.detail.split('≤ ')[1] ?? '$110.00').replace(/\.00$/, '')
+  const capLabel = (tx?.checks?.find((c) => c.id === 'cap')?.detail.split('≤ ')[1] ?? '$105.00').replace(/\.00$/, '')
   const avatar = (n: string) => (n === 'Maya' ? 330 : n === 'Ben' ? 200 : 150)
 
   return (
@@ -126,12 +126,12 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
         <Node at={P.buyer} label={!selling ? 'You' : buyer} sub="Verified buyer">
           <Avatar name={buyer === 'Verified fan' ? 'Fan' : buyer} hue={avatar(buyer)} size={54} />
         </Node>
-        <Node at={P.artist} label={artist} sub="Artist · 5%">
+        <Node at={P.artist} label={artist} sub="Artist · 2%">
           <span className="grid h-[54px] w-[54px] place-items-center rounded-full bg-[linear-gradient(140deg,#8b6cff,#3e3ab0)] text-white">
             <Music2 size={24} />
           </span>
         </Node>
-        <Node at={P.house} label="FairSeat" sub="Service fee · 3%">
+        <Node at={P.house} label="Proof of Seat" sub="Platform · 1%">
           <span className="grid h-[54px] w-[54px] place-items-center rounded-full bg-ink-4 hairline-2">
             <Mark size={28} className="text-accent" />
           </span>
@@ -215,7 +215,7 @@ export function AtomicSwap({ viewer }: { viewer: PersonId }) {
             style={{ paddingBottom: 'calc(var(--sab) + 14px)' }}
           >
             <p className="mb-4 text-center text-[14px] leading-snug text-fg-2">
-              {selling ? 'The buyer' : 'You'} paid {usd(br.buyerTotal)}. {selling ? 'You' : seller === 'Verified fan' ? 'The seller' : seller} got {usd(br.seller)}, {artist} {usd(br.royalty)}, FairSeat {usd(br.fee)}. If any rule had failed, no money would have moved.
+              {selling ? 'The buyer' : 'You'} paid {usd(br.buyerTotal)}. {selling ? 'You' : seller === 'Verified fan' ? 'The seller' : seller} got {usd(br.seller)}, {artist} {usd(br.royalty)}, Proof of Seat {usd(br.fee)}. If any rule had failed, no money would have moved.
             </p>
             <Button size="lg" full onClick={close}>
               Done

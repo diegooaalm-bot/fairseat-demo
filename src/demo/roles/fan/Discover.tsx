@@ -29,8 +29,8 @@ export function Discover({ person }: { person: PersonId }) {
     push(person, { name: 'event', params: { id } })
   }
   const nova = EVENTS.nova
-  const taylor = EVENTS.taylor
-  const taylorResale = resaleOf('taylor')
+  const soldOutEv = EVENTS.manchester
+  const soldOutResale = resaleOf('manchester')
 
   const status = owns('nova') ? 'You’re going' : person === 'ben' ? (mayaListing ? 'Sold out · fair resale available' : 'Sold out') : 'Verified fan presale · live'
 
@@ -144,19 +144,19 @@ export function Discover({ person }: { person: PersonId }) {
                 <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 pt-3.5 pb-3">
                   <ShieldCheck size={18} className="text-accent-soft" />
                   <div className="text-[16px] font-semibold tracking-[-0.01em]">Fair resale</div>
-                  <span className="ml-auto text-[12px] text-fg-3">Never above 110% of face value</span>
+                  <span className="ml-auto text-[12px] text-fg-3">Never above 105% of face value</span>
                 </div>
-                <motion.button whileTap={{ backgroundColor: 'rgba(255,255,255,0.04)' }} onClick={() => open('taylor')} className="flex w-full items-center gap-3 p-3 text-left">
+                <motion.button whileTap={{ backgroundColor: 'rgba(255,255,255,0.04)' }} onClick={() => open('manchester')} className="flex w-full items-center gap-3 p-3 text-left">
                   <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[12px]">
-                    <EventImage id="taylor" size="card" />
+                    <EventImage id="manchester" size="card" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[16px] font-semibold">{taylor.artist}</span>
+                    <span className="block text-[16px] font-semibold">{soldOutEv.artist}</span>
                     <span className="block truncate text-[13px] text-fg-3">
-                      {taylor.dateLabel.replace(/, \d{4}$/, '')} · Sold out
+                      {soldOutEv.dateLabel.replace(/, \d{4}$/, '')} · Sold out
                     </span>
                     <span className="mt-0.5 block text-[13px] font-semibold text-accent-soft">
-                      {taylorResale.length} resale tickets from {usd(Math.min(...taylorResale.map((l) => l.priceCents), 99_999_00), { cents: false })}
+                      {soldOutResale.length} resale tickets from {usd(Math.min(...soldOutResale.map((l) => l.priceCents), 99_999_00), { cents: false })}
                     </span>
                   </span>
                   <ChevronRight size={18} className="text-fg-3" />
@@ -201,7 +201,7 @@ export function Discover({ person }: { person: PersonId }) {
         </AnimatePresence>
 
         <p className="pb-2 text-[11px] leading-snug text-fg-3">
-          Academic demo. Artists, teams and venues are real; dates, listings, prices and seats are illustrative. FairSeat is not affiliated with any of them. Photos: Wikimedia Commons, see credits on the FairSeat site.
+          Academic demo. Artists, teams and venues are real; dates, listings, prices and seats are illustrative. Proof of Seat is not affiliated with any of them. Photos: Wikimedia Commons, see credits on the Proof of Seat site.
         </p>
       </div>
     </Screen>

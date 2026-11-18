@@ -82,7 +82,7 @@ function Explorer() {
 
         <div className="flex items-baseline justify-between px-1 pt-1">
           <div className="text-[20px] font-bold tracking-[-0.02em]">Transactions</div>
-          <div className="text-[12px] whitespace-nowrap text-fg-3">≈ $0.01 each · paid by FairSeat</div>
+          <div className="text-[12px] whitespace-nowrap text-fg-3">≈ $0.01 each · paid by Proof of Seat</div>
         </div>
         <div className="flex flex-col gap-2.5">
           <AnimatePresence initial={false}>
@@ -166,7 +166,7 @@ function TxCard({ tx, onClick }: { tx: Tx; onClick: () => void }) {
               <Chip ok>Buyer verified</Chip>
             </>
           ) : (
-            <Chip>Price {usd(tx.priceCents ?? 0)} &gt; cap $110.00</Chip>
+            <Chip>Price {usd(tx.priceCents ?? 0)} &gt; cap $105.00</Chip>
           )}
         </div>
       )}
@@ -186,12 +186,13 @@ function Chip({ ok, children }: { ok?: boolean; children: React.ReactNode }) {
 /* ───────────────────────── Code panel ───────────────────────── */
 const CODE = [
   { code: 'function resell(ticket, buyer, price):', kind: 'head' },
-  { code: '  require(price <= faceValue * 110%)', kind: 'req', check: 'cap' },
+  { code: '  require(price <= faceValue * 105%)', kind: 'req', check: 'cap' },
   { code: '  require(isVerified(buyer))', kind: 'req', check: 'verified' },
   { code: '  require(ticketsOf(buyer) < 4)', kind: 'req', check: 'limit' },
   { code: '  require(now < eventStart - 2h)', kind: 'req', check: 'window' },
-  { code: '  pay(artist, price * 5%)', kind: 'pay', note: 'royalty' },
-  { code: '  pay(seller, price - price * 5%)', kind: 'pay', note: 'seller' },
+  { code: '  pay(artist, faceValue * 2%)', kind: 'pay', note: 'royalty' },
+  { code: '  pay(platform, faceValue * 1%)', kind: 'pay', note: 'fee' },
+  { code: '  pay(seller, price - faceValue * 3%)', kind: 'pay', note: 'seller' },
   { code: '  transfer(ticket, seller -> buyer)', kind: 'pay', note: 'transfer' },
 ] as const
 
@@ -212,18 +213,19 @@ export function CodePanel({ tx }: { tx: Tx }) {
   }, [tx.id, last])
   const br = tx.breakdown
   const notes: Record<string, string> = {
-    cap: `${usd(tx.priceCents ?? 0)} ${reverted ? '>' : '≤'} $110.00`,
+    cap: `${usd(tx.priceCents ?? 0)} ${reverted ? '>' : '≤'} $105.00`,
     verified: 'verified ✓',
     limit: 'holds 0 · max 4',
     window: 'closes Jun 26, 6 PM',
     royalty: br ? `→ artist ${usd(br.royalty)}` : '',
+    fee: br ? `→ platform ${usd(br.fee)} · it also pays the gas` : '',
     seller: br ? `→ seller ${usd(br.seller)}` : '',
     transfer: 'atomic · same transaction, all or nothing',
   }
   return (
     <div className="overflow-hidden rounded-[22px] bg-[#07090f] hairline">
       <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-2.5">
-        <span className="font-mono text-[12px] text-fg-3">FairSeatMarket · resell()</span>
+        <span className="font-mono text-[12px] text-fg-3">ProofOfSeatMarket · resell()</span>
         <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${reverted ? 'bg-err/15 text-err' : 'bg-ok/15 text-ok'}`}>
           {reverted ? 'Reverted' : 'Success'} · block {int(tx.block)}
         </span>
@@ -334,8 +336,8 @@ function TxDetail({ id }: { id: string }) {
             {[
               ['Buyer paid', usd(br.buyerTotal)],
               ['Seller received', usd(br.seller)],
-              ['Artist royalty (5%)', usd(br.royalty)],
-              ['FairSeat fee (3%)', usd(br.fee)],
+              ['Artist royalty (2% of face)', usd(br.royalty)],
+              ['Proof of Seat fee (1% of face)', usd(br.fee)],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between border-b border-white/[0.06] px-4 py-2.5 text-[14px] last:border-0">
                 <span className="text-fg-2">{k}</span>
@@ -345,7 +347,7 @@ function TxDetail({ id }: { id: string }) {
           </div>
         )}
         {(tx.kind === 'resale' || tx.kind === 'reverted') && <CodePanel tx={tx} />}
-        <p className="px-1 text-[12px] leading-snug text-fg-3">Addresses are anonymous. Only FairSeat can link an address to a verified person, and that link never leaves its encrypted systems.</p>
+        <p className="px-1 text-[12px] leading-snug text-fg-3">Addresses are anonymous. Only Proof of Seat can link an address to a verified person, and that link never leaves its encrypted systems.</p>
       </div>
     </Screen>
   )

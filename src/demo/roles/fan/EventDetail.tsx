@@ -61,7 +61,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
         <h2 className="text-[18px] font-semibold tracking-[-0.015em]">Fair resale</h2>
         <span className="text-[12px] text-fg-3">{listings.length ? `${listings.length} ticket${listings.length > 1 ? 's' : ''} · from ${usd(listings[0].priceCents)}` : 'No listings yet'}</span>
       </div>
-      <p className="mb-2.5 text-[13px] leading-snug text-fg-2">From verified fans who can’t go. Never above 110% of face value; 5% of every resale goes to the {payee}.</p>
+      <p className="mb-2.5 text-[13px] leading-snug text-fg-2">From verified fans who can’t go. Never above 105% of face value; 2% of face value goes to the {payee} on every resale.</p>
       {listings.length > 0 ? (
         <EventListings id={id} header={false} viewer={person} listings={listings} onOpen={(l) => openOffer(l.id)} />
       ) : (
@@ -121,7 +121,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
               <ShieldCheck size={22} className="shrink-0 text-accent-soft" />
               <div className="min-w-0">
                 <div className="text-[15px] font-semibold">Sold out · fair resale is open</div>
-                <div className="text-[13px] text-fg-2">Buy from verified fans. Prices can’t go above 110% of face value, by design.</div>
+                <div className="text-[13px] text-fg-2">Buy from verified fans. Prices can’t go above 105% of face value, by design.</div>
               </div>
             </div>
           )}
@@ -132,7 +132,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
           <section>
             <div className="mb-2 flex items-baseline justify-between">
               <h2 className="text-[18px] font-semibold tracking-[-0.015em]">{soldOut ? 'Face values' : 'Tickets'}</h2>
-              <span className="text-[12px] text-fg-3">{soldOut ? 'Resale cap = 110% of these' : 'All-in prices · no hidden fees'}</span>
+              <span className="text-[12px] text-fg-3">{soldOut ? 'Resale cap = 105% of these' : 'All-in prices · no hidden fees'}</span>
             </div>
             <div className="overflow-hidden rounded-[16px] bg-ink-3 hairline">
               {ev.levels.map((l) => (
@@ -143,7 +143,7 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
                   </span>
                   <span className="text-[15px] font-semibold tabular">
                     {usd(l.cents)}
-                    {soldOut && <span className="ml-2 text-[12px] font-normal text-fg-3">max resale {usd(Math.round(l.cents * 1.1))}</span>}
+                    {soldOut && <span className="ml-2 text-[12px] font-normal text-fg-3">max resale {usd(Math.round(l.cents * 1.05))}</span>}
                   </span>
                 </div>
               ))}
@@ -176,13 +176,13 @@ export function EventDetail({ person, id, footer }: { person: PersonId; id: Even
                 <ShieldCheck size={20} />
               </span>
               <div>
-                <div className="text-[16px] font-semibold">FairSeat Guarantee</div>
+                <div className="text-[16px] font-semibold">Proof of Seat Guarantee</div>
                 <div className="text-[12px] text-fg-3">These rules are part of every ticket. Nobody can change them.</div>
               </div>
             </div>
             <ul className="mt-3 flex flex-col gap-2 text-[14px] text-fg-2">
-              <Li>Resale never above 110% of face value</Li>
-              <Li>5% of every resale goes to the {payee}</Li>
+              <Li>Resale never above 105% of face value</Li>
+              <Li>2% of face value goes to the {payee} on every resale</Li>
               <Li>Up to 4 tickets per verified fan</Li>
               <Li>Resale closes 2 hours before showtime</Li>
               <Li>Codes change every few seconds: screenshots and copies don’t work</Li>

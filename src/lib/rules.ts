@@ -1,12 +1,17 @@
-/** FairSeat rules engine. Pure functions, integer cents. */
+/**
+ * Proof of Seat rules engine. Pure functions, integer cents.
+ * Resale is capped at 105% of face value. The 5% above face is split:
+ * 2% to the seller, 2% to the artist, 1% to the platform (all % of face value).
+ * The buyer pays the listing price, all-in: no fees on top.
+ */
 
 export type Jurisdiction = 'UK' | 'GA' | 'NY' | 'CO'
 
 export interface Rules {
   capPct: number // resale cap, % of face value
-  royaltyPct: number // to the artist, % of resale price
-  buyerFeePct: number // FairSeat resale fee, paid by buyer
-  primaryFeeCents: number // FairSeat primary fee per ticket, paid by organizer
+  royaltyPct: number // to the artist, % of face value, on every resale
+  feePct: number // Proof of Seat resale fee, % of face value, taken from the price (it also pays the gas)
+  primaryFeeCents: number // Proof of Seat primary fee per ticket, paid by the organizer
   maxPerPerson: number
   resaleCloseHours: number
   maxTransfers: number // gifts per ticket
@@ -14,9 +19,9 @@ export interface Rules {
 }
 
 export const DEFAULT_RULES: Rules = {
-  capPct: 110,
-  royaltyPct: 5,
-  buyerFeePct: 3,
+  capPct: 105,
+  royaltyPct: 2,
+  feePct: 1,
   primaryFeeCents: 150,
   maxPerPerson: 4,
   resaleCloseHours: 2,
@@ -35,17 +40,18 @@ export interface ResaleBreakdown {
   buyerTotal: number
 }
 
-export function resaleBreakdown(priceCents: number, rules: Pick<Rules, 'royaltyPct' | 'buyerFeePct'> = DEFAULT_RULES): ResaleBreakdown {
-  const royalty = Math.round((priceCents * rules.royaltyPct) / 100)
-  const fee = Math.round((priceCents * rules.buyerFeePct) / 100)
-  return { price: priceCents, royalty, seller: priceCents - royalty, fee, buyerTotal: priceCents + fee }
+/** Who gets what when a ticket with this face value is resold at this price. */
+export function resaleBreakdown(priceCents: number, faceCents: number, rules: Pick<Rules, 'royaltyPct' | 'feePct'> = DEFAULT_RULES): ResaleBreakdown {
+  const royalty = Math.round((faceCents * rules.royaltyPct) / 100)
+  const fee = Math.round((faceCents * rules.feePct) / 100)
+  return { price: priceCents, royalty, seller: priceCents - royalty - fee, fee, buyerTotal: priceCents }
 }
 
 export interface JurisdictionProfile {
   id: Jurisdiction
   label: string
   short: string
-  capOnFairSeat: true
+  capOnPlatform: true
   openMarket: boolean
   headline: string
   note: string
@@ -56,16 +62,16 @@ export const JURISDICTIONS: Record<Jurisdiction, JurisdictionProfile> = {
     id: 'UK',
     label: 'United Kingdom',
     short: 'UK',
-    capOnFairSeat: true,
+    capOnPlatform: true,
     openMarket: false,
     headline: 'Full cap, everywhere',
-    note: 'Every resale goes through the FairSeat market and is capped. Compliance is automatic and provable.',
+    note: 'Every resale goes through the Proof of Seat market and is capped. Compliance is automatic and provable.',
   },
   GA: {
     id: 'GA',
     label: 'Georgia',
     short: 'GA',
-    capOnFairSeat: true,
+    capOnPlatform: true,
     openMarket: false,
     headline: 'Full cap, everywhere',
     note: 'Like most states: resale only through the official market, capped, with royalties.',
@@ -74,19 +80,19 @@ export const JURISDICTIONS: Record<Jurisdiction, JurisdictionProfile> = {
     id: 'NY',
     label: 'New York',
     short: 'NY',
-    capOnFairSeat: true,
+    capOnPlatform: true,
     openMarket: true,
     headline: 'Free resale protected by state law',
-    note: 'The ticket stays transferable to any compatible marketplace. On FairSeat the cap and royalty still apply.',
+    note: 'The ticket stays transferable to any compatible marketplace. On Proof of Seat the cap and royalty still apply.',
   },
   CO: {
     id: 'CO',
     label: 'Colorado',
     short: 'CO',
-    capOnFairSeat: true,
+    capOnPlatform: true,
     openMarket: true,
     headline: 'Free resale protected by state law',
-    note: 'Sellers cannot be restricted. The ticket is transferable to any compatible marketplace; FairSeat sales stay capped.',
+    note: 'Sellers cannot be restricted. The ticket is transferable to any compatible marketplace; Proof of Seat sales stay capped.',
   },
 }
 
@@ -136,22 +142,22 @@ export function resaleChecks(i: ResaleCheckInput): Check[] {
 /* ─────────────── Festival business model (illustrative) ─────────────── */
 
 export interface FestivalInput {
-  capacity: number
-  price: number // dollars
+  capacity: number // tickets sold per year
+  price: number // average face value, dollars
   resoldPct: number // 0-100
-  avgResale: number // dollars
 }
 
-export const FESTIVAL_DEFAULTS: FestivalInput = { capacity: 50_000, price: 150, resoldPct: 20, avgResale: 160 }
+/** A pilot venue's year: e.g. a 2,600-seat theater with ~20 sold-out nights. */
+export const FESTIVAL_DEFAULTS: FestivalInput = { capacity: 50_000, price: 60, resoldPct: 15 }
 
 export function festival(i: FestivalInput, rules: Rules = DEFAULT_RULES) {
   const primaryFee = i.capacity * (rules.primaryFeeCents / 100)
   const resales = Math.round((i.capacity * i.resoldPct) / 100)
-  const resaleVolume = resales * i.avgResale
-  const resaleFee = resaleVolume * (rules.buyerFeePct / 100)
+  const resaleFee = resales * i.price * (rules.feePct / 100)
   const revenue = primaryFee + resaleFee
-  const royalties = resaleVolume * (rules.royaltyPct / 100)
+  const royalties = resales * i.price * (rules.royaltyPct / 100)
+  const sellerBonus = resales * i.price * ((rules.capPct - 100 - rules.royaltyPct - rules.feePct) / 100)
   const ops = i.capacity + resales + i.capacity // issue + resales + badges
   const chainCost = ops * 0.01
-  return { primaryFee, resales, resaleVolume, resaleFee, revenue, royalties, ops, chainCost, cap: (i.price * rules.capPct) / 100 }
+  return { primaryFee, resales, resaleFee, revenue, royalties, sellerBonus, ops, chainCost, cap: (i.price * rules.capPct) / 100 }
 }

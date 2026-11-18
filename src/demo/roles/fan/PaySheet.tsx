@@ -81,7 +81,7 @@ export function PaySheet({
       <div className="relative px-5 pb-3">
         <div className="flex items-center justify-between pb-4">
           <div className="flex items-center gap-2 text-[17px] font-semibold tracking-[-0.02em]">
-            <Mark size={22} className="text-accent" /> FairSeat
+            <Mark size={22} className="text-accent" /> Proof of Seat
           </div>
           <button onClick={onClose} disabled={phase !== 'confirm'} className="text-[17px] text-accent-soft disabled:opacity-30">
             Cancel
@@ -117,7 +117,7 @@ export function PaySheet({
           ))}
         </div>
         <div className="flex items-center justify-between pt-3">
-          <span className="text-[17px] text-fg-2">Pay FairSeat</span>
+          <span className="text-[17px] text-fg-2">Pay Proof of Seat</span>
           <span className="text-[24px] font-bold tracking-[-0.02em] tabular">{usd(totalCents)}</span>
         </div>
         <div className="pb-2 text-[11px] text-fg-3">Simulated payment for a class demo · no real charge</div>

@@ -44,7 +44,7 @@ export const STEPS: StoryStep[] = [
     role: 'maya',
     scene: 'problem',
     say: 'Who here has ever lost a concert ticket to a “sold out” sign? Meet Maya. She waited two hours in a virtual queue. Sold out in minutes. Ten minutes later, her $100 ticket was listed at $400. She didn’t lose to other fans. She lost to bots.',
-    fact: '3.5B requests · $3.7B in fees · up to 6×',
+    fact: '$100 face value · $400 resale · $0 to the artist',
     apply: () => {
       fresh()
       S().setRole('maya')
@@ -53,11 +53,11 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 2,
     chapterTitle: 'The big idea',
-    title: 'What if the ticket knew the rules?',
+    title: 'One seat. One token. One owner.',
     role: 'maya',
     scene: 'idea',
-    say: 'So we asked one simple question: what if the ticket itself knew the rules? Meet FairSeat. Every ticket is unique, with its rules written inside: a 110% cap, 5% to the artist, verified fans only.',
-    fact: 'Cap 110% · 5% royalty · 4 per fan',
+    say: 'Meet Proof of Seat. One seat, one token, one owner. Every ticket is a token on a public ledger, so it can’t sit in two wallets or be sold twice, and its rules travel with it: resale capped at 105%, 2% to the artist, 4 tickets per verified fan.',
+    fact: 'Cap 105% · 2% to the artist · 4 per fan',
     apply: () => {
       fresh()
       S().setRole('maya')
@@ -68,7 +68,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The purchase',
     title: 'The fair queue',
     role: 'maya',
-    say: 'Presale day for Bad Bunny at Mercedes-Benz Stadium. Maya verified her identity once, when she signed up, like opening a bank account. Watch the bots: they hit the identity shield. Only verified humans get through, and priority goes to fans with real history.',
+    say: 'Presale day for Faye Webster’s hometown show at the Fox Theatre: a mid-size venue, the kind we’d pilot with. Maya verified her ID once, when she signed up. Watch the bots: they hit the identity check. Only verified people get through, and past fans get priority.',
     fact: 'Bots blocked, live',
     apply: () => {
       fresh()
@@ -83,7 +83,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The purchase',
     title: 'Pick a seat and pay',
     role: 'maya',
-    say: 'She picks Section 312, Row 14, Seat 7: $100, all-in, no surprise fees. Up to four per person: try a fifth and the rule pushes back. She pays with her card, double-click, done. The ticket can’t be copied or faked.',
+    say: 'She picks Mezzanine M3, Row 14, Seat 7: $100, all-in, no surprise fees. Up to four per person: try a fifth and the rule pushes back. She pays with her card. The app created her wallet at sign-up and pays the gas, so she never touches crypto.',
     fact: '$100 face value · no fees for the fan',
     apply: () => {
       fresh()
@@ -102,8 +102,8 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The resale',
     title: 'Maya can’t go',
     role: 'maya',
-    say: 'A few weeks later Maya can’t go. She taps Sell. Watch the slider: it hits a wall at $110. This ticket knows the rules. She gets $104.50, the artist $5.50, and the buyer pays $113.30.',
-    fact: '104.50 + 5.50 · buyer pays 113.30',
+    say: 'A few weeks later Maya can’t go. She taps Sell. Watch the slider: it hits a wall at $105. A sale above the cap isn’t against the rules, it’s impossible: the contract rejects it. Of the $105, Maya gets $102, the artist $2 and Proof of Seat $1.',
+    fact: '$102 seller · $2 artist · $1 platform',
     apply: () => {
       fresh()
       S().ensure('mayaBought')
@@ -119,8 +119,8 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The resale',
     title: 'The fair resale market',
     role: 'ben',
-    say: 'Now the show is sold out. This is FairSeat’s resale market: every seat comes from a verified fan, and every price is checked against the cap written into the ticket. Never above 110% of face value. Sold-out shows come first, and there is Maya’s seat at $110.',
-    fact: 'Every listing ≤ 110% of face value',
+    say: 'Now the show is sold out. This is Proof of Seat’s resale market: every seat comes from a verified fan, and every price is checked against the cap written into the ticket. Never above 105% of face value. Sold-out shows come first, and there is Maya’s seat at $105.',
+    fact: 'Every listing ≤ 105% of face value',
     apply: () => {
       fresh()
       S().ensure('listed')
@@ -132,10 +132,10 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 4,
     chapterTitle: 'The resale',
-    title: 'Ben buys it for $110',
+    title: 'Ben buys it for $105',
     role: 'ben',
-    say: 'Ben, a verified fan, opens Maya’s seat: $110, not $400 on a typical resale site. The price check shows face value, listing and cap side by side. He pays, and in one all-or-nothing transaction the ticket and the money move at the same time. If any rule failed, nothing would move.',
-    fact: '$110 here · $400 elsewhere',
+    say: 'Ben, a verified fan, opens Maya’s seat: $105 all-in, not $400 plus fees on a typical resale site. The price check shows face value, listing and cap side by side. He pays, and in one all-or-nothing transaction the ticket and the money move at the same time. If any rule failed, nothing would move.',
+    fact: '$105 here · $400+ elsewhere',
     apply: () => {
       fresh()
       S().ensure('listed')
@@ -149,7 +149,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'Ben gets in',
     title: 'At the door',
     role: 'gate',
-    say: 'Show night at Mercedes-Benz Stadium. Ben’s code changes every five seconds and is signed by his phone. Scan: welcome, Ben. Now try a screenshot, or Maya’s old ticket: rejected. And it keeps working offline.',
+    say: 'Show night at the Fox Theatre. Ben’s QR changes every few seconds and is signed by the wallet on his phone. Scan: welcome, Ben. Now try a screenshot, or Maya’s old ticket: rejected. And it keeps working offline.',
     fact: 'Signed QR · works offline',
     apply: () => {
       fresh()
@@ -162,9 +162,9 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 6,
     chapterTitle: 'The badge',
-    title: 'I was there',
+    title: 'Proof of attendance',
     role: 'ben',
-    say: 'After the show, Ben gets an “I was there” badge. It can’t be sold or transferred. More shows means earlier presales. Bots can’t buy history.',
+    say: 'After the show, Ben’s token becomes proof of attendance: an “I was there” badge that can’t be sold or transferred. It earns him early access to the next presale. Bots can’t buy history.',
     fact: 'Level up · priority next presale',
     apply: () => {
       fresh()
@@ -181,10 +181,10 @@ export const STEPS: StoryStep[] = [
   {
     chapter: 7,
     chapterTitle: 'The artist gets paid',
-    title: '5% of every resale',
+    title: '2% of every resale',
     role: 'artist',
-    say: 'And the artist? Every resale pays the artist 5%, instantly. There’s Maya’s $5.50 going to Bad Bunny’s team. With traditional resale, the artist gets nothing.',
-    fact: '+$5.50 per resale · $0 elsewhere',
+    say: 'And the artist? Every resale pays the artist 2% of face value, automatically. There’s Maya’s $2 going to Faye Webster’s team. With traditional resale, the artist gets $0.',
+    fact: '+$2 per resale · $0 elsewhere',
     apply: () => {
       fresh()
       S().ensure('after')
@@ -198,7 +198,7 @@ export const STEPS: StoryStep[] = [
     chapterTitle: 'The artist gets paid',
     title: 'Anyone can check',
     role: 'proof',
-    say: 'Anyone can audit it: every resale is public and every rule is code. We don’t use blockchain to sell tickets. We use it so that nobody, not even us, can break the rules.',
+    say: 'Anyone can verify it: fans, venues, artists, other marketplaces. Every resale is public and every rule is code. Ticketmaster could cap prices in its own database; here nobody has to trust a company to keep doing it, not even us.',
     fact: 'Every require ✓',
     apply: () => {
       fresh()
@@ -214,7 +214,7 @@ export const STEPS: StoryStep[] = [
     title: 'Back to Maya',
     role: 'maya',
     scene: 'close',
-    say: 'So, back to Maya. Next time, she doesn’t lose to a bot. She gets in for $110, not $400. And the artist gets paid twice. FairSeat: the ticket that knows the rules.',
+    say: 'So, back to Maya. Next time, she doesn’t lose to a bot, the resale price is capped and the artist gets paid. Proof of Seat: one seat, one token, one owner.',
     apply: () => {
       fresh()
       S().ensure('after')

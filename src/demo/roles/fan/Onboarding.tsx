@@ -92,7 +92,7 @@ function Welcome({ onPasskey, onEmail }: { onPasskey: () => void; onEmail: () =>
         <Button size="lg" full variant="secondary" onClick={onEmail} icon={<Mail size={19} />}>
           Continue with email
         </Button>
-        <p className="pt-1 text-center text-[13px] text-fg-3">No passwords. If you can use a card, you can use FairSeat.</p>
+        <p className="pt-1 text-center text-[13px] text-fg-3">No passwords. If you can use a card, you can use Proof of Seat.</p>
       </motion.div>
     </>
   )
@@ -141,7 +141,7 @@ function Passkey({ onDone }: { onDone: () => void }) {
         <FaceID state={state} size={92} />
       </motion.div>
       <div className="mt-7 text-[22px] font-semibold tracking-[-0.02em]">{state === 'scan' ? 'Face ID' : 'Passkey created'}</div>
-      <div className="mt-1 text-[15px] text-fg-3">{state === 'scan' ? 'Creating a passkey for FairSeat' : 'Signed in as Maya'}</div>
+      <div className="mt-1 text-[15px] text-fg-3">{state === 'scan' ? 'Creating a passkey for Proof of Seat' : 'Signed in as Maya'}</div>
     </div>
   )
 }

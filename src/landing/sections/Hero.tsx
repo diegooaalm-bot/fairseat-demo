@@ -17,21 +17,23 @@ export function Hero() {
     <section className="relative overflow-hidden pt-[calc(env(safe-area-inset-top)+88px)] pb-16 sm:pb-24 lg:min-h-[100svh]">
       <motion.div style={{ opacity: glowO }} className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute -top-[35%] left-1/2 h-[110%] w-[110%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(62,134,255,.32),transparent)]" />
-        <img src={`${import.meta.env.BASE_URL}photos/mbs-bg.webp`} alt="" fetchPriority="low" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-[0.16]" />
+        <img src={`${import.meta.env.BASE_URL}photos/fox-bg.webp`} alt="" fetchPriority="low" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-[0.16]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,13,.55)_0%,rgba(10,10,13,.85)_60%,#0a0a0d_100%)]" />
       </motion.div>
       <Container className="relative grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="text-center lg:text-left">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-3 py-1.5 text-[13px] font-semibold text-fg-2 hairline">
-            <ShieldCheck size={14} className="text-accent-soft" /> Fair resale for concert tickets
+            <ShieldCheck size={14} className="text-accent-soft" /> Tickets on the blockchain
           </motion.div>
           <motion.h1
             initial={{ y: 18 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.9, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-6 text-[clamp(52px,9vw,124px)] leading-[0.92] font-bold tracking-[-0.055em]"
+            className="mt-6 text-[clamp(50px,7vw,100px)] leading-[0.94] font-bold tracking-[-0.055em]"
           >
-            The ticket that <span className="text-gradient-accent">knows the rules.</span>
+            <span className="block whitespace-nowrap">One seat.</span>
+            <span className="block whitespace-nowrap">One token.</span>
+            <span className="block whitespace-nowrap text-gradient-accent">One owner.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -39,7 +41,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mx-auto mt-6 max-w-[36ch] text-[clamp(18px,2.1vw,23px)] leading-[1.4] text-fg-2 lg:mx-0"
           >
-            Resale that exists but can never be abusive: capped at 110%, 5% to the artist on every resale, verified fans only.
+            Digital tickets that end scalping, fake tickets and hidden resale markups. Resale capped at 105% of face value, 2% to the artist on every resale, verified fans only.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <Link
@@ -52,7 +54,7 @@ export function Hero() {
               How it works <ArrowDown size={16} />
             </a>
           </motion.div>
-          <p className="mt-6 text-[14px] text-fg-3">If you can use Apple Pay, you can use FairSeat. No crypto to buy, ever.</p>
+          <p className="mt-6 text-[14px] text-fg-3">Fans sign up with an email and a card. The app creates the wallet and pays the gas: no crypto to buy, ever.</p>
         </div>
 
         <motion.div style={{ y: phoneY }} className="relative mx-auto" initial={{ opacity: 0, y: 60, rotate: -4 }} animate={{ opacity: 1, rotate: 0 }} transition={{ duration: 1.1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}>
@@ -81,7 +83,7 @@ function HeroPhone() {
         <BadgeCheck size={16} className="text-ok" /> Verified fans only
       </Float>
       <Float className="left-[calc(100%-36px)] top-[46%] hidden sm:flex" delay={1.1}>
-        <Music2 size={16} className="text-[#a58cff]" /> +$5.50 to the artist
+        <Music2 size={16} className="text-[#a58cff]" /> +$2.00 to the artist
       </Float>
       <Float className="right-[calc(100%-30px)] bottom-[14%] hidden sm:flex" delay={1.4}>
         <span className="text-err line-through">$400</span> Not here.
@@ -103,11 +105,11 @@ function Float({ children, className, delay }: { children: React.ReactNode; clas
   )
 }
 
-/** A live, looping resale screen: the slider slams into the $110 cap. */
+/** A live, looping resale screen: the slider slams into the $105 cap. */
 function HeroScreen() {
   const [v, setV] = useState(9500)
   const [hit, setHit] = useState(0)
-  const br = resaleBreakdown(v)
+  const br = resaleBreakdown(v, 10000)
   return (
     <div className="absolute inset-0 flex flex-col bg-ink px-5" style={{ paddingTop: 'calc(var(--sat) + 14px)' }}>
       <div className="text-center text-[17px] font-semibold">Resell</div>
@@ -116,8 +118,8 @@ function HeroScreen() {
           <EventImage id="nova" size="card" />
         </span>
         <span className="flex-1">
-          <span className="block text-[15px] font-semibold">Bad Bunny</span>
-          <span className="block text-[13px] text-fg-3">Sec 312 · Row 14 · Seat 7</span>
+          <span className="block text-[15px] font-semibold">Faye Webster</span>
+          <span className="block text-[13px] text-fg-3">Fox Theatre · Sec M3 · Row 14</span>
         </span>
         <span className="text-right text-[12px] text-fg-3">
           You paid
@@ -127,11 +129,11 @@ function HeroScreen() {
       <div className="mt-4 rounded-[24px] bg-ink-2 p-5 hairline">
         <div className="text-[54px] leading-none font-bold tracking-[-0.045em] tabular">{usd(v)}</div>
         <div className="mt-8">
-          <CapSlider faceCents={10000} capCents={11000} minCents={8000} maxCents={14000} value={v} onChange={setV} onHitCap={() => setHit((h) => h + 1)} autoDemo />
+          <CapSlider faceCents={10000} capCents={10500} minCents={8500} maxCents={12500} value={v} onChange={setV} onHitCap={() => setHit((h) => h + 1)} autoDemo />
         </div>
         <div className="h-12">
           <AnimatePresence mode="wait">
-            {hit > 0 && v >= 11000 && (
+            {hit > 0 && v >= 10500 && (
               <motion.div key={hit} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-2 flex items-center gap-2 text-[16px] font-bold text-accent-soft">
                 <ShieldCheck size={19} className="text-accent" /> This ticket knows the rules.
               </motion.div>
@@ -142,8 +144,8 @@ function HeroScreen() {
       <div className="mt-4 overflow-hidden rounded-[24px] bg-ink-3 hairline">
         {[
           ['You receive', usd(br.seller), true],
-          ['Artist gets (5%)', usd(br.royalty), false],
-          ['Buyer pays', usd(br.buyerTotal), false],
+          ['Artist gets (2%)', usd(br.royalty), false],
+          ['Proof of Seat (1%)', usd(br.fee), false],
         ].map(([k, val, big]) => (
           <div key={k as string} className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3.5 last:border-0">
             <span className={big ? 'text-[17px] font-semibold' : 'text-[15px] text-fg-2'}>{k}</span>

@@ -46,13 +46,13 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
   }
   const ev = EVENTS[ticket.eventId]
   const cap = capCents(ticket.faceCents)
-  const br = resaleBreakdown(price)
+  const br = resaleBreakdown(price, ticket.faceCents)
   const mins = minutesToShow(ticket.eventId, m)
   const locked = mins <= 120
   const isListed = !!listing
-  // slider range follows the ticket's own face value (80%–140%), so the cap sits mid-track for any price
-  const minC = Math.round((ticket.faceCents * 0.8) / 100) * 100
-  const maxC = Math.round((ticket.faceCents * 1.4) / 100) * 100
+  // slider range follows the ticket's own face value (85%–125%), so the cap sits mid-track for any price
+  const minC = Math.round((ticket.faceCents * 0.85) / 100) * 100
+  const maxC = Math.round((ticket.faceCents * 1.25) / 100) * 100
   const artist = shortArtist(ev.artist)
   const setAtCap = () => {
     setPrice(cap)
@@ -90,14 +90,14 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
               {ev.artist} · Sec {ticket.section} · Row {ticket.row} · Seat {ticket.seat}
             </p>
             <ol className="mt-6 flex w-full flex-col gap-0 rounded-[16px] bg-ink-3 p-4 text-left hairline">
-              <Step done title="Listed on FairSeat" sub="Visible to verified fans right now" />
+              <Step done title="Listed on Proof of Seat" sub="Visible to verified fans right now" />
               <Step
                 title="A verified fan buys it"
-                sub={ticket.eventId === 'nova' ? '88,200 verified fans are on the waitlist for this show' : `Fans following ${artist} get a notification`}
+                sub={ticket.eventId === 'nova' ? '7,505 verified fans are on the waitlist for this show' : `Fans following ${artist} get a notification`}
               />
               <Step
                 last
-                title={`You get ${usd(resaleBreakdown(listing!.priceCents).seller)} · ${artist} gets ${usd(resaleBreakdown(listing!.priceCents).royalty)}`}
+                title={`You get ${usd(resaleBreakdown(listing!.priceCents, ticket.faceCents).seller)} · ${artist} gets ${usd(resaleBreakdown(listing!.priceCents, ticket.faceCents).royalty)}`}
                 sub="Paid at the same moment the ticket moves"
               />
             </ol>
@@ -146,7 +146,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
                 <div className="shrink-0 pb-1 text-right text-[12px] leading-tight whitespace-nowrap text-fg-3">
                   Max <span className="font-semibold text-accent-soft">{usd(cap)}</span>
                   <br />
-                  110% of face
+                  105% of face
                 </div>
               </div>
               <div className="mt-8">
@@ -170,7 +170,7 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
                       <ShieldCheck size={20} className="mt-0.5 shrink-0 text-accent" />
                       <div>
                         <div className="text-[16px] font-bold tracking-[-0.015em] text-accent-soft">This ticket knows the rules.</div>
-                        <div className="text-[12px] leading-snug text-fg-3">The cap is part of the ticket. No one can sell above it, not even FairSeat.</div>
+                        <div className="text-[12px] leading-snug text-fg-3">The cap is part of the ticket. No one can sell above it, not even Proof of Seat.</div>
                       </div>
                     </motion.div>
                   )}
@@ -190,9 +190,9 @@ export function Resell({ person, id }: { person: PersonId; id: string }) {
                 </div>
               </div>
               <div className="mt-3 mb-2.5 border-t border-white/[0.06] pt-3 text-[13px] text-fg-2">
-                The buyer pays <b className="text-fg tabular">{usd(br.buyerTotal)}</b>, split like this:
+                The buyer pays <b className="text-fg tabular">{usd(br.buyerTotal)}</b>, all-in. It splits like this:
               </div>
-              <MoneySplit priceCents={price} artist={artist} seller="You" />
+              <MoneySplit priceCents={price} faceCents={ticket.faceCents} artist={artist} seller="You" />
             </div>
 
             <div className="flex flex-col gap-2 px-1 text-[13px] text-fg-3">

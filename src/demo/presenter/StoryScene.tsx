@@ -58,7 +58,7 @@ function Poster({ scene }: { scene: Scene }) {
             <div className="absolute inset-0 flex flex-col justify-between p-5">
               <div className="text-[22px] font-bold tracking-[-0.03em]">{EVENTS.nova.artist}</div>
               <div className="flex items-end justify-between">
-                <span className="text-[12px] text-white/75">Sec 312 · Face value $100</span>
+                <span className="text-[12px] text-white/75">Sec M3 · Face value $100</span>
                 <motion.span className="text-[52px] leading-none font-bold tracking-[-0.05em]" initial={{ color: '#f5f5f7' }} animate={{ color: '#ff453a' }} transition={{ delay: 1.2, duration: 1.4 }}>
                   <NumberTicker value={400} from={100} format={(n) => `$${Math.round(n)}`} duration={2.2} />
                 </motion.span>
@@ -68,9 +68,9 @@ function Poster({ scene }: { scene: Scene }) {
         </motion.div>
         <div className="relative mt-auto flex flex-col gap-2.5">
           {[
-            ['3.5B', 'requests in one presale (Eras Tour, 2022)'],
-            ['$3.7B', 'resale fees, 2019–2024 (FTC lawsuit)'],
-            ['6×', 'face value, resale prices in the UK'],
+            ['$35,438', 'one Atlanta Eras Tour floor seat, listed the day after the presale (2022)'],
+            ['$3,801', 'average Eras resale price, vs. $157 on her previous tour'],
+            ['$0', 'of the markup goes to the artist on most resale sites'],
           ].map(([n, t], i) => (
             <motion.div key={n} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.6 + i * 0.2 }} className="flex items-baseline gap-3 rounded-[16px] bg-ink-2/90 px-4 py-3 hairline">
               <span className="w-[74px] shrink-0 text-[24px] font-bold tracking-[-0.03em]">{n}</span>
@@ -88,14 +88,14 @@ function Poster({ scene }: { scene: Scene }) {
           <AppIcon size={84} />
         </motion.div>
         <h2 className="relative mt-8 text-[46px] leading-[0.98] font-bold tracking-[-0.05em]">
-          {'What if the ticket itself knew the rules?'.split(' ').map((w, i) => (
-            <motion.span key={i} className={`inline-block pr-[0.22em] ${i >= 3 ? 'text-gradient-accent' : ''}`} initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ delay: 0.15 + i * 0.13, duration: 0.5 }}>
+          {'One seat. One token. One owner.'.split(' ').map((w, i) => (
+            <motion.span key={i} className={`inline-block pr-[0.22em] ${i >= 4 ? 'text-gradient-accent' : ''}`} initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ delay: 0.15 + i * 0.13, duration: 0.5 }}>
               {w}
             </motion.span>
           ))}
         </h2>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2 }} className="relative mt-8 flex flex-wrap justify-center gap-2">
-          {['Never above 110%', '5% to the artist', 'Verified fans only'].map((t) => (
+          {['Never above 105%', '2% to the artist', 'Verified fans only'].map((t) => (
             <span key={t} className="rounded-full bg-white/[0.08] px-3 py-1.5 text-[13px] font-semibold hairline">
               {t}
             </span>
@@ -110,14 +110,14 @@ function Poster({ scene }: { scene: Scene }) {
         Back to Maya
       </motion.div>
       <motion.h2 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="relative mt-4 text-[50px] leading-[0.96] font-bold tracking-[-0.05em]">
-        She gets in for <span className="text-gradient-accent">$110</span>, not <span className="text-err line-through decoration-[5px]">$400</span>.
+        She gets in for <span className="text-gradient-accent">$105</span>, not <span className="text-err line-through decoration-[5px]">$400</span>.
       </motion.h2>
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="relative mt-5 text-[18px] text-fg-2">
-        And the artist gets paid twice.
+        Resale capped. Artists paid.
       </motion.p>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.3, type: 'spring', stiffness: 200, damping: 18 }} className="relative mt-14 flex flex-col items-center gap-2">
         <Logo size={28} />
-        <span className="text-[15px] text-fg-3">The ticket that knows the rules.</span>
+        <span className="text-[15px] text-fg-3">One seat. One token. One owner.</span>
       </motion.div>
     </div>
   )

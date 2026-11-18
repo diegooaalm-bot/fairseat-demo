@@ -72,7 +72,7 @@ export function GateApp() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[17px] font-semibold tracking-[-0.02em]">{GATE_NAME}</div>
-            <div className="text-[12px] text-white/60">Mercedes-Benz Stadium · Bad Bunny</div>
+            <div className="text-[12px] text-white/60">Fox Theatre · Faye Webster</div>
           </div>
           <RoleButton />
         </div>
@@ -147,7 +147,7 @@ export function GateApp() {
               <div className="mb-3 flex items-center justify-between text-[13px]">
                 <span className="text-fg-3">Checked in tonight</span>
                 <span className="font-semibold tabular">
-                  {int(14_212 + entries)} · avg 2.4 s
+                  {int(3_412 + entries)} · avg 2.4 s
                 </span>
               </div>
               <Button size="lg" full icon={<ScanLine size={20} />} onClick={() => run('live')} disabled={!!flying}>

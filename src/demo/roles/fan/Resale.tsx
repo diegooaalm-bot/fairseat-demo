@@ -31,7 +31,7 @@ export function ResaleHub({ person }: { person: PersonId }) {
   return (
     <Screen title="Resale" tabBar roleButton>
       <div className="flex flex-col gap-4 px-5">
-        <p className="-mt-1 text-[15px] leading-snug text-fg-2">Buy and sell tickets fan to fan. The price can never go above 110% of face value.</p>
+        <p className="-mt-1 text-[15px] leading-snug text-fg-2">Buy and sell tickets fan to fan. The price can never go above 105% of face value.</p>
         <Segmented
           size="lg"
           value={side}
@@ -50,8 +50,8 @@ export function ResaleHub({ person }: { person: PersonId }) {
 
 function RulesStrip() {
   const items: [ReactNode, string, string][] = [
-    [<ShieldCheck size={17} />, 'Max 110%', 'of face value'],
-    [<Percent size={17} />, '5% to the artist', 'on every resale'],
+    [<ShieldCheck size={17} />, 'Max 105%', 'of face value'],
+    [<Percent size={17} />, '2% to the artist', 'on every resale'],
     [<BadgeCheck size={17} />, 'Verified fans', 'buyers and sellers'],
     [<CalendarClock size={17} />, 'Closes 2 h', 'before the show'],
   ]
@@ -243,9 +243,9 @@ function SellSide({ person }: { person: PersonId }) {
 
 function HowSelling() {
   const steps = [
-    ['Set your price', 'Anything up to 110% of what you paid. The ticket blocks higher prices.'],
-    ['A verified fan buys it', 'Only real, verified fans. They pay a 3% service fee.'],
-    ['Everyone is paid at once', 'You get 95% of the price, the artist 5%. Ticket and money move together.'],
+    ['Set your price', 'Anything up to 105% of what you paid. The ticket blocks higher prices.'],
+    ['A verified fan buys it', 'Only real, verified fans. They pay the price you set, with no fees on top.'],
+    ['Everyone is paid at once', 'The artist gets 2% of face value, Proof of Seat 1%, you keep the rest. Ticket and money move together.'],
   ]
   return (
     <div className="rounded-[16px] bg-ink-3 p-4 hairline">
@@ -263,9 +263,9 @@ function HowSelling() {
       </ol>
       <div className="mt-4 border-t border-white/[0.06] pt-3">
         <div className="mb-2.5 text-[13px] text-fg-2">
-          Example: a <b className="text-fg">$100</b> ticket resold at the <b className="text-fg">$110</b> cap. The buyer pays <b className="text-fg">$113.30</b>.
+          Example: a <b className="text-fg">$100</b> ticket resold at the <b className="text-fg">$105</b> cap. The buyer pays <b className="text-fg">$105</b>, all-in.
         </div>
-        <MoneySplit priceCents={11000} artist="Artist" />
+        <MoneySplit priceCents={10500} faceCents={10000} artist="Artist" />
       </div>
     </div>
   )
@@ -294,7 +294,7 @@ export function Offer({ person, id }: { person: PersonId; id: string }) {
     )
   }
   const ev = EVENTS[l.eventId]
-  const br = resaleBreakdown(l.priceCents)
+  const br = resaleBreakdown(l.priceCents, l.faceCents)
   const cap = capCents(l.faceCents)
   const elsewhere = l.eventId === 'nova' ? 40000 : Math.round((l.faceCents * 3.5) / 1000) * 1000
   const mine = l.seller === person
@@ -345,7 +345,7 @@ export function Offer({ person, id }: { person: PersonId; id: string }) {
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
               <PriceCell k="Face value" v={usd(l.faceCents)} />
               <PriceCell k="Listed at" v={usd(l.priceCents)} strong sub={markup(l)} />
-              <PriceCell k="Max allowed" v={usd(cap)} sub="110%" />
+              <PriceCell k="Max allowed" v={usd(cap)} sub="105%" />
             </div>
           </div>
 
@@ -353,7 +353,7 @@ export function Offer({ person, id }: { person: PersonId; id: string }) {
           <div className="rounded-[16px] bg-ink-3 p-4 hairline">
             <div className="text-[13px] font-semibold tracking-[0.04em] text-fg-3 uppercase">Same seat, two worlds</div>
             <div className="mt-3 flex flex-col gap-3.5">
-              <Bar label="On FairSeat" sub="Capped at 110% of face value" value={l.priceCents} max={elsewhere} tone="accent" delay={0.1} />
+              <Bar label="On Proof of Seat" sub="Capped at 105% of face value" value={l.priceCents} max={elsewhere} tone="accent" delay={0.1} />
               <Bar label="Elsewhere" sub="Typical open resale site · illustrative" value={elsewhere} max={elsewhere} tone="err" delay={0.25} />
             </div>
           </div>
@@ -365,9 +365,9 @@ export function Offer({ person, id }: { person: PersonId; id: string }) {
               <div className="text-[20px] font-bold tabular">{usd(br.buyerTotal)}</div>
             </div>
             <div className="mb-3 text-[12px] text-fg-3">
-              Ticket {usd(br.price)} + {usd(br.fee)} service fee (3%)
+              All-in: no fees on top. Proof of Seat’s 1% comes out of the price.
             </div>
-            <MoneySplit priceCents={l.priceCents} artist={shortArtist(ev.artist)} seller={l.sellerName === 'Verified fan' ? 'Seller' : l.sellerName} />
+            <MoneySplit priceCents={l.priceCents} faceCents={l.faceCents} artist={shortArtist(ev.artist)} seller={l.sellerName === 'Verified fan' ? 'Seller' : l.sellerName} />
           </div>
 
           <div className="flex flex-col gap-2 px-1 text-[13px] text-fg-3">
@@ -397,7 +397,7 @@ export function Offer({ person, id }: { person: PersonId; id: string }) {
         }}
         lines={[
           { k: 'Ticket', v: usd(br.price) },
-          { k: 'Service fee (3%)', v: usd(br.fee) },
+          { k: 'Fees', v: '$0.00 · included', muted: true },
         ]}
         totalCents={br.buyerTotal}
         onPaid={() => {

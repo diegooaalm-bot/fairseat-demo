@@ -7,14 +7,16 @@ export const SPLIT_COLORS = { seller: '#3E86FF', artist: '#3CCFB4', fee: '#8E8E9
 
 /**
  * Where the buyer's money goes on a resale: one bar, three parts.
- * Seller 95% of the price, artist 5% of the price, FairSeat 3% paid on top by the buyer.
+ * The artist gets 2% of face value, Proof of Seat 1% of face value, the seller the rest.
+ * The buyer pays the listing price: nothing on top.
  */
-export function MoneySplit({ priceCents, artist, seller = 'Seller', className = '' }: { priceCents: number; artist: string; seller?: string; className?: string }) {
-  const br = resaleBreakdown(priceCents)
+export function MoneySplit({ priceCents, faceCents, artist, seller = 'Seller', className = '' }: { priceCents: number; faceCents: number; artist: string; seller?: string; className?: string }) {
+  const br = resaleBreakdown(priceCents, faceCents)
+  const gain = br.seller - faceCents
   const parts = [
-    { id: 'seller', k: seller, sub: '95% of price', v: br.seller, c: SPLIT_COLORS.seller },
-    { id: 'artist', k: artist, sub: '5% royalty', v: br.royalty, c: SPLIT_COLORS.artist },
-    { id: 'fee', k: 'FairSeat', sub: '3% fee', v: br.fee, c: SPLIT_COLORS.fee },
+    { id: 'seller', k: seller, sub: gain >= 0 ? `Face value + ${usd(gain)}` : 'Keeps the rest', v: br.seller, c: SPLIT_COLORS.seller },
+    { id: 'artist', k: artist, sub: '2% of face', v: br.royalty, c: SPLIT_COLORS.artist },
+    { id: 'fee', k: 'Proof of Seat', sub: '1% of face', v: br.fee, c: SPLIT_COLORS.fee },
   ]
   return (
     <div className={className}>

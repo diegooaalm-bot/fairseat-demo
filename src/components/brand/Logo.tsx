@@ -1,4 +1,4 @@
-/** FairSeat mark: a theater seat with a check cut into the backrest. */
+/** Proof of Seat mark: a theater seat with a check cut into the backrest. */
 export function Mark({ size = 28, className = '', color = 'currentColor' }: { size?: number; className?: string; color?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden="true">
@@ -18,7 +18,7 @@ export function Logo({ size = 22, className = '', markClass = 'text-accent' }: {
   return (
     <span className={`inline-flex items-center gap-[0.38em] font-semibold tracking-[-0.035em] ${className}`} style={{ fontSize: size }}>
       <Mark size={size * 1.18} className={markClass} />
-      <span>FairSeat</span>
+      <span>Proof of Seat</span>
     </span>
   )
 }

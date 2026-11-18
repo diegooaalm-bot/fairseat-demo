@@ -52,9 +52,9 @@ export default function Kit() {
             <div className="flex flex-col gap-3 rounded-[28px] bg-ink-2 p-6 hairline">
               <div className="text-[64px] leading-none font-bold tracking-[-0.045em]">Knows the rules.</div>
               <div className="text-[28px] font-semibold tracking-[-0.025em]">Resell at a fair price</div>
-              <div className="text-[17px] text-fg-2">Your seat goes to a verified fan. You get your money back, the artist gets 5%.</div>
-              <div className="text-[44px] font-semibold tracking-[-0.03em] tabular">$113.30</div>
-              <code className="font-mono text-[13px] text-fg-2">require(price &lt;= faceValue * 110%)</code>
+              <div className="text-[17px] text-fg-2">Your seat goes to a verified fan. You get your money back plus 2%, the artist gets 2%.</div>
+              <div className="text-[44px] font-semibold tracking-[-0.03em] tabular">$105.00</div>
+              <code className="font-mono text-[13px] text-fg-2">require(price &lt;= faceValue * 105%)</code>
             </div>
             <div className="grid grid-cols-4 gap-3">
               {[
@@ -83,7 +83,7 @@ export default function Kit() {
         <Section title="Controls">
           <div className="flex flex-col gap-6">
             <div className="flex flex-wrap items-center gap-3">
-              <Button size="lg">Pay $113.30</Button>
+              <Button size="lg">Pay $105.00</Button>
               <Button size="lg" variant="secondary">Not now</Button>
               <Button variant="light">Try the live demo</Button>
               <Button variant="gold">Claim badge</Button>
@@ -117,8 +117,8 @@ export default function Kit() {
         <Section title="Tickets & codes">
           <div className="grid items-center gap-8 md:grid-cols-[auto_auto] md:justify-start">
             <div className="flex w-full max-w-[400px] flex-col gap-4">
-              <TicketCard ticket={{ eventId: 'nova', section: '312', row: '14', seat: 7, faceCents: 10000, tokenId: 14207 }} tilt />
-              <TicketCard ticket={{ eventId: 'harry', section: '118', row: '22', seat: 9, faceCents: 17000, tokenId: 3021 }} tilt />
+              <TicketCard ticket={{ eventId: 'nova', section: 'M3', row: '14', seat: 7, faceCents: 10000, tokenId: 14207 }} tilt />
+              <TicketCard ticket={{ eventId: 'jbreakfast', section: 'M2', row: '12', seat: 9, faceCents: 6500, tokenId: 3021 }} tilt />
             </div>
             <div className="flex flex-col items-center gap-3">
               <DynamicQR tokenId={14207} owner="0x2b9d04ae" />
@@ -202,23 +202,23 @@ function ToggleDemo() {
 function SliderDemo() {
   const [v, setV] = useState(10400)
   const cap = capCents(10000)
-  const br = resaleBreakdown(v)
+  const br = resaleBreakdown(v, 10000)
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <div className="flex flex-col gap-5 rounded-[28px] bg-ink-2 p-6 hairline">
         <div className="flex items-end justify-between">
           <div className="text-[52px] leading-none font-bold tracking-[-0.04em] tabular">{usd(v)}</div>
           <div className="text-right text-[12px] text-fg-3">
-            Max 110% of $100
+            Max 105% of $100
             <br />
             set by the artist
           </div>
         </div>
-        <CapSlider faceCents={10000} capCents={cap} minCents={8000} maxCents={14000} value={v} onChange={setV} />
+        <CapSlider faceCents={10000} capCents={cap} minCents={8500} maxCents={12500} value={v} onChange={setV} />
         <div className="divide-y divide-white/[0.07] border-t border-white/[0.07]">
           <Line k="You receive" v={<NumberTicker value={br.seller} format={(n) => usd(Math.round(n))} className="text-accent-soft" />} />
-          <Line k="Artist royalty · 5%" v={<NumberTicker value={br.royalty} format={(n) => usd(Math.round(n))} />} />
-          <Line k="Buyer pays · incl. 3% fee" v={<NumberTicker value={br.buyerTotal} format={(n) => usd(Math.round(n))} />} />
+          <Line k="Artist royalty · 2% of face" v={<NumberTicker value={br.royalty} format={(n) => usd(Math.round(n))} />} />
+          <Line k="Buyer pays · all-in" v={<NumberTicker value={br.buyerTotal} format={(n) => usd(Math.round(n))} />} />
         </div>
       </div>
       <div className="flex flex-col gap-5 rounded-[28px] bg-paper p-6 text-paper-ink">
@@ -233,7 +233,7 @@ function AutoSlider() {
   return (
     <>
       <div className="text-[52px] leading-none font-bold tracking-[-0.04em] tabular">{usd(v)}</div>
-      <CapSlider tone="light" faceCents={10000} capCents={11000} minCents={8000} maxCents={14000} value={v} onChange={setV} autoDemo />
+      <CapSlider tone="light" faceCents={10000} capCents={10500} minCents={8500} maxCents={12500} value={v} onChange={setV} autoDemo />
     </>
   )
 }
@@ -258,8 +258,8 @@ function ShellDemo() {
               <Pill tone="glass" icon={<ShieldCheck size={13} />}>
                 Fair Resale Protected
               </Pill>
-              <div className="mt-3 text-[30px] leading-none font-bold tracking-[-0.035em]">Bad Bunny</div>
-              <div className="mt-1 text-[14px] text-white/80">DeBÍ TiRAR MáS FOToS · Mercedes-Benz Stadium</div>
+              <div className="mt-3 text-[30px] leading-none font-bold tracking-[-0.035em]">Faye Webster</div>
+              <div className="mt-1 text-[14px] text-white/80">Underdressed at the Symphony Tour · Fox Theatre</div>
             </div>
           </div>
           <ListGroup header="This week">
@@ -293,11 +293,11 @@ function SheetDemo() {
           </Button>
         </div>
       </Screen>
-      <Sheet open={open} onClose={() => setOpen(false)} title={<div className="text-[20px] font-bold tracking-[-0.02em]">Pay FairSeat</div>}>
+      <Sheet open={open} onClose={() => setOpen(false)} title={<div className="text-[20px] font-bold tracking-[-0.02em]">Pay Proof of Seat</div>}>
         <div className="flex flex-col gap-4 px-5 pb-4">
           <ListGroup>
             <Row icon={<CreditCard size={18} className="text-accent" />} title="Card •••• 4242" subtitle="Debit" chevron />
-            <Row icon={<Gift size={18} className="text-fg-2" />} title="Bad Bunny · Sec 312" value="$100.00" />
+            <Row icon={<Gift size={18} className="text-fg-2" />} title="Faye Webster · Sec M3" value="$100.00" />
           </ListGroup>
           <div className="flex items-center justify-between px-1 text-[17px]">
             <span className="text-fg-2">Total</span>

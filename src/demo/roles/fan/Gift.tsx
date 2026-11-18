@@ -75,7 +75,7 @@ export function GiftScreen({ person, id }: { person: PersonId; id: string }) {
               </div>
             </div>
             <div>
-              <div className="mb-2 px-1 text-[13px] font-semibold tracking-[0.04em] text-fg-3 uppercase">Friends on FairSeat</div>
+              <div className="mb-2 px-1 text-[13px] font-semibold tracking-[0.04em] text-fg-3 uppercase">Friends on Proof of Seat</div>
               <div className="overflow-hidden rounded-[20px] bg-ink-3 hairline">
                 {contacts.map((c) => {
                   const sel = to === c.id

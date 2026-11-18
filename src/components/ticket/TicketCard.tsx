@@ -47,7 +47,7 @@ export function TicketCard({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.1em] text-white/70 uppercase">
-                <Mark size={12} color="#fff" /> FairSeat ticket
+                <Mark size={12} color="#fff" /> Proof of Seat ticket
               </div>
               <div className={`leading-none font-bold tracking-[-0.03em] ${compact ? 'text-[20px]' : 'text-[24px]'}`}>{ev.artist}</div>
               <div className="mt-1.5 truncate text-[12.5px] font-medium text-white/80">{ev.venue}</div>

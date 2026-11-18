@@ -155,7 +155,7 @@ interface Actions {
   cancelListing: (ticketId: string) => void
   /** buy any market listing; 'fan' = an anonymous verified fan (demo buyer) */
   buyListing: (p: PersonId | 'fan', listingId: string) => string | null
-  /** the canonical flow: buy Maya's Bad Bunny listing */
+  /** the canonical flow: buy Maya's Faye Webster listing */
   buyResale: (p: PersonId) => string | null
   attemptBreak: (kind: 'overCap' | 'adminOverride') => Tx
   gift: (ticketId: string, contactId: string, contactAddr: string) => void
@@ -178,26 +178,27 @@ export type DemoState = DemoData & Actions
 
 const BASE_BLOCK = 24_118_302
 export const NOVA_BASELINE = {
-  soldBefore: 69_846,
-  botsBlocked: 1_284_331,
-  tourResales: 7_514,
-  tourRoyaltyCents: 7_514 * 550,
-  waitlist: { Floor: 31_480, '100 Level': 24_910, '200 Level': 12_660, '300 Level': 19_150 },
+  soldBefore: 4_512,
+  botsBlocked: 184_331,
+  tourResales: 1_186,
+  tourRoyaltyCents: 1_186 * 200,
+  waitlist: { Orchestra: 3_120, Mezzanine: 2_480, Balcony: 1_905 },
   gateSeconds: 2.4,
 }
 
 export const tokenIdFor = (eventId: string, section: string, row: string, seat: number) =>
   (hashString(`${eventId}-${section}-${row}-${seat}`) % 19_000) + 1_000
 
+/** Maya already owns a Japanese Breakfast seat, so resale can be shown in seconds. */
 const existingTicket: Ticket = {
-  id: 't-zach-maya',
-  tokenId: tokenIdFor('zach', '118', '22', 9),
-  eventId: 'zach',
-  section: '118',
-  row: '22',
+  id: 't-jbreakfast-maya',
+  tokenId: tokenIdFor('jbreakfast', 'M2', '12', 9),
+  eventId: 'jbreakfast',
+  section: 'M2',
+  row: '12',
   seat: 9,
-  faceCents: 16000,
-  paidCents: 16000,
+  faceCents: 6500,
+  paidCents: 6500,
   owner: 'maya',
   status: 'active',
   transfersLeft: DEFAULT_RULES.maxTransfers,
@@ -210,21 +211,21 @@ function seedLedger(): Tx[] {
     block: BASE_BLOCK - 4000 + i * 517,
     ...t,
   })
-  const b = resaleBreakdown(11000)
-  const b2 = resaleBreakdown(10500)
+  const b = resaleBreakdown(10500, 10000)
+  const b2 = resaleBreakdown(10300, 10000)
   return [
-    mk(0, { kind: 'issue', at: 'Oct 16 · 10:00 AM', eventId: 'zach', qty: 71000, from: ADDR.organizer, to: ADDR.tickets, note: 'Zach Bryan · Mercedes-Benz Stadium' }),
-    mk(1, { kind: 'primary', at: 'Oct 16 · 10:07 AM', eventId: 'zach', qty: 1, tokenId: existingTicket.tokenId, from: ADDR.tickets, to: ADDR.maya, priceCents: 16000 }),
-    mk(2, { kind: 'issue', at: 'Nov 2 · 9:00 AM', eventId: 'nova', qty: 71000, from: ADDR.organizer, to: ADDR.tickets, note: 'Bad Bunny · Mercedes-Benz Stadium' }),
+    mk(0, { kind: 'issue', at: 'Oct 16 · 10:00 AM', eventId: 'jbreakfast', qty: 4665, from: ADDR.organizer, to: ADDR.tickets, note: 'Japanese Breakfast · Fox Theatre' }),
+    mk(1, { kind: 'primary', at: 'Oct 16 · 10:07 AM', eventId: 'jbreakfast', qty: 1, tokenId: existingTicket.tokenId, from: ADDR.tickets, to: ADDR.maya, priceCents: 6500 }),
+    mk(2, { kind: 'issue', at: 'Nov 2 · 9:00 AM', eventId: 'nova', qty: 4665, from: ADDR.organizer, to: ADDR.tickets, note: 'Faye Webster · Fox Theatre' }),
     mk(3, {
-      kind: 'resale', at: 'Nov 14 · 8:12 PM', eventId: 'nova', eventLabel: 'World Tour · Madrid', tokenId: 6311,
-      from: '0x91c4' + '2'.repeat(30) + '7e1a0b', to: '0x3fd0' + '8'.repeat(30) + 'c2b914', priceCents: 11000, breakdown: b,
-      checks: resaleChecks({ priceCents: 11000, faceCents: 10000, buyerVerified: true, buyerTickets: 1, minutesToShow: 2880 }),
+      kind: 'resale', at: 'Nov 14 · 8:12 PM', eventId: 'nova', eventLabel: 'Tour · Nashville', tokenId: 6311,
+      from: '0x91c4' + '2'.repeat(30) + '7e1a0b', to: '0x3fd0' + '8'.repeat(30) + 'c2b914', priceCents: 10500, breakdown: b,
+      checks: resaleChecks({ priceCents: 10500, faceCents: 10000, buyerVerified: true, buyerTickets: 1, minutesToShow: 2880 }),
     }),
     mk(4, {
-      kind: 'resale', at: 'Nov 15 · 1:47 PM', eventId: 'nova', eventLabel: 'World Tour · Barcelona', tokenId: 9874,
-      from: '0x5e72' + 'a'.repeat(30) + '19dd03', to: '0xb83a' + '4'.repeat(30) + '6f2e71', priceCents: 10500, breakdown: b2,
-      checks: resaleChecks({ priceCents: 10500, faceCents: 10000, buyerVerified: true, buyerTickets: 0, minutesToShow: 4320 }),
+      kind: 'resale', at: 'Nov 15 · 1:47 PM', eventId: 'nova', eventLabel: 'Tour · Asheville', tokenId: 9874,
+      from: '0x5e72' + 'a'.repeat(30) + '19dd03', to: '0xb83a' + '4'.repeat(30) + '6f2e71', priceCents: 10300, breakdown: b2,
+      checks: resaleChecks({ priceCents: 10300, faceCents: 10000, buyerVerified: true, buyerTickets: 0, minutesToShow: 4320 }),
     }),
   ]
 }
@@ -237,21 +238,20 @@ function seedMarket(): MarketListing[] {
     return { id: `m-${eventId}-${section}-${row}-${seat}`, eventId, section, row, seat, faceCents: face, priceCents: price, seller: 'fan', sellerName: 'Verified fan' }
   }
   return [
-    mk('taylor', '312', '11', 4, '300', 10),
-    mk('taylor', '226', '8', 15, '200', 5),
-    mk('taylor', '118', '19', 2, '100', 10),
-    mk('taylor', 'F3', '4', 9, 'floor', 0),
-    mk('harry', '107', '18', 6, '100', 5),
-    mk('harry', '330', '12', 21, '300', 10),
-    mk('zach', '225', '7', 3, '200', 0),
-    mk('straykids', 'F2', '3', 11, 'floor', 8),
-    mk('straykids', '305', '15', 8, '300', 10),
-    mk('bocelli', '106', '17', 5, '100', 4),
-    mk('atlutd', '121', '20', 14, '100', 10),
-    mk('falcons', '224', '9', 7, '200', 6),
-    mk('monsterjam', '115', '22', 10, '100', 0),
-    mk('hamilton', 'ORC', '6', 8, 'floor', 10),
-    mk('disney', '208', '6', 3, '200', 5),
+    mk('manchester', 'M2', '12', 4, '100', 5),
+    mk('manchester', 'ORC', '12', 11, 'floor', 5),
+    mk('manchester', 'ORL', '14', 2, 'floor', 3),
+    mk('manchester', 'B4', '7', 15, '200', 0),
+    mk('jbreakfast', 'B2', '9', 6, '200', 5),
+    mk('lakestreetdive', 'BC', '4', 10, '100', 5),
+    mk('waxahatchee', 'OC', '3', 7, 'floor', 0),
+    mk('lucydacus', 'OL', '6', 12, 'floor', 5),
+    mk('dream', '106', '5', 8, '100', 5),
+    mk('gatech', '208', '11', 3, '200', 5),
+    mk('aso', 'OC', '8', 5, 'floor', 2),
+    mk('improv', 'OC', '3', 4, 'floor', 0),
+    mk('puppetry', 'OL', '2', 6, 'floor', 0),
+    mk('dreamkids', '112', '6', 9, '100', 5),
   ].filter((l) => EVENTS[l.eventId])
 }
 
@@ -279,10 +279,10 @@ export const initialData = (): DemoData => ({
   organizer: {
     secondShowIssued: false,
     draft: {
-      name: 'Bad Bunny · Night 2',
-      venue: 'Mercedes-Benz Stadium',
+      name: 'Faye Webster · Night 2',
+      venue: 'Fox Theatre',
       date: 'Sun, Jun 27, 2027 · 8:00 PM',
-      capacity: 71000,
+      capacity: 4665,
       priceCents: 10000,
       rules: { ...DEFAULT_RULES },
     },
@@ -299,7 +299,7 @@ export const initialData = (): DemoData => ({
 export const minutesToShow = (eventId: EventId, m: MomentId) => EVENTS[eventId].startMin - momentOf(m).min
 export const isAtOrAfter = (cur: MomentId, target: MomentId) => momentIndex(cur) >= momentIndex(target)
 export const ticketsOf = (s: DemoData, p: PersonId | string) => s.tickets.filter((t) => t.owner === p && t.status !== 'gone')
-/** Maya's Bad Bunny listing: the canonical resale of the story. */
+/** Maya's Faye Webster listing: the canonical resale of the story. */
 export const novaListing = (s: DemoData) => s.market.find((l) => l.eventId === 'nova' && l.seller === 'maya')
 export const listingOf = (s: DemoData, ticketId: string) => s.market.find((l) => l.ticketId === ticketId)
 /** Resale is open until 2 hours before the show. */
@@ -317,7 +317,7 @@ function nextTx(s: DemoData, t: Omit<Tx, 'id' | 'hash' | 'block' | 'at'>): [Tx, 
 }
 
 function novaBadge(): Badge {
-  return { id: 'b-nova-live', eventId: 'nova', artist: 'Bad Bunny', venue: 'Mercedes-Benz Stadium', date: 'Jun 26, 2027', hue: 220 }
+  return { id: 'b-nova-live', eventId: 'nova', artist: 'Faye Webster', venue: 'Fox Theatre', date: 'Jun 26, 2027', hue: 220 }
 }
 
 /* ───────────────────────── Store ───────────────────────── */
@@ -446,7 +446,7 @@ export const useDemo = create<DemoState>()(
         const s = get()
         const l = s.market.find((x) => x.id === listingId)
         if (!l || l.seller === p) return null
-        const br = resaleBreakdown(l.priceCents)
+        const br = resaleBreakdown(l.priceCents, l.faceCents)
         const checks = resaleChecks({
           priceCents: l.priceCents,
           faceCents: l.faceCents,
@@ -508,7 +508,7 @@ export const useDemo = create<DemoState>()(
 
       attemptBreak: (kind) => {
         const s = get()
-        const price = kind === 'overCap' ? 40000 : 40000
+        const price = 40000
         const checks = resaleChecks({ priceCents: price, faceCents: 10000, buyerVerified: true, buyerTickets: 0, minutesToShow: 2000 })
         const [tx, b] = nextTx(s, {
           kind: 'reverted',
@@ -519,7 +519,7 @@ export const useDemo = create<DemoState>()(
           priceCents: price,
           checks,
           failed: 'cap',
-          note: kind === 'adminOverride' ? 'Sent by the FairSeat admin key. Reverted: no one can bypass the cap.' : 'Resale at $400. Reverted by the contract.',
+          note: kind === 'adminOverride' ? 'Sent by the Proof of Seat admin key. Reverted: no one can bypass the cap.' : 'Resale at $400. Reverted by the contract.',
         })
         set({ block: b, ledger: [tx, ...s.ledger] })
         return tx
@@ -559,8 +559,8 @@ export const useDemo = create<DemoState>()(
         }
         const t = s.tickets.find((x) => x.eventId === 'nova' && x.owner === 'ben' && x.status !== 'gone')
         if (!t) return finish({ ok: false, code: 'noTicket', title: 'No valid ticket', detail: 'Ben has no ticket for tonight yet.' })
-        if (t.status === 'used') return finish({ ok: false, code: 'used', title: 'Already used', detail: 'Checked in at 7:42 PM · North Gate.', ticketId: t.id })
-        const [tx, b] = nextTx(s, { kind: 'entry', eventId: 'nova', tokenId: t.tokenId, from: ADDR.ben, note: offline ? 'Validated offline · synced later' : 'Checked in · North Gate' })
+        if (t.status === 'used') return finish({ ok: false, code: 'used', title: 'Already used', detail: 'Checked in at 7:42 PM · Main Entrance.', ticketId: t.id })
+        const [tx, b] = nextTx(s, { kind: 'entry', eventId: 'nova', tokenId: t.tokenId, from: ADDR.ben, note: offline ? 'Validated offline · synced later' : 'Checked in · Main Entrance' })
         set({
           block: b,
           ledger: offline ? s.ledger : [tx, ...s.ledger],
@@ -605,18 +605,18 @@ export const useDemo = create<DemoState>()(
       ambientResale: () => {
         const s = get()
         const n = s.artist.ambient + 1
-        const cities = ['Madrid', 'Barcelona', 'Mexico City', 'São Paulo', 'Buenos Aires', 'London', 'Paris', 'Brussels']
-        const br = resaleBreakdown(11000)
+        const cities = ['Nashville', 'Asheville', 'Chicago', 'Brooklyn', 'Philadelphia', 'Austin', 'Denver', 'Seattle']
+        const br = resaleBreakdown(10500, 10000)
         const [tx, b] = nextTx(s, {
           kind: 'resale',
           eventId: 'nova',
-          eventLabel: `World Tour · ${cities[n % cities.length]}`,
+          eventLabel: `Tour · ${cities[n % cities.length]}`,
           tokenId: 1000 + ((n * 7919) % 19000),
           from: txHash(`amb-from-${n}`).slice(0, 42),
           to: txHash(`amb-to-${n}`).slice(0, 42),
-          priceCents: 11000,
+          priceCents: 10500,
           breakdown: br,
-          checks: resaleChecks({ priceCents: 11000, faceCents: 10000, buyerVerified: true, buyerTickets: n % 3, minutesToShow: 3000 }),
+          checks: resaleChecks({ priceCents: 10500, faceCents: 10000, buyerVerified: true, buyerTickets: n % 3, minutesToShow: 3000 }),
         })
         set({ block: b, ledger: [tx, ...s.ledger].slice(0, 120), artist: { ambient: n } })
       },
@@ -636,7 +636,7 @@ export const useDemo = create<DemoState>()(
         if (idx >= 0 && !st().maya.onboarded) st().completeOnboarding('maya')
         if (idx >= 1 && !st().tickets.some((t) => t.eventId === 'nova' && (t.owner === 'maya' || t.prevOwner === 'maya'))) {
           st().addBotsBlocked(4_812)
-          st().buyPrimary('maya', 'nova', [{ section: '312', row: '14', seat: 7, faceCents: 10000 }])
+          st().buyPrimary('maya', 'nova', [{ section: 'M3', row: '14', seat: 7, faceCents: 10000 }])
         }
         if (idx >= 2 && !novaListing(st()) && !st().tickets.some((t) => t.eventId === 'nova' && t.owner === 'ben')) {
           const mt = st().tickets.find((t) => t.eventId === 'nova' && t.owner === 'maya' && t.status === 'active')
@@ -656,7 +656,7 @@ export const useDemo = create<DemoState>()(
       },
     }),
     {
-      name: 'fairseat-demo-v4',
+      name: 'proofofseat-demo-v5',
       version: 1,
       storage: createJSONStorage(() => {
         try {
@@ -682,15 +682,15 @@ export const selectJurisdiction = (s: DemoData): Jurisdiction => s.organizer.dra
 export function novaStats(s: DemoData) {
   const mayaBought = s.tickets.some((t) => t.eventId === 'nova' && (t.owner === 'maya' || t.prevOwner === 'maya'))
   const livePrimaries = s.ledger.filter((t) => t.live && t.kind === 'primary').length
-  const sold = mayaBought ? 71_000 : NOVA_BASELINE.soldBefore + livePrimaries
+  const sold = mayaBought ? 4_665 : NOVA_BASELINE.soldBefore + livePrimaries
   const liveResales = s.ledger.filter((t) => t.live && t.kind === 'resale' && t.eventId === 'nova')
   const resales = NOVA_BASELINE.tourResales + liveResales.length
   const royaltyCents = NOVA_BASELINE.tourRoyaltyCents + liveResales.reduce((a, t) => a + (t.breakdown?.royalty ?? 0), 0)
   const entries = s.gate.entries
   return {
     sold,
-    capacity: 71_000,
-    revenueCents: sold * 15_200,
+    capacity: 4_665,
+    revenueCents: sold * 9_500,
     botsBlocked: s.botsBlocked,
     resales,
     withinCapPct: 100,
