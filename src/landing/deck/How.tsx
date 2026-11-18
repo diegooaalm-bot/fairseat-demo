@@ -5,7 +5,8 @@ import { NumberTicker } from '@/components/ui/NumberTicker'
 import { usd } from '@/lib/money'
 import { spring } from '@/lib/motion'
 import { resaleBreakdown } from '@/lib/rules'
-import { Container, Reveal, Section, SlideHead, asset } from './ui'
+import { Ban, CircleCheck, CircleDollarSign } from 'lucide-react'
+import { Card, Container, Reveal, Section, SlideHead, asset } from './ui'
 
 /* ───────── Slide 9 · How it works ───────── */
 const BLOCKS = [
@@ -51,7 +52,7 @@ export function BuildingBlocks() {
   )
 }
 
-/* ───────── Slide 10 · The rules written into the contract ───────── */
+/* ───────── Slides 10–11 · The rules written into the contract, and where the $105 goes ───────── */
 const RULES = [
   ['Resale cap', '105%', 'Max resale price. A $100 ticket can’t sell above $105.', 'text-deck-blue'],
   ['Royalty', '2%', 'Of face value, on every resale, to the artist’s address, automatically.', 'text-deck-teal'],
@@ -73,7 +74,7 @@ export function ContractRules() {
   return (
     <Section id="rules" tone="gray">
       <Container>
-        <SlideHead kicker="Part 3 · How it works" title="The Rules Written Into the Contract" sub="Enforced on every transfer, whether or not a reseller wants to follow them." />
+        <SlideHead kicker="Part 3 · Rules & business model" title="The Rules Written Into the Contract" sub="Enforced on every transfer, on any marketplace. And the money they move, in the open." />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {RULES.map(([k, n, d, c], i) => (
             <Reveal key={k} delay={i * 0.08}>
@@ -108,12 +109,7 @@ export function ContractRules() {
                     onHitCap={reject}
                   />
                 </div>
-                <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  <Tile k="Buyer pays, all-in" v={br.buyerTotal} />
-                  <Tile k="Seller keeps" v={br.seller} c="text-[#8db8ff]" />
-                  <Tile k="Artist · 2% of face" v={br.royalty} c="text-[#5fd6c2]" />
-                  <Tile k="Platform · 1% of face" v={br.fee} />
-                </div>
+                <SplitBar seller={br.seller} artist={br.royalty} platform={br.fee} />
               </div>
               <div className="flex flex-col justify-center border-t border-white/10 bg-[#0a0c10] p-6 font-mono text-[13px] leading-[1.9] sm:p-8 lg:border-t-0 lg:border-l">
                 <div>
@@ -151,18 +147,61 @@ export function ContractRules() {
             </div>
           </div>
         </Reveal>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {EARN.map((c, i) => (
+            <Reveal key={c.t} delay={0.1 + i * 0.08}>
+              <Card className="h-full bg-white">
+                <span className={`grid h-11 w-11 place-items-center rounded-[13px] ${c.tone}`}>
+                  <c.icon size={20} />
+                </span>
+                <div className="mt-5 text-[19px] font-semibold tracking-[-0.02em]">{c.t}</div>
+                <div className="mt-1.5 text-[15px] leading-snug text-deck-slate">{c.d}</div>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
       </Container>
     </Section>
   )
 }
+
+const EARN = [
+  { icon: CircleDollarSign, t: 'How we earn', d: '1% on primary sales, paid by the organizer, and 1% of face value on every resale. Gas costs under a cent and comes out of our fee.', tone: 'bg-deck-blue/10 text-deck-blue' },
+  { icon: Ban, t: 'No platform token', d: 'A ticketing app doesn’t need one, and FTX’s FTT showed the risk.', tone: 'bg-deck-red/10 text-deck-red' },
+  { icon: CircleCheck, t: 'Who wins', d: 'Fans pay the same or less. Artists gain a new revenue stream. Brokers lose the markup.', tone: 'bg-deck-green/12 text-deck-green-ink' },
+]
+
 const money = (n: number) => usd(Math.round(n))
-function Tile({ k, v, c = 'text-white' }: { k: string; v: number; c?: string }) {
+
+/** Where the buyer's money goes, live with the slider. Artist and platform shares drawn larger so they stay visible. */
+function SplitBar({ seller, artist, platform }: { seller: number; artist: number; platform: number }) {
+  const parts = [
+    { k: 'Seller keeps', v: seller, g: seller, c: 'bg-deck-blue', t: 'text-[#8db8ff]' },
+    { k: 'Artist · 2% of face', v: artist, g: artist * 6, c: 'bg-deck-teal', t: 'text-[#5fd6c2]' },
+    { k: 'Platform · 1% of face', v: platform, g: platform * 6, c: 'bg-white/40', t: 'text-white' },
+  ]
   return (
-    <div className="rounded-[16px] bg-white/[0.06] p-3">
-      <div className="text-[12px] text-white/60">{k}</div>
-      <div className={`mt-1 text-[22px] leading-none font-bold tracking-[-0.03em] ${c}`}>
-        <NumberTicker value={v} format={money} duration={0.4} />
+    <div className="mt-8">
+      <div className="text-[13px] text-white/60">
+        Buyer pays <b className="text-white">{money(seller + artist + platform)}</b>, all-in. Where it goes:
       </div>
+      <div className="mt-2 flex h-4 gap-[3px] overflow-hidden rounded-full">
+        {parts.map((p) => (
+          <motion.span key={p.k} className={`h-full ${p.c}`} style={{ flexBasis: 0 }} animate={{ flexGrow: p.g }} initial={false} transition={spring.snappy} />
+        ))}
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {parts.map((p) => (
+          <div key={p.k} className="min-w-0">
+            <div className="truncate text-[12px] text-white/60">{p.k}</div>
+            <div className={`mt-0.5 text-[22px] leading-none font-bold tracking-[-0.03em] ${p.t}`}>
+              <NumberTicker value={p.v} format={money} duration={0.4} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 text-[12px] text-white/45">Not to scale: the artist and platform shares are drawn larger.</div>
     </div>
   )
 }

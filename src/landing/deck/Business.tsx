@@ -1,70 +1,5 @@
-import { motion } from 'motion/react'
-import { Ban, CircleDollarSign, CircleCheck } from 'lucide-react'
-import { Card, Container, Reveal, Section, SlideHead, Sources } from './ui'
-
-/* ───────── Slide 11 · Business model: following the $105 ───────── */
-const SPLIT = [
-  { k: 'Seller keeps', v: '$102.00', w: 76, c: 'bg-deck-blue' },
-  { k: 'Artist', v: '$2.00', w: 13, c: 'bg-deck-teal' },
-  { k: 'Platform', v: '$1.00', w: 11, c: 'bg-deck-slate' },
-]
-export function Following105() {
-  const cards = [
-    { icon: CircleDollarSign, t: 'How we earn', d: 'A 1% fee on primary sales, paid by the organizer, and 1% of face value on every resale.', tone: 'bg-deck-blue/10 text-deck-blue' },
-    { icon: Ban, t: 'No platform token', d: 'A ticketing app doesn’t need one, and FTX’s FTT showed the risk.', tone: 'bg-deck-red/10 text-deck-red' },
-    { icon: CircleCheck, t: 'Who wins', d: 'Fans pay the same or less. Artists gain a new revenue stream. Brokers lose the markup.', tone: 'bg-deck-green/12 text-deck-green-ink' },
-  ]
-  return (
-    <Section id="business">
-      <Container>
-        <SlideHead kicker="Part 4 · Business model" title="Business Model: Following the $105" sub="A $100 ticket resold at the $105 cap: the seller gets face value + 2%, the artist 2% and the platform 1%." />
-        <Reveal delay={0.1} className="mt-12">
-          <div className="flex h-[92px] gap-[3px] overflow-hidden rounded-[18px] sm:h-[104px]">
-            {SPLIT.map((s, i) => (
-              <motion.div
-                key={s.k}
-                className={`${s.c} flex min-w-0 flex-col justify-center px-3 text-white sm:px-5`}
-                initial={{ flexGrow: 0.001, opacity: 0.4 }}
-                whileInView={{ flexGrow: s.w, opacity: 1 }}
-                viewport={{ once: true, margin: '-15% 0px' }}
-                transition={{ duration: 1.1, delay: 0.15 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-                style={{ flexBasis: 0 }}
-              >
-                <div className={`truncate text-[11px] font-bold tracking-[0.12em] text-white/80 uppercase ${i ? 'hidden sm:block' : ''}`}>{s.k}</div>
-                <div className={`truncate text-[clamp(18px,2.6vw,30px)] font-bold tracking-[-0.03em] tabular ${i ? 'hidden sm:block' : ''}`}>{s.v}</div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="mt-3 grid grid-cols-3 gap-2 sm:hidden">
-            {SPLIT.map((s) => (
-              <div key={s.k} className="flex items-start gap-1.5">
-                <span className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${s.c}`} />
-                <span>
-                  <span className="block text-[11px] font-semibold tracking-[0.06em] text-deck-mute uppercase">{s.k}</span>
-                  <span className="block text-[17px] font-bold tabular">{s.v}</span>
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-3 text-[13px] text-deck-mute">Gas for the transfer: under one cent, paid by the platform out of its fee. Bar not to scale.</div>
-        </Reveal>
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {cards.map((c, i) => (
-            <Reveal key={c.t} delay={0.1 + i * 0.08}>
-              <Card className="h-full">
-                <span className={`grid h-11 w-11 place-items-center rounded-[13px] ${c.tone}`}>
-                  <c.icon size={20} />
-                </span>
-                <div className="mt-5 text-[19px] font-semibold tracking-[-0.02em]">{c.t}</div>
-                <div className="mt-1.5 text-[15px] leading-snug text-deck-slate">{c.d}</div>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  )
-}
+import { Ban } from 'lucide-react'
+import { Container, Reveal, Section, SlideHead, Sources } from './ui'
 
 /* ───────── Slide 12 · Who buys in, and why ───────── */
 const BUYERS = [
@@ -75,7 +10,7 @@ const BUYERS = [
 ]
 export function BuyIn() {
   return (
-    <Section id="buyin" tone="gray">
+    <Section id="buyin">
       <Container>
         <SlideHead kicker="Part 4 · Buy-in" title="Who Buys In, and Why" sub="Everyone at the table comes out ahead except the broker." />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -114,7 +49,7 @@ const RISKS = [
 ]
 export function Risks() {
   return (
-    <Section id="risks">
+    <Section id="risks" tone="gray">
       <Container>
         <SlideHead kicker="Part 4 · Risks" title="Risks and Our Answers" sub="What could go wrong, and what we’d do about it." />
         <div className="mt-12 grid gap-3 md:grid-cols-2">

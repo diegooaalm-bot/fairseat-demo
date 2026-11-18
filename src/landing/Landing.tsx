@@ -7,7 +7,7 @@ import { Broken, Scalping } from './deck/Problem'
 import { TokenChanges } from './deck/Solution'
 import { Alternatives } from './deck/Alternatives'
 import { BuildingBlocks, ContractRules } from './deck/How'
-import { BuyIn, Following105, Risks } from './deck/Business'
+import { BuyIn, Risks } from './deck/Business'
 import { Footer, ThankYou, TryDemo } from './deck/Closing'
 
 /** The product page follows the Proof of Seat deck, slide by slide. */
@@ -41,7 +41,6 @@ export default function Landing() {
         <Alternatives />
         <BuildingBlocks />
         <ContractRules />
-        <Following105 />
         <BuyIn />
         <Risks />
         <TryDemo />
@@ -61,7 +60,7 @@ function Nav() {
     setLight(!!t && t.getBoundingClientRect().bottom < 64)
   })
   useEffect(() => {
-    const ids = [...CHAPTERS.map(([id]) => id), 'rules', 'business', 'demo']
+    const ids = [...CHAPTERS.map(([id]) => id), 'rules', 'demo']
     const els = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
     const io = new IntersectionObserver(
       (entries) => {
@@ -74,7 +73,7 @@ function Nav() {
     return () => io.disconnect()
   }, [])
   // sections without their own chapter belong to the one before them
-  const chapterOf = (id: string | null) => (id === 'rules' ? 'how' : id === 'business' ? 'buyin' : id === 'demo' ? null : id)
+  const chapterOf = (id: string | null) => (id === 'rules' ? 'how' : id === 'demo' ? null : id)
   return (
     <motion.header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${light ? 'border-b border-black/[0.06] bg-white/80 text-deck-ink backdrop-blur-xl backdrop-saturate-150' : 'border-b border-transparent text-white'}`}

@@ -235,7 +235,6 @@ export function Roadmap() {
   const cases = [
     ['road-concerts', 'Concerts'],
     ['road-worldcup', 'World Cup'],
-    ['road-superbowl', 'Super Bowl'],
   ]
   return (
     <Section tone="gray">
@@ -249,7 +248,7 @@ export function Roadmap() {
           }
           sub="Our roadmap: where ticketing breaks, and how tokens fix it."
         />
-        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
           {cases.map(([img, label], i) => (
             <Reveal key={img} delay={i * 0.1}>
               <div className="group relative aspect-[16/10] overflow-hidden rounded-[22px] bg-deck-ink">
